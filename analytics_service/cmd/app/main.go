@@ -19,7 +19,7 @@ func main() {
 
 	log.Println("DB connected seccessfully")
 
-	repo := repository.NewMetricsRepo(conn)
+	repo := repository.NewQueueMetricsRepo(conn)
 
 	queueTestId, _ := uuid.Parse("22222222-2222-2222-2222-222222222222")
 
