@@ -63,7 +63,7 @@ type Queue struct {
 type QueueParams struct {
 	ID                 uuid.UUID `gorm:"type: uuid; primaryKey"`
 	QueueID            uuid.UUID `gorm:"type: uuid; not null"`
-	ArrivalGracePeriod string    `gorm:"type: interval; deffault: '5 minutes'"`
+	ArrivalGracePeriod int       `gorm:"deffault: 5"`
 	MaxQueueSize       int       `gorm:"default: 100"`
 	IsActive           bool      `gorm:"default: true"`
 }

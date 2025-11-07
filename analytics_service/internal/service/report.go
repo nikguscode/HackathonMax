@@ -20,10 +20,10 @@ func ToJSON(v any) ([]byte, error) {
 }
 
 // возвращает форматированный JSON
-func PrettyJSON(v any) (string, error) {
+func PrettyJSON(v any) ([]byte, error) {
 	data, err := json.MarshalIndent(v, "", "  ")
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return string(data), nil
+	return data, nil
 }

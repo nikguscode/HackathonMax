@@ -3,10 +3,9 @@ package main
 import (
 	"analytics_service/internal/db"
 	"analytics_service/internal/repository"
+	"analytics_service/internal/service"
 
 	"log"
-
-	"github.com/google/uuid"
 )
 
 func main() {
@@ -19,22 +18,17 @@ func main() {
 
 	log.Println("DB connected seccessfully")
 
-	repo := repository.NewQueueMetricsRepo(conn)
+	repoQueue := repository.NewQueueMetricsRepo(conn)
+	repoOrg := repository.NewOrgMetricsRepo(conn)
 
-	queueTestId, _ := uuid.Parse("22222222-2222-2222-2222-222222222222")
+	reportQueue, err := service.GenerateQueueReport(repoQueue, "11111111-1111-1111-1111-111111111111", "Test Org", "22222222-2222-2222-2222-222222222222", "Main Queue")
 
-	count, _ := repo.CountEntries(queueTestId)
-	log.Println("Общее кол-во записей в очередь: ", count)
+	reportOrg, err := service.GenerateOrganizationReport(repoOrg, "11111111-1111-1111-1111-111111111111", "Test Org")
 
-	count, _ = repo.CountServedMembers(queueTestId)
-	log.Println("Кол-во обслуженных: ", count)
+	prettyQueue, err := service.PrettyJSON(reportQueue)
+	prettyOrg, err := service.PrettyJSON(reportOrg)
 
-	count, _ = repo.CountLeftMembers(queueTestId)
-	log.Println("Кол-во покинувших: ", count)
+	log.Printf("%s\n", prettyQueue)
+	log.Printf("%s\n", prettyOrg)
 
-	ms, _ := repo.AverageWaitingTime(queueTestId)
-	log.Println("Среднее время ожидания: ", ms)
-
-	ms, _ = repo.AverageServiceTime(queueTestId)
-	log.Println("Среднее время обслуживания: ", ms)
 }
