@@ -1,0 +1,104 @@
+openapi: 3.0.4
+info:
+  title: MaxQueue Metrics API
+  version: 0.0.1
+
+paths:
+  /organizations/{organizationId}/metrics:
+    get:
+      tags: [organizations]
+      summary: Get organization metrics
+      operationId: getOrganizationMetrics
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          description: Organization ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Organization metrics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationMetricsResponse'
+  
+  /queues/{queueId}/metrics:
+    get:
+      tags: [queues]
+      summary: Get queue metrics
+      operationId: getQueueMetrics
+      parameters:
+        - name: queueId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Queue metrics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueMetricsResponse'
+
+components:
+  schemas:
+    OrganizationMetricsResponse:
+      type: object
+      properties:
+        metrics:
+          $ref: '#/components/schemas/OrganizationMetrics'
+
+    OrganizationMetrics:
+      type: object
+      properties:
+        numberOfActiveQueues:
+          type: integer
+        numberOfQueues:
+          type: integer
+        numberOfMembersInAllQueues:
+          type: integer
+        numberOfEmployees:
+          type: integer
+        membersInDay:
+          type: integer
+        waitingTime:
+          type: number
+          format: float
+        averageLoadInQueues:
+          type: number
+          format: float
+        numberOfServedMembers:
+          type: integer
+
+    QueueMetricsResponse:
+      type: object
+      properties:
+        metrics:
+          $ref: '#/components/schemas/QueueMetrics'
+
+    QueueMetrics:
+      type: object
+      properties:
+        waitingTime:
+          type: number
+          format: float
+        membersInFragment:
+          type: integer
+        entriesInTheQueue:
+          type: integer
+        numberOfServedMembers:
+          type: integer
+        serviceTime:
+          type: number
+          format: float
+        totalLeft:
+          type: integer
+        maxInQueue:
+          type: integer
+        minInQueue:
+          type: integer
+        averageInQueue:
+          type: integer

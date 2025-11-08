@@ -12,7 +12,7 @@ type OrganizationMetricsRepository interface {
 	NumberOfQueues(IDorg uuid.UUID) (int, error)
 	NumberOfMembersInAllQueues(IDorg uuid.UUID) (int, error)
 	NumberOfEmployees(IDorg uuid.UUID) (int, error)
-	AverageWaitingTimeOrg(IDorg uuid.UUID) (float64, error)
+	AverageWaitingTimeOrg(IDorg uuid.UUID) (float32, error)
 	NumberOfServedMembersOrg(IDorg uuid.UUID) (int, error)
 }
 
@@ -62,8 +62,8 @@ func (r *orgMetricsRepo) NumberOfEmployees(IDorg uuid.UUID) (int, error) {
 }
 
 // Среднее время ожидания по организации
-func (r *orgMetricsRepo) AverageWaitingTimeOrg(IDorg uuid.UUID) (float64, error) {
-	var avg *float64
+func (r *orgMetricsRepo) AverageWaitingTimeOrg(IDorg uuid.UUID) (float32, error) {
+	var avg *float32
 	err := r.db.Table(model.QueueEntry{}.TableName()+" AS qe").
 		Select("AVG(EXTRACT(EPOCH FROM (em.arrived_at - em.joined_at)))").
 		Joins("LEFT JOIN "+model.EntryMeta{}.TableName()+" em ON em.id_queue_entry = qe.id").

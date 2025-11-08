@@ -11,8 +11,8 @@ type QueueMetricsRepository interface {
 	CountEntries(IDqueue uuid.UUID) (int, error)
 	CountServedMembers(IDqueue uuid.UUID) (int, error)
 	CountLeftMembers(IDqueue uuid.UUID) (int, error)
-	AverageWaitingTime(IDqueue uuid.UUID) (float64, error)
-	AverageServiceTime(IDqueue uuid.UUID) (float64, error)
+	AverageWaitingTime(IDqueue uuid.UUID) (float32, error)
+	AverageServiceTime(IDqueue uuid.UUID) (float32, error)
 }
 
 type queueMetricsRepo struct {
@@ -51,8 +51,8 @@ func (r *queueMetricsRepo) CountLeftMembers(IDqueue uuid.UUID) (int, error) {
 }
 
 // Среднее время ожидания
-func (r *queueMetricsRepo) AverageWaitingTime(IDqueue uuid.UUID) (float64, error) {
-	var avg *float64
+func (r *queueMetricsRepo) AverageWaitingTime(IDqueue uuid.UUID) (float32, error) {
+	var avg *float32
 	err := r.db.Table(model.QueueEntry{}.TableName()+" AS qe").
 		Select("AVG(EXTRACT(EPOCH FROM (em.arrived_at - em.joined_at)))").
 		Joins("LEFT JOIN "+model.EntryMeta{}.TableName()+" em ON em.id_queue_entry = qe.id").
@@ -66,8 +66,8 @@ func (r *queueMetricsRepo) AverageWaitingTime(IDqueue uuid.UUID) (float64, error
 }
 
 // Среднее время обслуживания
-func (r *queueMetricsRepo) AverageServiceTime(IDqueue uuid.UUID) (float64, error) {
-	var avg *float64
+func (r *queueMetricsRepo) AverageServiceTime(IDqueue uuid.UUID) (float32, error) {
+	var avg *float32
 	err := r.db.Table(model.QueueEntry{}.TableName()+" AS qe").
 		Select("AVG(EXTRACT(EPOCH FROM (em.finished_at - em.called_at)))").
 		Joins("LEFT JOIN "+model.EntryMeta{}.TableName()+" em ON em.id_queue_entry = qe.id").
