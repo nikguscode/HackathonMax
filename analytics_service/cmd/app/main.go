@@ -1,47 +1,22 @@
 package main
 
 import (
-	"analytics_service/internal/db"
-	"analytics_service/internal/repository"
-	"analytics_service/internal/service"
-	"analytics_service/internal/transport/rabbitmq"
-	"fmt"
+	"analytics_service/internal/app"
+	"analytics_service/internal/bootstrap"
 	"log"
-	"os"
 )
 
 func main() {
-	log.Println("Start application...")
+	log.Println("Starting application...")
 
-	conn, err := db.ConnectDB()
+	bs, err := bootstrap.Init()
 	if err != nil {
-		log.Fatalf("DB connection failed: %v", err)
+		log.Fatalf("Bootstrap initialization failed: %v", err)
 	}
+	defer bs.RabbitConn.Close()
 
-	log.Println("DB connected seccessfully")
-
-	repoQueue := repository.NewQueueMetricsRepo(conn)
-	repoOrg := repository.NewOrgMetricsRepo(conn)
-
-	metricsService := service.NewMetricsService(repoOrg, repoQueue)
-
-	rabbitURL := fmt.Sprintf("amqp://%s:%s@45.135.135.32:5672",
-		os.Getenv("RABBITMQ_DEFAULT_USER"),
-		os.Getenv("RABBITMQ_DEFAULT_PASS"))
-
-	fmt.Print(rabbitURL)
-
-	rbconn, err := rabbitmq.NewConnection(rabbitURL)
-	if err != nil {
-		log.Fatal(err)
+	a := app.New(bs)
+	if err := a.Run(); err != nil {
+		log.Fatalf("Application failed: %v", err)
 	}
-	defer rbconn.Close()
-
-	ch := rbconn.Channel()
-
-	publisher := rabbitmq.NewPublisher(ch, "", "metrics_results")
-	consumer := rabbitmq.NewConsumer(ch, "metrics_commands", metricsService, publisher)
-	_ = consumer.Start()
-
-	select {}
 }
