@@ -20,23 +20,18 @@ type MetricsOrganization struct {
 
 // структура JSON для организации
 type OrganizationReportJSON struct {
-	Organization OrganizationInfo    `json:"organization"`
-	Metrics      MetricsOrganization `json:"metrics"`
+	Metrics MetricsOrganization `json:"metrics"`
 }
 
 // создаёт отчёт по организации
-func NewOrganizationReportJSON(orgID, orgName string, metrics MetricsOrganization) OrganizationReportJSON {
+func NewOrganizationReportJSON(metrics MetricsOrganization) OrganizationReportJSON {
 	return OrganizationReportJSON{
-		Organization: OrganizationInfo{
-			ID:   orgID,
-			Name: orgName,
-		},
 		Metrics: metrics,
 	}
 }
 
 // формирует полный JSON-отчёт по организации
-func GenerateOrganizationReport(repo repository.OrganizationMetricsRepository, orgID, orgName string) (OrganizationReportJSON, error) {
+func GenerateOrganizationReport(repo repository.OrganizationMetricsRepository, orgID string) (OrganizationReportJSON, error) {
 	oID, _ := uuid.Parse(orgID)
 
 	activeQueues, _ := repo.NumberOfActiveQueues(oID)
@@ -57,7 +52,7 @@ func GenerateOrganizationReport(repo repository.OrganizationMetricsRepository, o
 		NumberOfServedMembers: servedMembers,
 	}
 
-	report := NewOrganizationReportJSON(orgID, orgName, metrics)
+	report := NewOrganizationReportJSON(metrics)
 
 	return report, nil
 }

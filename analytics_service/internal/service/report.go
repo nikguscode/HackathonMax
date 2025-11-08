@@ -6,18 +6,6 @@ import (
 	"fmt"
 )
 
-// данные об организации
-type OrganizationInfo struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-}
-
-// данные о очереди
-type QueueInfo struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-}
-
 // сериализует любую структуру в JSON
 func ToJSON(v any) ([]byte, error) {
 	return json.Marshal(v)
@@ -48,25 +36,22 @@ func NewMetricsService(
 }
 
 type MetricsCommand struct {
-	Type             string `json:"type"`
-	OrganizationID   string `json:"organization_id"`
-	OrganizationName string `json:"organization_name"`
-	QueueID          string `json:"queue_id"`
-	QueueName        string `json:"queue_name"`
+	Type string `json:"type"`
+	ID   string `json:"id"` // организации или очереди в завирсимости от типа
 }
 
 // какой отчет форматировать
 func (s *MetricsService) GenerateReport(cmd MetricsCommand) (interface{}, error) {
 	switch cmd.Type {
 	case "queue":
-		report, err := GenerateQueueReport(s.queueRepo, cmd.OrganizationID, cmd.OrganizationName, cmd.QueueID, cmd.QueueName)
+		report, err := GenerateQueueReport(s.queueRepo, cmd.ID)
 		if err != nil {
 			return nil, fmt.Errorf("failed to generate queue report: %w", err)
 		}
 		return report, nil
 
 	case "organization":
-		report, err := GenerateOrganizationReport(s.orgRepo, cmd.OrganizationID, cmd.OrganizationName)
+		report, err := GenerateOrganizationReport(s.orgRepo, cmd.ID)
 		if err != nil {
 			return nil, fmt.Errorf("failed to generate organization report: %w", err)
 		}

@@ -21,28 +21,18 @@ type MetricsQueue struct {
 
 // структура JSON для очереди
 type QueueReportJSON struct {
-	Organization OrganizationInfo `json:"organization"`
-	Queue        QueueInfo        `json:"queue"`
-	Metrics      MetricsQueue     `json:"metrics"`
+	Metrics MetricsQueue `json:"metrics"`
 }
 
 // создаёт отчёт по очереди
-func NewQueueReportJSON(orgID, orgName, queueID, queueName string, metrics MetricsQueue) QueueReportJSON {
+func NewQueueReportJSON(metrics MetricsQueue) QueueReportJSON {
 	return QueueReportJSON{
-		Organization: OrganizationInfo{
-			ID:   orgID,
-			Name: orgName,
-		},
-		Queue: QueueInfo{
-			ID:   queueID,
-			Name: queueName,
-		},
 		Metrics: metrics,
 	}
 }
 
 // формирует полный JSON-отчёт по очереди
-func GenerateQueueReport(repo repository.QueueMetricsRepository, orgID, orgName, queueID, queueName string) (QueueReportJSON, error) {
+func GenerateQueueReport(repo repository.QueueMetricsRepository, queueID string) (QueueReportJSON, error) {
 
 	qID, _ := uuid.Parse(queueID)
 
@@ -64,7 +54,7 @@ func GenerateQueueReport(repo repository.QueueMetricsRepository, orgID, orgName,
 		AverageInQueue:    0,
 	}
 
-	report := NewQueueReportJSON(orgID, orgName, queueID, queueName, metrics)
+	report := NewQueueReportJSON(metrics)
 
 	return report, nil
 }

@@ -15,14 +15,12 @@ type User struct {
 	LastActivityTime time.Time    `gorm:"not null"`
 	CreatedAt        time.Time    `gorm:"default:now()"`
 	UserRoles        []UserRole   `gorm:"foreignKey: IDUser"`
-	QueueEntries     []QueueEntry `gorm:"foreignKey: UserID"`
+	UserQueues       []UserQueue  `gorm:"foreignKey: IDUser"`
+	QueueEntries     []QueueEntry `gorm:"foreignKey: IDUser"`
 }
 
-// таблица "role"
-type Role struct {
-	ID        uuid.UUID  `gorm:"type: uuid; primaryKey"`
-	Name      string     `gorm:"size: 50; unique; not null"`
-	UserRoles []UserRole `gorm:"foreignKey: IDRole"`
+func (User) TableName() string {
+	return `"user"`
 }
 
 // таблица "organization"
@@ -31,96 +29,98 @@ type Organization struct {
 	Name        string    `gorm:"size: 255; not null"`
 	Description string
 	Address     string
-	IsBanned    bool
+	IsBanned    bool       `gorm:"default:false"`
 	CreatedAt   time.Time  `gorm:"default: now()"`
-	UserRoles   []UserRole `gorm:"foreignKey: IDOrganization"`
-	Queues      []Queue    `gorm:"foreignKey: OrganizationID"`
-}
-
-// таблица "user_role"
-type UserRole struct {
-	ID             uuid.UUID    `gorm:"type: uuid"`
-	IDUser         uuid.UUID    `gorm:"type: uuid; not null"`
-	IDRole         uuid.UUID    `gorm:"type: uuid; not null"`
-	IDOrganization uuid.UUID    `gorm:"type: uuid; not null"`
-	User           User         `gorm:"foreignKey: IDUser"`
-	Role           Role         `gorm:"foreignKey: IDRole"`
-	Organization   Organization `gorm:"foreignKey: IDOrganization"`
-}
-
-// таблица "queue"
-type Queue struct {
-	ID             uuid.UUID    `gorm:"type: uuid; primaryKey"`
-	OrganizationID uuid.UUID    `gorm:"type: uuid; not null"`
-	Name           string       `gorm:"size: 255; not null"`
-	CreatedAt      time.Time    `gorm:"default: now()"`
-	Organization   Organization `gorm:"foreignKey: OrganizationID"`
-	Params         QueueParams  `gorm:"foreignKey: QueueID"`
-	Entries        []QueueEntry `gorm:"foreignKey: QueueID"`
-}
-
-// таблица "queue_params"
-type QueueParams struct {
-	ID                 uuid.UUID `gorm:"type: uuid; primaryKey"`
-	QueueID            uuid.UUID `gorm:"type: uuid; not null"`
-	ArrivalGracePeriod int       `gorm:"deffault: 5"`
-	MaxQueueSize       int       `gorm:"default: 100"`
-	IsActive           bool      `gorm:"default: true"`
-}
-
-// таблица "queue_entrie"
-type QueueEntry struct {
-	ID      uuid.UUID   `gorm:"type: uuid; primaryKey"`
-	QueueID uuid.UUID   `gorm:"type: uuid; not null"`
-	UserID  uuid.UUID   `gorm:"type: uuid; not null"`
-	Status  string      `gorm:"size: 50; default: 'waiting'"`
-	Queue   Queue       `gorm:"foreignKey: QueueID"`
-	User    User        `gorm:"foreignKey: UserID"`
-	Meta    []EntryMeta `gorm:"foreignKey: QueueEntrieID"`
-}
-
-// таблица "queue_entrie_meta"
-type EntryMeta struct {
-	ID            uuid.UUID `gorm:"type:uuid;primaryKey"`
-	QueueEntrieID uuid.UUID `gorm:"type:uuid;not null"`
-	JoinedAt      time.Time `gorm:"default:now()"`
-	CalledAt      *time.Time
-	ArrivedAt     *time.Time
-	MissedAt      *time.Time
-	StartedAt     *time.Time
-	FinishedAt    *time.Time
-	TimeLimit     *time.Time
-	QueueEntry    QueueEntry `gorm:"foreignKey:QueueEntrieID"`
-}
-
-func (User) TableName() string {
-	return `"user"`
-}
-
-func (Role) TableName() string {
-	return `"role"`
+	UserRoles   []UserRole `gorm:"foreignKey:IDOrganization;references:ID"`
+	Queues      []Queue    `gorm:"foreignKey:IDOrganization;references:ID"`
 }
 
 func (Organization) TableName() string {
 	return `"organization"`
 }
 
+// таблица "user_role"
+type UserRole struct {
+	ID             uuid.UUID    `gorm:"type: uuid; primaryKey"`
+	IDUser         uuid.UUID    `gorm:"type: uuid; not null"`
+	IDOrganization uuid.UUID    `gorm:"type: uuid; not null"`
+	Role           string       `gorm:"type: user_role; not null"`
+	User           User         `gorm:"foreignKey: IDUser"`
+	Organization   Organization `gorm:"foreignKey: IDOrganization"`
+}
+
 func (UserRole) TableName() string {
-	return `"user_role"`
+	return `"user_roles"`
+}
+
+type UserQueue struct {
+	ID      uuid.UUID `gorm:"type: uuid; primaryKey"`
+	IDUser  uuid.UUID `gorm:"type: uuid; not null"`
+	IDQueue uuid.UUID `gorm:"type: uuid; not null"`
+	User    User      `gorm:"foreignKey: IDUser"`
+	Queue   Queue     `gorm:"foreignKey: IDQueue"`
+}
+
+func (UserQueue) TableName() string {
+	return `"user_queue"`
+}
+
+// таблица "queue"
+type Queue struct {
+	ID             uuid.UUID    `gorm:"type: uuid; primaryKey"`
+	IDOrganization uuid.UUID    `gorm:"type: uuid; not null"`
+	Name           string       `gorm:"size: 255; not null"`
+	CreatedAt      time.Time    `gorm:"default: now()"`
+	Organization   Organization `gorm:"foreignKey: IDOrganization"`
+	Params         QueueParams  `gorm:"foreignKey: IDQueue"`
+	Entries        []QueueEntry `gorm:"foreignKey: IDQueue"`
 }
 
 func (Queue) TableName() string {
 	return `"queue"`
 }
 
+// таблица "queue_params"
+type QueueParams struct {
+	ID                 uuid.UUID `gorm:"type: uuid; primaryKey"`
+	IDQueue            uuid.UUID `gorm:"column: id_queue; type: uuid; not null"`
+	ArrivalGracePeriod int       `gorm:"deffault: 5"`
+	MaxQueueSize       int       `gorm:"default: 100"`
+	IsActive           bool      `gorm:"default: true"`
+}
+
 func (QueueParams) TableName() string {
 	return `"queue_params"`
 }
 
+// таблица "queue_entrie"
+type QueueEntry struct {
+	ID      uuid.UUID   `gorm:"type: uuid; primaryKey"`
+	IDQueue uuid.UUID   `gorm:"column: id_queue; type: uuid; not null"`
+	IDUser  uuid.UUID   `gorm:"column: id_user; type: uuid; not null"`
+	Status  string      `gorm:"type: queue_status; not null'"`
+	Queue   Queue       `gorm:"foreignKey: IDQueue"`
+	User    User        `gorm:"foreignKey: IDUser"`
+	Meta    []EntryMeta `gorm:"foreignKey:IDQueueEntry;references:ID"`
+}
+
 func (QueueEntry) TableName() string {
-	return `"queue_entrie"`
+	return `"queue_entry"`
+}
+
+// таблица "queue_entrie_meta"
+type EntryMeta struct {
+	ID           uuid.UUID  `gorm:"type:uuid;primaryKey"`
+	QueueEntryID uuid.UUID  `gorm:"column:id_queue_entry;type:uuid;not null"`
+	JoinedAt     *time.Time `gorm:"default:now()"`
+	CalledAt     *time.Time
+	ArrivedAt    *time.Time
+	MissedAt     *time.Time
+	StartedAt    *time.Time
+	FinishedAt   *time.Time
+	TimeLimit    *time.Time
 }
 
 func (EntryMeta) TableName() string {
-	return `"queue_entrie_meta"`
+	return `"queue_entry_meta"`
 }
