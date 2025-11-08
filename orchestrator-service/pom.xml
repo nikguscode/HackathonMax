@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.5.7</version>
+		<relativePath/>
+	</parent>
+
+	<groupId>com.nikguscode</groupId>
+	<artifactId>orchestrator-service</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>orchestrator-service</name>
+	<description>Orchestrator service for MaxQueue</description>
+
+	<url/>
+	<licenses>
+		<license/>
+	</licenses>
+
+	<developers>
+		<developer/>
+	</developers>
+
+	<scm>
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
+	</scm>
+
+	<properties>
+		<java.version>21</java.version>
+    <liquibase-core.version>4.33.0</liquibase-core.version>
+    <lombok.version>1.18.36</lombok.version>
+    <mapstruct.version>1.6.3</mapstruct.version>
+    <testcontainers-jooq-codegen.version>0.0.4</testcontainers-jooq-codegen.version>
+    <testcontainers-postgresql.version>1.21.3</testcontainers-postgresql.version>
+    <postgresql.version>42.7.4</postgresql.version>
+    <jooq.version>3.20.8</jooq.version>
+
+    <!-- Configuration variables -->
+    <jooq.codegen.jdbc.username>postgres</jooq.codegen.jdbc.username>
+    <jooq.codegen.jdbc.password>postgres</jooq.codegen.jdbc.password>
+	</properties>
+
+	<dependencies>
+
+    <!-- Spring Starters -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jooq</artifactId>
+    </dependency>
+
+    <!-- Database  -->
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>${postgresql.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>${testcontainers-postgresql.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.liquibase</groupId>
+      <artifactId>liquibase-core</artifactId>
+      <version>${liquibase-core.version}</version>
+    </dependency>
+
+    <!-- Database access -->
+    <dependency>
+      <groupId>org.jooq</groupId>
+      <artifactId>jooq</artifactId>
+      <version>${jooq.version}</version>
+    </dependency>
+
+    <!-- Utilities -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${lombok.version}</version>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct</artifactId>
+      <version>${mapstruct.version}</version>
+    </dependency>
+	</dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.11.0</version>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>${lombok.version}</version>
+            </path>
+            <path>
+              <groupId>org.mapstruct</groupId>
+              <artifactId>mapstruct-processor</artifactId>
+              <version>${mapstruct.version}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.6.0</version>
+        <executions>
+          <execution>
+            <id>add-jooq-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-sources/jooq</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>jooq-generate</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.gmaven</groupId>
+            <artifactId>groovy-maven-plugin</artifactId>
+            <version>2.1.1</version>
+            <executions>
+              <execution>
+                <id>testcontainer-start</id>
+                <phase>generate-sources</phase>
+                <goals>
+                  <goal>execute</goal>
+                </goals>
+                <configuration>
+                  <source>
+                    db = new org.testcontainers.containers.PostgreSQLContainer("postgres:latest")
+                      .withUsername("${jooq.codegen.jdbc.username}")
+                      .withDatabaseName("postgres")
+                      .withPassword("${jooq.codegen.jdbc.password}")
+
+                    db.start()
+                    project.properties.setProperty('jooq.codegen.jdbc.url', db.getJdbcUrl())
+                    project.properties.setProperty('jooq.codegen.jdbc.username', db.getUsername())
+                    project.properties.setProperty('jooq.codegen.jdbc.password', db.getPassword())
+                    project.properties.setProperty('testcontainer.containerid', db.getContainerId())
+                    project.properties.setProperty('testcontainer.imageName', db.getDockerImageName())
+                  </source>
+                </configuration>
+              </execution>
+
+              <execution>
+                <id>testcontainer-stop</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>execute</goal>
+                </goals>
+                <configuration>
+                  <source>
+                    containerId = "${testcontainer.containerid}"
+                    imageName = "${testcontainer.imageName}"
+                    println("Stopping testcontainer $containerId - $imageName")
+                    org.testcontainers.utility.ResourceReaper
+                      .instance()
+                      .stopAndRemoveContainer(containerId, imageName)
+                  </source>
+                </configuration>
+              </execution>
+            </executions>
+
+            <dependencies>
+              <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${testcontainers-postgresql.version}</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+
+          <plugin>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-maven-plugin</artifactId>
+            <version>${liquibase-core.version}</version>
+            <executions>
+              <execution>
+                <id>init-db-with-liquibase</id>
+                <phase>generate-sources</phase>
+                <goals>
+                  <goal>update</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <driver>org.postgresql.Driver</driver>
+              <url>${jooq.codegen.jdbc.url}</url>
+              <username>${jooq.codegen.jdbc.username}</username>
+              <password>${jooq.codegen.jdbc.password}</password>
+              <changeLogFile>src/main/resources/db/changelog.xml</changeLogFile>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgresql.version}</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+
+          <plugin>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-codegen-maven</artifactId>
+            <version>${jooq.version}</version>
+
+            <executions>
+              <execution>
+                <id>generate-java</id>
+                <phase>generate-sources</phase>
+                <goals>
+                  <goal>generate</goal>
+                </goals>
+
+                <configuration>
+                  <jdbc>
+                    <url>${jooq.codegen.jdbc.url}</url>
+                    <user>${jooq.codegen.jdbc.username}</user>
+                    <password>${jooq.codegen.jdbc.password}</password>
+                  </jdbc>
+                  <generator>
+                    <database>
+                      <includes>.*</includes>
+                      <excludes>(?i:DATABASECHANGELOG|DATABASECHANGELOGLOCK)</excludes>
+                      <schemata>
+                        <schema>
+                          <inputSchema>public</inputSchema>
+                        </schema>
+                      </schemata>
+                    </database>
+                    <generate>
+                      <generatedAnnotation>false</generatedAnnotation>
+                    </generate>
+                    <target>
+                      <packageName>com.nikguscode.tbankapi.jooq</packageName>
+                      <directory>${project.build.directory}/generated-sources/jooq</directory>
+                    </target>
+                  </generator>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.2.2</version>
+            <configuration>
+              <systemPropertyVariables>
+                <jooq.codegen.jdbc.url>${jooq.codegen.jdbc.url}</jooq.codegen.jdbc.url>
+                <jooq.codegen.jdbc.username>${jooq.codegen.jdbc.username}
+                </jooq.codegen.jdbc.username>
+                <jooq.codegen.jdbc.password>${jooq.codegen.jdbc.password}
+                </jooq.codegen.jdbc.password>
+              </systemPropertyVariables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>
