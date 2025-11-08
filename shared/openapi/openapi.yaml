@@ -47,10 +47,10 @@ paths:
         default:
           $ref: '#/components/responses/UnexpectedError'
 
-    post:
+    put:
       tags: [users]
-      summary: Add user in maxqueue system
-      operationId: addUserInMaxQueueSystem
+      summary: Update user in maxqueue system
+      operationId: updateUserInMaxQueueSystem
       parameters:
         - name: maxId
           in: path
@@ -59,18 +59,14 @@ paths:
           schema:
             type: string
       requestBody:
-        description: Add user in maxqueue system
+        description: Update user in maxqueue system
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserReq'
+              $ref: '#/components/schemas/UserUpdateRequest'
       responses:
         '200':
           description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -78,8 +74,26 @@ paths:
         default:
           $ref: '#/components/responses/UnexpectedError'
 
-    put:
-
+  /users:
+    post:
+      tags: [users]
+      summary: Add user in maxqueue system
+      operationId: addUserInMaxQueueSystem
+      requestBody:
+        description: Add user in maxqueue system
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
 
   /queue-entries/{entryId}:
     delete:
@@ -100,6 +114,47 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /organizations/{organizationId}/users/{maxId}/role:
+    put:
+      tags: [organizations]
+      summary: Update user role in organization
+      operationId: updateOrganizationUserRole
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          description: Organization ID
+          schema:
+            type: string
+        - name: maxId
+          in: path
+          required: true
+          description: User MAX ID
+          schema:
+            type: string
+      requestBody:
+        description: Update user role in organization
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  $ref: '#/components/schemas/UserRole'
+      responses:
+        '200':
+          description: Organization with its queues
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationQueuesResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -273,6 +328,23 @@ components:
       description: Unexpected server error
 
   schemas:
+    User:
+      type: object
+      properties:
+        maxId:
+          type: string
+        username:
+          type: string
+
+    UserRole:
+      type: string
+      description: Role of user
+      enum:
+        - CLIENT
+        - EMPLOYEE
+        - MODERATOR
+        - ADMIN
+
     UserResponse:
       type: object
       properties:
@@ -284,14 +356,31 @@ components:
             $ref: '#/components/schemas/Organization'
       example:
         user:
-          idMax: "u001"
+          maxId: "u001"
           username: "john_doe"
         organizations:
           - id: "org1"
             name: "Main Office"
             isModerator: true
 
-    UserReq:
+    UserRequest:
+      type: object
+      properties:
+        maxId:
+          type: string
+        username:
+          type: string
+        firstName:
+          type: string
+        secondName:
+          type: string
+      required:
+        - maxId
+        - username
+        - firstName
+        - secondName
+
+    UserUpdateRequest:
       type: object
       properties:
         username:
@@ -301,15 +390,6 @@ components:
         secondName:
           type: string
         createdAt:
-          type: string
-          format: date-time
-
-    User:
-      type: object
-      properties:
-        idMax:
-          type: string
-        username:
           type: string
 
     Organization:
