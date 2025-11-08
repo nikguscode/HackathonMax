@@ -14,4 +14,5 @@
   <include file="007-create-table-queue-entry.sql" relativeToChangelogFile="true"/>
   <include file="008-create-table-queue-params.sql" relativeToChangelogFile="true"/>
   <include file="009-create-table-queue-entry-meta.sql" relativeToChangelogFile="true"/>
+  <include file="010-recreate-table-user.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>
