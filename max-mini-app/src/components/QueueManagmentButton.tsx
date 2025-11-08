@@ -2,14 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Flex, Typography } from '@maxhub/max-ui';
 
-interface OrganizationCardProps {
+interface QueueCardProps {
   name: string;
-  count: number;
-  orgId: string;
+  queueId: string;
   onClick?: () => void;
 }
 
-const OrganizationCard: React.FC<OrganizationCardProps> = ({ name, count, orgId, onClick }) => {
+const QueueManagmentButton: React.FC<QueueCardProps> = ({ name, queueId, onClick }) => {
   const [isPressed, setIsPressed] = useState(false);
   const navigate = useNavigate();
 
@@ -29,7 +28,7 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ name, count, orgId,
     if (onClick) {
       onClick();
     } else {
-      navigate(`/managment/${orgId}`);
+      navigate(`/managment/queue/${queueId}`);
     }
   };
 
@@ -72,25 +71,8 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ name, count, orgId,
       >
         {name}
       </Typography.Title>
-
-      <div
-        style={{
-          backgroundColor: '#6A5ACD', 
-          color: '#FFFFFF',
-          padding: '4px 12px', 
-          borderRadius: '0px',
-          fontSize: '14px',
-          fontWeight: 600, 
-          minWidth: '20px', 
-          textAlign: 'center',
-          pointerEvents: 'none',
-          boxShadow: '0 2px 4px #6A5ACD', 
-        }}
-      >
-        {count}
-      </div>
     </Flex>
   );
 };
 
-export default OrganizationCard;
+export default QueueManagmentButton;

@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Flex, Typography } from '@maxhub/max-ui';
 
-interface OrganizationCardProps {
+interface ModeratorCardProps {
   name: string;
   count: number;
-  orgId: string;
+  queueId: string;
   onClick?: () => void;
 }
 
-const OrganizationCard: React.FC<OrganizationCardProps> = ({ name, count, orgId, onClick }) => {
+const ModeratorCard: React.FC<ModeratorCardProps> = ({ name, count, queueId, onClick }) => {
   const [isPressed, setIsPressed] = useState(false);
   const navigate = useNavigate();
 
@@ -29,7 +29,7 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ name, count, orgId,
     if (onClick) {
       onClick();
     } else {
-      navigate(`/managment/${orgId}`);
+      navigate(`/moderator`);
     }
   };
 
@@ -93,4 +93,5 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ name, count, orgId,
   );
 };
 
-export default OrganizationCard;
+export default ModeratorCard;
+
