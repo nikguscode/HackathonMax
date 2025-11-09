@@ -7,9 +7,8 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **id** | **string** |  | [optional] [default to undefined]
 **name** | **string** |  | [optional] [default to undefined]
-**role** | **string** |  | [optional] [default to undefined]
 **peopleInFront** | **number** |  | [optional] [default to undefined]
-**status** | **string** |  | [optional] [default to undefined]
+**status** | [**QueueEntryStatus**](QueueEntryStatus.md) |  | [optional] [default to undefined]
 
 ## Example
 
@@ -19,7 +18,6 @@ import { QueueEntry } from './api';
 const instance: QueueEntry = {
     id,
     name,
-    role,
     peopleInFront,
     status,
 };

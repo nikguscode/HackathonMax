@@ -4,10 +4,65 @@ All URIs are relative to *http://orchestrator-service:8080*
 
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
-|[**deleteUserFromQueueEntry**](#deleteuserfromqueueentry) | **DELETE** /queue-entries/{entryId} | Delete user from queue|
+|[**addQueueEntry**](#addqueueentry) | **POST** /queue-entries | Add user in queue|
+|[**deleteQueueEntry**](#deletequeueentry) | **DELETE** /queue-entries/{entryId} | Delete user from queue|
 
-# **deleteUserFromQueueEntry**
-> UserResponse deleteUserFromQueueEntry()
+# **addQueueEntry**
+> addQueueEntry()
+
+
+### Example
+
+```typescript
+import {
+    QueueEntriesApi,
+    Configuration,
+    QueueEntryCreatingRequest
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new QueueEntriesApi(configuration);
+
+let queueEntryCreatingRequest: QueueEntryCreatingRequest; //Add user in queue (optional)
+
+const { status, data } = await apiInstance.addQueueEntry(
+    queueEntryCreatingRequest
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **queueEntryCreatingRequest** | **QueueEntryCreatingRequest**| Add user in queue | |
+
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: Not defined
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**201** | User added to queue |  -  |
+|**400** | Invalid request parameters |  -  |
+|**404** | Resource not found |  -  |
+|**0** | Unexpected server error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **deleteQueueEntry**
+> deleteQueueEntry()
 
 
 ### Example
@@ -23,7 +78,7 @@ const apiInstance = new QueueEntriesApi(configuration);
 
 let entryId: string; //Queue Entry id (default to undefined)
 
-const { status, data } = await apiInstance.deleteUserFromQueueEntry(
+const { status, data } = await apiInstance.deleteQueueEntry(
     entryId
 );
 ```
@@ -37,7 +92,7 @@ const { status, data } = await apiInstance.deleteUserFromQueueEntry(
 
 ### Return type
 
-**UserResponse**
+void (empty response body)
 
 ### Authorization
 
@@ -46,7 +101,7 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: Not defined
- - **Accept**: application/json
+ - **Accept**: Not defined
 
 
 ### HTTP response details

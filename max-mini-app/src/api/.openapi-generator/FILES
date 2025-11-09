@@ -1,6 +1,5 @@
 .gitignore
 .npmignore
-.openapi-generator-ignore
 api.ts
 base.ts
 common.ts
@@ -13,8 +12,11 @@ docs/OrganizationQueuesResponse.md
 docs/OrganizationSettings.md
 docs/OrganizationSettingsResponse.md
 docs/OrganizationsApi.md
+docs/QueueCreatingRequest.md
 docs/QueueEntriesApi.md
 docs/QueueEntry.md
+docs/QueueEntryCreatingRequest.md
+docs/QueueEntryStatus.md
 docs/QueueMembersResponse.md
 docs/QueueMetrics.md
 docs/QueueMetricsResponse.md
@@ -24,11 +26,10 @@ docs/QueuesApi.md
 docs/SimpleMember.md
 docs/SimpleOrganization.md
 docs/SimpleQueue.md
-docs/UpdateOrganizationUserRoleRequest.md
-docs/User.md
-docs/UserRequest.md
+docs/UserCreatingRequest.md
 docs/UserResponse.md
 docs/UserRole.md
+docs/UserRoleRequest.md
 docs/UserUpdateRequest.md
 docs/UsersApi.md
 git_push.sh

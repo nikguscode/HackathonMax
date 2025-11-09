@@ -30,8 +30,8 @@ export interface BaseQueueResponse {
 export interface Organization {
     'id'?: string;
     'name'?: string;
-    'isModerator'?: boolean;
-    'queueEntries'?: Array<QueueEntry>;
+    'role'?: UserRole & string;
+    'amountOfQueues'?: number;
 }
 export interface OrganizationMetrics {
     'numberOfActiveQueues'?: number;
@@ -60,21 +60,36 @@ export interface OrganizationSettings {
 export interface OrganizationSettingsResponse {
     'organization'?: OrganizationSettings;
 }
+export interface QueueCreatingRequest {
+    'maxId'?: string;
+    'queueId'?: string;
+}
 export interface QueueEntry {
     'id'?: string;
     'name'?: string;
-    'role'?: string;
     'peopleInFront'?: number;
-    'status'?: QueueEntryStatusEnum;
+    'status'?: QueueEntryStatus;
 }
 
-export const QueueEntryStatusEnum = {
-    Active: 'active',
-    Paused: 'paused',
-    Completed: 'completed'
+
+export interface QueueEntryCreatingRequest {
+    'maxId': number;
+    'queueId': string;
+}
+/**
+ * Status of queue entry
+ */
+
+export const QueueEntryStatus = {
+    Waiting: 'WAITING',
+    Serving: 'SERVING',
+    Served: 'SERVED',
+    Cancelled: 'CANCELLED',
+    Missed: 'MISSED'
 } as const;
 
-export type QueueEntryStatusEnum = typeof QueueEntryStatusEnum[keyof typeof QueueEntryStatusEnum];
+export type QueueEntryStatus = typeof QueueEntryStatus[keyof typeof QueueEntryStatus];
+
 
 export interface QueueMembersResponse {
     'members'?: Array<SimpleMember>;
@@ -113,24 +128,15 @@ export interface SimpleQueue {
     'id'?: string;
     'name'?: string;
 }
-export interface UpdateOrganizationUserRoleRequest {
-    'role'?: UserRole;
-}
-
-
-export interface User {
-    'maxId'?: string;
-    'username'?: string;
-}
-export interface UserRequest {
+export interface UserCreatingRequest {
     'maxId': string;
-    'username': string;
-    'firstName': string;
-    'secondName': string;
+    'username'?: string;
+    'firstName'?: string;
+    'secondName'?: string;
 }
 export interface UserResponse {
-    'user'?: User;
     'organizations'?: Array<Organization>;
+    'queue-entries'?: Array<QueueEntry>;
 }
 /**
  * Role of user
@@ -144,6 +150,12 @@ export const UserRole = {
 } as const;
 
 export type UserRole = typeof UserRole[keyof typeof UserRole];
+
+
+export interface UserRoleRequest {
+    'organizationId': string;
+    'role': UserRole;
+}
 
 
 export interface UserUpdateRequest {
@@ -260,48 +272,6 @@ export const OrganizationsApiAxiosParamCreator = function (configuration?: Confi
                 options: localVarRequestOptions,
             };
         },
-        /**
-         * 
-         * @summary Update user role in organization
-         * @param {string} organizationId Organization ID
-         * @param {string} maxId User MAX ID
-         * @param {UpdateOrganizationUserRoleRequest} [updateOrganizationUserRoleRequest] Update user role in organization
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        updateOrganizationUserRole: async (organizationId: string, maxId: string, updateOrganizationUserRoleRequest?: UpdateOrganizationUserRoleRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'organizationId' is not null or undefined
-            assertParamExists('updateOrganizationUserRole', 'organizationId', organizationId)
-            // verify required parameter 'maxId' is not null or undefined
-            assertParamExists('updateOrganizationUserRole', 'maxId', maxId)
-            const localVarPath = `/organizations/{organizationId}/users/{maxId}/role`
-                .replace(`{${"organizationId"}}`, encodeURIComponent(String(organizationId)))
-                .replace(`{${"maxId"}}`, encodeURIComponent(String(maxId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(updateOrganizationUserRoleRequest, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
     }
 };
 
@@ -350,21 +320,6 @@ export const OrganizationsApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['OrganizationsApi.getOrganizationSettings']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
-        /**
-         * 
-         * @summary Update user role in organization
-         * @param {string} organizationId Organization ID
-         * @param {string} maxId User MAX ID
-         * @param {UpdateOrganizationUserRoleRequest} [updateOrganizationUserRoleRequest] Update user role in organization
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async updateOrganizationUserRole(organizationId: string, maxId: string, updateOrganizationUserRoleRequest?: UpdateOrganizationUserRoleRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrganizationQueuesResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.updateOrganizationUserRole(organizationId, maxId, updateOrganizationUserRoleRequest, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['OrganizationsApi.updateOrganizationUserRole']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
     }
 };
 
@@ -403,18 +358,6 @@ export const OrganizationsApiFactory = function (configuration?: Configuration, 
          */
         getOrganizationSettings(organizationId: string, options?: RawAxiosRequestConfig): AxiosPromise<OrganizationSettingsResponse> {
             return localVarFp.getOrganizationSettings(organizationId, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @summary Update user role in organization
-         * @param {string} organizationId Organization ID
-         * @param {string} maxId User MAX ID
-         * @param {UpdateOrganizationUserRoleRequest} [updateOrganizationUserRoleRequest] Update user role in organization
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        updateOrganizationUserRole(organizationId: string, maxId: string, updateOrganizationUserRoleRequest?: UpdateOrganizationUserRoleRequest, options?: RawAxiosRequestConfig): AxiosPromise<OrganizationQueuesResponse> {
-            return localVarFp.updateOrganizationUserRole(organizationId, maxId, updateOrganizationUserRoleRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -455,19 +398,6 @@ export class OrganizationsApi extends BaseAPI {
     public getOrganizationSettings(organizationId: string, options?: RawAxiosRequestConfig) {
         return OrganizationsApiFp(this.configuration).getOrganizationSettings(organizationId, options).then((request) => request(this.axios, this.basePath));
     }
-
-    /**
-     * 
-     * @summary Update user role in organization
-     * @param {string} organizationId Organization ID
-     * @param {string} maxId User MAX ID
-     * @param {UpdateOrganizationUserRoleRequest} [updateOrganizationUserRoleRequest] Update user role in organization
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    public updateOrganizationUserRole(organizationId: string, maxId: string, updateOrganizationUserRoleRequest?: UpdateOrganizationUserRoleRequest, options?: RawAxiosRequestConfig) {
-        return OrganizationsApiFp(this.configuration).updateOrganizationUserRole(organizationId, maxId, updateOrganizationUserRoleRequest, options).then((request) => request(this.axios, this.basePath));
-    }
 }
 
 
@@ -479,14 +409,48 @@ export const QueueEntriesApiAxiosParamCreator = function (configuration?: Config
     return {
         /**
          * 
+         * @summary Add user in queue
+         * @param {QueueEntryCreatingRequest} [queueEntryCreatingRequest] Add user in queue
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        addQueueEntry: async (queueEntryCreatingRequest?: QueueEntryCreatingRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/queue-entries`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(queueEntryCreatingRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary Delete user from queue
          * @param {string} entryId Queue Entry id
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteUserFromQueueEntry: async (entryId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        deleteQueueEntry: async (entryId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'entryId' is not null or undefined
-            assertParamExists('deleteUserFromQueueEntry', 'entryId', entryId)
+            assertParamExists('deleteQueueEntry', 'entryId', entryId)
             const localVarPath = `/queue-entries/{entryId}`
                 .replace(`{${"entryId"}}`, encodeURIComponent(String(entryId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -522,15 +486,28 @@ export const QueueEntriesApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
+         * @summary Add user in queue
+         * @param {QueueEntryCreatingRequest} [queueEntryCreatingRequest] Add user in queue
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async addQueueEntry(queueEntryCreatingRequest?: QueueEntryCreatingRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.addQueueEntry(queueEntryCreatingRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['QueueEntriesApi.addQueueEntry']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @summary Delete user from queue
          * @param {string} entryId Queue Entry id
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteUserFromQueueEntry(entryId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteUserFromQueueEntry(entryId, options);
+        async deleteQueueEntry(entryId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteQueueEntry(entryId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['QueueEntriesApi.deleteUserFromQueueEntry']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['QueueEntriesApi.deleteQueueEntry']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -544,13 +521,23 @@ export const QueueEntriesApiFactory = function (configuration?: Configuration, b
     return {
         /**
          * 
+         * @summary Add user in queue
+         * @param {QueueEntryCreatingRequest} [queueEntryCreatingRequest] Add user in queue
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        addQueueEntry(queueEntryCreatingRequest?: QueueEntryCreatingRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.addQueueEntry(queueEntryCreatingRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Delete user from queue
          * @param {string} entryId Queue Entry id
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteUserFromQueueEntry(entryId: string, options?: RawAxiosRequestConfig): AxiosPromise<UserResponse> {
-            return localVarFp.deleteUserFromQueueEntry(entryId, options).then((request) => request(axios, basePath));
+        deleteQueueEntry(entryId: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.deleteQueueEntry(entryId, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -561,13 +548,24 @@ export const QueueEntriesApiFactory = function (configuration?: Configuration, b
 export class QueueEntriesApi extends BaseAPI {
     /**
      * 
+     * @summary Add user in queue
+     * @param {QueueEntryCreatingRequest} [queueEntryCreatingRequest] Add user in queue
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public addQueueEntry(queueEntryCreatingRequest?: QueueEntryCreatingRequest, options?: RawAxiosRequestConfig) {
+        return QueueEntriesApiFp(this.configuration).addQueueEntry(queueEntryCreatingRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary Delete user from queue
      * @param {string} entryId Queue Entry id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public deleteUserFromQueueEntry(entryId: string, options?: RawAxiosRequestConfig) {
-        return QueueEntriesApiFp(this.configuration).deleteUserFromQueueEntry(entryId, options).then((request) => request(this.axios, this.basePath));
+    public deleteQueueEntry(entryId: string, options?: RawAxiosRequestConfig) {
+        return QueueEntriesApiFp(this.configuration).deleteQueueEntry(entryId, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -818,11 +816,11 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
         /**
          * 
          * @summary Add user in maxqueue system
-         * @param {UserRequest} [userRequest] Add user in maxqueue system
+         * @param {UserCreatingRequest} [userCreatingRequest] Add user in maxqueue system
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        addUserInMaxQueueSystem: async (userRequest?: UserRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        addUserInMaxQueueSystem: async (userCreatingRequest?: UserCreatingRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/users`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -842,7 +840,7 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(userRequest, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(userCreatingRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -852,11 +850,11 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
         /**
          * 
          * @summary Get user by Max Messenger ID
-         * @param {string} maxId Max Messenger user ID
+         * @param {number} maxId Max Messenger user ID
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getUserByMaxId: async (maxId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getUserByMaxId: async (maxId: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'maxId' is not null or undefined
             assertParamExists('getUserByMaxId', 'maxId', maxId)
             const localVarPath = `/users/{maxId}`
@@ -885,13 +883,51 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
         },
         /**
          * 
+         * @summary Update user role in organization
+         * @param {number} maxId User MAX ID
+         * @param {UserRoleRequest} [userRoleRequest] Update user role in organization
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateOrganizationUserRole: async (maxId: number, userRoleRequest?: UserRoleRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'maxId' is not null or undefined
+            assertParamExists('updateOrganizationUserRole', 'maxId', maxId)
+            const localVarPath = `/users/{maxId}/role`
+                .replace(`{${"maxId"}}`, encodeURIComponent(String(maxId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(userRoleRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary Update user in maxqueue system
-         * @param {string} maxId Max Messenger user ID
+         * @param {number} maxId Max Messenger user ID
          * @param {UserUpdateRequest} [userUpdateRequest] Update user in maxqueue system
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateUserInMaxQueueSystem: async (maxId: string, userUpdateRequest?: UserUpdateRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        updateUserInMaxQueueSystem: async (maxId: number, userUpdateRequest?: UserUpdateRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'maxId' is not null or undefined
             assertParamExists('updateUserInMaxQueueSystem', 'maxId', maxId)
             const localVarPath = `/users/{maxId}`
@@ -933,12 +969,12 @@ export const UsersApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Add user in maxqueue system
-         * @param {UserRequest} [userRequest] Add user in maxqueue system
+         * @param {UserCreatingRequest} [userCreatingRequest] Add user in maxqueue system
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async addUserInMaxQueueSystem(userRequest?: UserRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.addUserInMaxQueueSystem(userRequest, options);
+        async addUserInMaxQueueSystem(userCreatingRequest?: UserCreatingRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.addUserInMaxQueueSystem(userCreatingRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsersApi.addUserInMaxQueueSystem']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -946,11 +982,11 @@ export const UsersApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Get user by Max Messenger ID
-         * @param {string} maxId Max Messenger user ID
+         * @param {number} maxId Max Messenger user ID
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getUserByMaxId(maxId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserResponse>> {
+        async getUserByMaxId(maxId: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getUserByMaxId(maxId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsersApi.getUserByMaxId']?.[localVarOperationServerIndex]?.url;
@@ -958,13 +994,27 @@ export const UsersApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Update user role in organization
+         * @param {number} maxId User MAX ID
+         * @param {UserRoleRequest} [userRoleRequest] Update user role in organization
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateOrganizationUserRole(maxId: number, userRoleRequest?: UserRoleRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrganizationQueuesResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateOrganizationUserRole(maxId, userRoleRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsersApi.updateOrganizationUserRole']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @summary Update user in maxqueue system
-         * @param {string} maxId Max Messenger user ID
+         * @param {number} maxId Max Messenger user ID
          * @param {UserUpdateRequest} [userUpdateRequest] Update user in maxqueue system
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateUserInMaxQueueSystem(maxId: string, userUpdateRequest?: UserUpdateRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async updateUserInMaxQueueSystem(maxId: number, userUpdateRequest?: UserUpdateRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.updateUserInMaxQueueSystem(maxId, userUpdateRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsersApi.updateUserInMaxQueueSystem']?.[localVarOperationServerIndex]?.url;
@@ -982,32 +1032,43 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
         /**
          * 
          * @summary Add user in maxqueue system
-         * @param {UserRequest} [userRequest] Add user in maxqueue system
+         * @param {UserCreatingRequest} [userCreatingRequest] Add user in maxqueue system
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        addUserInMaxQueueSystem(userRequest?: UserRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.addUserInMaxQueueSystem(userRequest, options).then((request) => request(axios, basePath));
+        addUserInMaxQueueSystem(userCreatingRequest?: UserCreatingRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.addUserInMaxQueueSystem(userCreatingRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Get user by Max Messenger ID
-         * @param {string} maxId Max Messenger user ID
+         * @param {number} maxId Max Messenger user ID
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getUserByMaxId(maxId: string, options?: RawAxiosRequestConfig): AxiosPromise<UserResponse> {
+        getUserByMaxId(maxId: number, options?: RawAxiosRequestConfig): AxiosPromise<UserResponse> {
             return localVarFp.getUserByMaxId(maxId, options).then((request) => request(axios, basePath));
         },
         /**
          * 
+         * @summary Update user role in organization
+         * @param {number} maxId User MAX ID
+         * @param {UserRoleRequest} [userRoleRequest] Update user role in organization
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateOrganizationUserRole(maxId: number, userRoleRequest?: UserRoleRequest, options?: RawAxiosRequestConfig): AxiosPromise<OrganizationQueuesResponse> {
+            return localVarFp.updateOrganizationUserRole(maxId, userRoleRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Update user in maxqueue system
-         * @param {string} maxId Max Messenger user ID
+         * @param {number} maxId Max Messenger user ID
          * @param {UserUpdateRequest} [userUpdateRequest] Update user in maxqueue system
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateUserInMaxQueueSystem(maxId: string, userUpdateRequest?: UserUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        updateUserInMaxQueueSystem(maxId: number, userUpdateRequest?: UserUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
             return localVarFp.updateUserInMaxQueueSystem(maxId, userUpdateRequest, options).then((request) => request(axios, basePath));
         },
     };
@@ -1020,34 +1081,46 @@ export class UsersApi extends BaseAPI {
     /**
      * 
      * @summary Add user in maxqueue system
-     * @param {UserRequest} [userRequest] Add user in maxqueue system
+     * @param {UserCreatingRequest} [userCreatingRequest] Add user in maxqueue system
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public addUserInMaxQueueSystem(userRequest?: UserRequest, options?: RawAxiosRequestConfig) {
-        return UsersApiFp(this.configuration).addUserInMaxQueueSystem(userRequest, options).then((request) => request(this.axios, this.basePath));
+    public addUserInMaxQueueSystem(userCreatingRequest?: UserCreatingRequest, options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).addUserInMaxQueueSystem(userCreatingRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Get user by Max Messenger ID
-     * @param {string} maxId Max Messenger user ID
+     * @param {number} maxId Max Messenger user ID
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public getUserByMaxId(maxId: string, options?: RawAxiosRequestConfig) {
+    public getUserByMaxId(maxId: number, options?: RawAxiosRequestConfig) {
         return UsersApiFp(this.configuration).getUserByMaxId(maxId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
+     * @summary Update user role in organization
+     * @param {number} maxId User MAX ID
+     * @param {UserRoleRequest} [userRoleRequest] Update user role in organization
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public updateOrganizationUserRole(maxId: number, userRoleRequest?: UserRoleRequest, options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).updateOrganizationUserRole(maxId, userRoleRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary Update user in maxqueue system
-     * @param {string} maxId Max Messenger user ID
+     * @param {number} maxId Max Messenger user ID
      * @param {UserUpdateRequest} [userUpdateRequest] Update user in maxqueue system
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public updateUserInMaxQueueSystem(maxId: string, userUpdateRequest?: UserUpdateRequest, options?: RawAxiosRequestConfig) {
+    public updateUserInMaxQueueSystem(maxId: number, userUpdateRequest?: UserUpdateRequest, options?: RawAxiosRequestConfig) {
         return UsersApiFp(this.configuration).updateUserInMaxQueueSystem(maxId, userUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }

@@ -12,7 +12,6 @@ import ModeratorDashboardPage from './pages/ModeratorDashboardPage.tsx';
 import OrganizationDetailsPage from './pages/OrganizationDetailsPage.tsx';
 import ModeratorQueueDetailsPage from './pages/ModeratorQueueDetailsPage.tsx';
 import { UsersApi, OrganizationsApi, QueuesApi, Configuration } from './api';
-import type { QueueEntry } from './api';
 
 import logo from '/logo.jpg';
 
@@ -27,11 +26,11 @@ const getMaxId = (): string | null => {
   if (maxIdFromEnv) {
     return maxIdFromEnv;
   }
-  return 'test_max_id_001';
+  return '1';
 };
 
 const createApiConfiguration = (): Configuration => {
-  const basePath = import.meta.env.VITE_API_BASE_PATH || 'http://localhost:8080';
+  const basePath = import.meta.env.VITE_API_BASE_PATH || 'http://api:8080';
   return new Configuration({
     basePath,
   });
@@ -46,19 +45,21 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     const loadUserData = async () => {
       const config = createApiConfiguration();
-      const apiBasePath = config.basePath || import.meta.env.VITE_API_BASE_PATH || 'http://orchestrator-service:8080';
+      const apiBasePath = config.basePath; 
       
       try {
         setLoading(true);
         setError(null);
 
         const maxId = getMaxId();
-        
+
         if (!maxId) {
           setError('Max ID не найден. Укажите maxId в параметрах URL (?maxId=xxx) или в переменной окружения VITE_MAX_ID');
           setLoading(false);
           return;
         }
+
+        const maxIdNum = Number(maxId);
         
         console.log('Используется maxId:', maxId);
         console.log('API Base Path:', apiBasePath);
@@ -67,9 +68,9 @@ const HomePage: React.FC = () => {
         const organizationsApi = new OrganizationsApi(config);
         const queuesApi = new QueuesApi(config);
 
-        console.log('Запрос к API:', `/users/${maxId}`);
+        console.log('Запрос к API:', `/users/${maxIdNum}`);
         
-        const response = await usersApi.getUserByMaxId(maxId);
+        const response = await usersApi.getUserByMaxId(maxIdNum);
         const userResponse = response.data;
 
         console.log('API Response:', userResponse);
@@ -99,7 +100,7 @@ const HomePage: React.FC = () => {
           let canManageQueues = false;
           let orgQueues: any[] = [];
           
-          if (org.isModerator) {
+          if (org.role == 'MODERATOR') {
             canManageQueues = true;
             try {
               const queuesResponse = await organizationsApi.getOrganizationQueues(org.id);
@@ -147,19 +148,19 @@ const HomePage: React.FC = () => {
             });
           }
 
-          if (org.queueEntries) {
-            org.queueEntries.forEach((entry: QueueEntry) => {
-              if (entry.id && entry.name && entry.status === 'active') {
-                if (!queues.find(q => q.id === entry.id)) {
-                  queues.push({
-                    id: entry.id,
-                    name: entry.name,
-                    count: entry.peopleInFront || 0,
-                  });
-                }
-              }
-            });
-          }
+          // if (org.amountOfQueues) {
+          //   org.queueEntries.forEach((entry: QueueEntry) => {
+          //     if (entry.id && entry.name && entry.status === 'active') {
+          //       if (!queues.find(q => q.id === entry.id)) {
+          //         queues.push({
+          //           id: entry.id,
+          //           name: entry.name,
+          //           count: entry.peopleInFront || 0,
+          //         });
+          //       }
+          //     }
+          //   });
+          // }
         }
 
         setModeratorOrgs(organizations);
