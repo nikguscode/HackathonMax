@@ -23,15 +23,17 @@ func GenerateOrganizationReport(repo repository.OrganizationMetricsRepository, o
 	numEmployees, _ := repo.NumberOfEmployees(oID)
 	waitingTime, _ := repo.AverageWaitingTimeOrg(oID)
 	servedMembers, _ := repo.NumberOfServedMembersOrg(oID)
+	membersInDay, _ := repo.MembersInDay(oID)
+	averageLoadInQueues, _ := repo.AverageLoadInQueues(oID)
 
 	metrics := OrganizationMetrics{
 		NumberOfActiveQueues:       &activeQueues,
 		NumberOfQueues:             &totalQueues,
 		NumberOfMembersInAllQueues: &membersInAllQueues,
 		NumberOfEmployees:          &numEmployees,
-		MembersInDay:               nil,
+		MembersInDay:               &membersInDay,
 		WaitingTime:                &waitingTime,
-		AverageLoadInQueues:        nil,
+		AverageLoadInQueues:        &averageLoadInQueues,
 		NumberOfServedMembers:      &servedMembers,
 	}
 

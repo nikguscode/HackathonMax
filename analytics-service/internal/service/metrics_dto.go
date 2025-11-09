@@ -25,7 +25,6 @@ type QueueMetrics struct {
 	AverageInQueue        *int     `json:"averageInQueue,omitempty"`
 	EntriesInTheQueue     *int     `json:"entriesInTheQueue,omitempty"`
 	MaxInQueue            *int     `json:"maxInQueue,omitempty"`
-	MembersInFragment     *int     `json:"membersInFragment,omitempty"`
 	MinInQueue            *int     `json:"minInQueue,omitempty"`
 	NumberOfServedMembers *int     `json:"numberOfServedMembers,omitempty"`
 	ServiceTime           *float32 `json:"serviceTime,omitempty"`
