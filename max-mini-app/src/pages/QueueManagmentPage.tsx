@@ -10,7 +10,7 @@ interface QueueToManage {
 }
 
 const getMockQueues = (orgId: string): QueueToManage[] => {
-  if (orgId === 'org1') {
+  if (orgId === 'org_mod_1') {
     return [
       { id: 'q1', name: 'Очередь 1' },
       { id: 'q2', name: 'Очередь 2' },

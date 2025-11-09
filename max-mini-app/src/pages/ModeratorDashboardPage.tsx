@@ -108,6 +108,7 @@ const QueueCard: React.FC<QueueCardProps> = ({ queue, onClick }) => {
 const ModeratorDashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const [isModeratorButtonPressed, setIsModeratorButtonPressed] = useState(false);
+  const [isAddQueue, setisAddQueue] = useState(false);
   
   const moderatorOrg = moderatorOrganizations[0];
   
@@ -126,9 +127,21 @@ const ModeratorDashboardPage: React.FC = () => {
   const handleAddQueue = () => {
     console.log('Добавить очередь');
   };
+  
+  const handleAddQueueMouseDown = () => {
+    setisAddQueue(true);
+  };
+
+  const handleAddQueueMouseUp = () => {
+    setisAddQueue(false);
+  };
+
+  const handleAddQueueMouseLeave = () => {
+    setisAddQueue(false);
+  };
 
   const handleModeratorButtonClick = () => {
-    console.log('Модератор кликнут');
+    navigate(`/organization/${moderatorOrg.id}`);
   };
 
   const handleModeratorMouseDown = () => {
@@ -209,7 +222,7 @@ const ModeratorDashboardPage: React.FC = () => {
               fontSize: '15px',
               fontWeight: 500,
               color: '#333333',
-              margin: 0,
+              margin: '0 auto',
             }}
           >
             {moderatorOrg.name}
@@ -226,30 +239,43 @@ const ModeratorDashboardPage: React.FC = () => {
           ))}
         </Flex>
 
-        <Button
-          mode="secondary"
+        <Flex
+          align="center"
+          justify="space-between"
           onClick={handleAddQueue}
+          onMouseDown={handleAddQueueMouseDown}
+          onMouseUp={handleAddQueueMouseUp}
+          onMouseLeave={handleAddQueueMouseLeave}
+          onTouchStart={handleAddQueueMouseDown}
+          onTouchEnd={handleAddQueueMouseUp}
+          onTouchCancel={handleAddQueueMouseLeave}
           style={{
             width: '100%',
-            borderRadius: '12px',
-            padding: '14px 16px',
-            backgroundColor: '#E6E0F8',
-            border: 'none',
-            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-            marginTop: '8px',
+            padding: '12px 16px',
+            backgroundColor: '#FFFFFF',
+            border: '0.3px solid rgba(0, 0, 0, 0.15)',
+            borderRadius: '16px',
+            boxShadow: isAddQueue ? pressedShadow : defaultShadow,
+            cursor: 'pointer',
+            marginBottom: '12px',
+            transform: isAddQueue ? 'scale(0.98)' : 'scale(1)',
+            transition: 'all 0.15s ease',
+            userSelect: 'none',
           }}
         >
           <Typography.Title
+            
             style={{
-              fontSize: '16px',
+              fontSize: '15px',
               fontWeight: 500,
-              color: '#000000',
-              margin: 0,
+              color: '#333333',
+              margin: '0 auto',
             }}
           >
             Добавить очередь
           </Typography.Title>
-        </Button>
+        </Flex>
+        
       </Flex>
     </Container>
   );
