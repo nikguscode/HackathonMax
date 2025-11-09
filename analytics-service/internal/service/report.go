@@ -37,7 +37,7 @@ func NewMetricsService(
 
 type MetricsCommand struct {
 	Type string `json:"type"`
-	ID   string `json:"id"` // организации или очереди в завирсимости от типа
+	ID   string `json:"id"`
 }
 
 // какой отчет форматировать
