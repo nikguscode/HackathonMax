@@ -1,0 +1,607 @@
+openapi: 3.0.4
+info:
+  title: MaxQueue Orchestrator API
+  description: API, which is the entry point to the MaxQueue project
+  version: 0.0.1
+
+servers:
+  - url: http://orchestrator-service:8080
+    description: Development server
+  - url: http://localhost:8080
+    description: Local server
+
+tags:
+  - name: users
+    description: Operations related to Max Messenger users
+  - name: queue-entries
+    description: Operations related to Queue Entries
+  - name: organizations
+    description: Manage organizations, their queues, settings, and metrics
+  - name: queues
+    description: Queue-specific operations within organizations
+
+paths:
+  /users/{maxId}:
+    get:
+      tags: [users]
+      summary: Get user by Max Messenger ID
+      operationId: getUserByMaxId
+      parameters:
+        - name: maxId
+          in: path
+          required: true
+          description: Max Messenger user ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+    put:
+      tags: [users]
+      summary: Update user in maxqueue system
+      operationId: updateUserInMaxQueueSystem
+      parameters:
+        - name: maxId
+          in: path
+          required: true
+          description: Max Messenger user ID
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update user in maxqueue system
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /users/{maxId}/role:
+    put:
+      tags: [users]
+      summary: Update user role in organization
+      operationId: updateOrganizationUserRole
+      parameters:
+        - name: maxId
+          in: path
+          required: true
+          description: User MAX ID
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update user role in organization
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRoleRequest'
+      responses:
+        '200':
+          description: Organization with its queues
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationQueuesResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /users:
+    post:
+      tags: [users]
+      summary: Add user in maxqueue system
+      operationId: addUserInMaxQueueSystem
+      requestBody:
+        description: Add user in maxqueue system
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /queue-entries/{entryId}:
+    delete:
+      tags: [queue-entries]
+      summary: Delete user from queue
+      operationId: deleteQueueEntry
+      parameters:
+        - name: entryId
+          in: path
+          required: true
+          description: Queue Entry id
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /queue-entries:
+    post:
+      tags: [queue-entries]
+      summary: Add user in queue
+      operationId: addQueueEntry
+      requestBody:
+        description: Add user in queue
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueueEntryCreatingRequest'
+      responses:
+        '201':
+          description: User added to queue
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /organizations/{organizationId}/queues:
+    get:
+      tags: [organizations]
+      summary: Get list of queues in an organization
+      operationId: getOrganizationQueues
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          description: Organization ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Organization with its queues
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationQueuesResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /organizations/{organizationId}/settings:
+    get:
+      tags: [organizations]
+      summary: Get organization settings
+      operationId: getOrganizationSettings
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          description: Organization ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Organization settings retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationSettingsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  #Analytics
+  /organizations/{organizationId}/metrics:
+    get:
+      tags: [organizations]
+      summary: Get organization metrics
+      operationId: getOrganizationMetrics
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          description: Organization ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Organization metrics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationMetricsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /queues/{queueId}/members:
+    get:
+      tags: [queues]
+      summary: Get members of a queue
+      operationId: getQueueMembers
+      parameters:
+        - name: queueId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Queue members retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueMembersResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /queues/{queueId}/settings:
+    get:
+      tags: [queues]
+      summary: Get queue settings
+      operationId: getQueueSettings
+      parameters:
+        - name: queueId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Queue settings retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueSettingsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  #Analytics
+  /queues/{queueId}/metrics:
+    get:
+      tags: [queues]
+      summary: Get queue metrics
+      operationId: getQueueMetrics
+      parameters:
+        - name: queueId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Queue metrics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueMetricsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+components:
+  responses:
+    BadRequest:
+      description: Invalid request parameters
+    NotFound:
+      description: Resource not found
+    UnexpectedError:
+      description: Unexpected server error
+
+  schemas:
+    User:
+      type: object
+      properties:
+        maxId:
+          type: string
+        username:
+          type: string
+
+    UserRole:
+      type: string
+      description: Role of user
+      enum:
+        - CLIENT
+        - EMPLOYEE
+        - MODERATOR
+        - ADMIN
+
+    UserRoleRequest:
+      type: object
+      properties:
+        organizationId:
+          type: string
+          format: uuid
+        role:
+          $ref: '#/components/schemas/UserRole'
+
+    UserResponse:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        organizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Organization'
+      example:
+        user:
+          maxId: "u001"
+          username: "john_doe"
+        organizations:
+          - id: "org1"
+            name: "Main Office"
+            isModerator: true
+
+    UserRequest:
+      type: object
+      properties:
+        maxId:
+          type: string
+        username:
+          type: string
+        firstName:
+          type: string
+        secondName:
+          type: string
+      required:
+        - maxId
+        - username
+        - firstName
+        - secondName
+
+    UserUpdateRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        firstName:
+          type: string
+        secondName:
+          type: string
+        createdAt:
+          type: string
+
+    Organization:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        isModerator:
+          type: boolean
+        queueEntries:
+          type: array
+          items:
+            $ref: '#/components/schemas/QueueEntry'
+
+    QueueEntry:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        peopleInFront:
+          type: integer
+        status:
+          type: string
+          enum: [active, paused, completed]
+
+    QueueEntryCreatingRequest:
+      type: object
+      properties:
+        maxId:
+          type: string
+          format: uuid
+        queueId:
+          type: string
+          format: uuid
+
+    OrganizationQueuesResponse:
+      type: object
+      properties:
+        queues:
+          type: array
+          items:
+            $ref: '#/components/schemas/SimpleQueue'
+
+
+    OrganizationSettingsResponse:
+      type: object
+      properties:
+        organization:
+          $ref: '#/components/schemas/OrganizationSettings'
+
+    OrganizationSettings:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        address:
+          type: string
+        isBanned:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    #Analytics
+    OrganizationMetricsResponse:
+      type: object
+      properties:
+        metrics:
+          $ref: '#/components/schemas/OrganizationMetrics'
+
+    #Analytics
+    OrganizationMetrics:
+      type: object
+      properties:
+        numberOfActiveQueues:
+          type: integer
+        numberOfQueues:
+          type: integer
+        numberOfMembersInAllQueues:
+          type: integer
+        numberOfEmployees:
+          type: integer
+        membersInDay:
+          type: integer
+        waitingTime:
+          type: number
+          format: float
+        averageLoadInQueues:
+          type: number
+          format: float
+        numberOfServedMembers:
+          type: integer
+
+    QueueSettingsResponse:
+      properties:
+        settings:
+          $ref: '#/components/schemas/QueueSettings'
+
+    #Analytics
+    QueueMetricsResponse:
+      properties:
+        metrics:
+          $ref: '#/components/schemas/QueueMetrics'
+
+    QueueMembersResponse:
+      properties:
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/SimpleMember'
+
+    QueueSettings:
+      type: object
+      properties:
+        arrivalGracePeriod:
+          type: integer
+        maxQueueSize:
+          type: integer
+        isActive:
+          type: boolean
+
+    QueueMetrics:
+      type: object
+      properties:
+        waitingTime:
+          type: number
+          format: float
+        membersInFragment:
+          type: integer
+        entriesInTheQueue:
+          type: integer
+        numberOfServedMembers:
+          type: integer
+        serviceTime:
+          type: number
+          format: float
+        totalLeft:
+          type: integer
+        maxInQueue:
+          type: integer
+        minInQueue:
+          type: integer
+        averageInQueue:
+          type: integer
+
+    QueueCreatingRequest:
+      type: object
+      properties:
+        maxId:
+          type: string
+          format: uuid
+        queueId:
+          type: string
+          format: uuid
+
+    BaseQueueResponse:
+      type: object
+      properties:
+        organization:
+          $ref: '#/components/schemas/SimpleOrganization'
+        queue:
+          $ref: '#/components/schemas/SimpleQueue'
+
+    SimpleOrganization:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+
+    SimpleQueue:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+
+    SimpleMember:
+      type: object
+      properties:
+        maxId:
+          type: string
+        username:
+          type: string
