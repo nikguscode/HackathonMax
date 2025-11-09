@@ -138,19 +138,28 @@ const QueueUserManagementPage: React.FC = () => {
                 justifyContent: 'space-between',
               }}
             >
-              <Flex>
-                <Flex align="flex-start">
+              <Flex
+                    justify="space-between"
+                    align="center"
+                    style={{
+                      width: '100%',
+                      gap: '10px',
+                    }}
+                  >
                   <Typography.Title
                     style={{
                       fontSize: '15px',
                       fontWeight: 500,
                       color: '#333333',
                       margin: 0,
+                      flexShrink: 1,
+                      minWidth: 0,
+                      textAlign: 'left',
                     }}
                   >
                     {user.name}
                   </Typography.Title>
-                </Flex>
+                
               <Button
                 mode="primary"
                 onClick={() => handleDeleteUser(user.id)}
@@ -166,6 +175,7 @@ const QueueUserManagementPage: React.FC = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0,
+                  marginLeft: '70%',
                 }}
               >
                 <svg
@@ -191,7 +201,7 @@ const QueueUserManagementPage: React.FC = () => {
                   />
                 </svg>
               </Button>
-              </Flex>
+            </Flex>
             </Panel>
           ))}
         </Flex>
