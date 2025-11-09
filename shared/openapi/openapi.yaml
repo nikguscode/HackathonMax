@@ -32,7 +32,8 @@ paths:
           required: true
           description: Max Messenger user ID
           schema:
-            type: string
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation
@@ -57,7 +58,8 @@ paths:
           required: true
           description: Max Messenger user ID
           schema:
-            type: string
+            type: integer
+            format: int64
       requestBody:
         description: Update user in maxqueue system
         content:
@@ -85,7 +87,8 @@ paths:
           required: true
           description: User MAX ID
           schema:
-            type: string
+            type: integer
+            format: int64
       requestBody:
         description: Update user role in organization
         content:
