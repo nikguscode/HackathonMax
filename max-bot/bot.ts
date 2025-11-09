@@ -30,30 +30,30 @@ bot.hears('hello', (ctx) => ctx.reply('world'));
 
 const MOCK_USER_RESPONSE = {
     user: {
-        maxId: "test_max_id_001",
+        maxId: 1,
         username: "Иван Тестовый"
     },
     organizations: [
         { 
             id: "org_mod_1", 
-            name: "Ресторан 'Сигма'", 
-            isModerator: true, 
-            queueEntries: []
+            name: "Ресторан 'Сигма' (Админ)", 
+            // Используем 'ADMIN' или 'MANAGER' для модераторских прав, согласно API-схеме
+            role: 'ADMIN', 
+            // app.tsx использует это поле, чтобы показать количество очередей
+            amountOfQueues: 2 // Две очереди: столик и доставка
         },
         { 
             id: "org_emp_1", 
-            name: "Кафе 'Уютное место'", 
-            isModerator: false,
-            queueEntries: []
+            name: "Кафе 'Уютное место' (Клиент)", 
+            // Роль CLIENT, не отображается как модераторская
+            role: 'CLIENT', 
+            amountOfQueues: 0 
         },
         { 
             id: "org_user_2", 
-            name: "Обычная Организация B", 
-            isModerator: false,
-            queueEntries: [
-                { id: "q_user_1", name: "Очередь Пользователя 1", status: "active", peopleInFront: 5 },
-                { id: "q_user_2", name: "Очередь Пользователя 2", status: "active", peopleInFront: 1 },
-            ]
+            name: "Фитнес-клуб 'Сила'", 
+            role: 'MANAGER', // Отображается как модераторская
+            amountOfQueues: 3
         },
     ]
 };
@@ -92,7 +92,7 @@ app.use(cors());
 
 app.get('/users/:maxId', (req: Request, res: Response) => {
     const maxId = req.params.maxId;
-    if (maxId === 'test_max_id_001' || maxId === 'placeholder_maxid') {
+    if (maxId === '1' || maxId === 'placeholder_maxid') {
         return res.json(MOCK_USER_RESPONSE);
     } else {
         return res.status(404).json({ message: 'Пользователь не найден' });

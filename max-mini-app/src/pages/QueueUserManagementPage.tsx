@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Container, Flex, Button, Typography, Panel } from '@maxhub/max-ui';
 import type { IQueueUser } from '../types';
+import AddUserModal from '../components/AddUserModal';
 
 const getMockQueueUsers = (queueId: string): IQueueUser[] => {
   if (queueId === 'q1') {
@@ -28,6 +29,34 @@ const QueueUserManagementPage: React.FC = () => {
     if (!queueId) return [];
     return getMockQueueUsers(queueId);
   });
+  const [isAddQueue, setisAddQueue] = useState(false);
+  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+  const handleAddUserMouseDown = () => {
+    setisAddQueue(true);
+  };
+
+  const handleAddUserMouseUp = () => {
+    setisAddQueue(false);
+  };
+
+  const handleAddUserMouseLeave = () => {
+    setisAddQueue(false);
+  };
+
+
+  const handleAddUserSubmit = (userName: string) => {
+    const newUserId = `u${Date.now()}`;
+    const newUser: IQueueUser = {
+      id: newUserId,
+      name: userName, // Используем имя из модального окна
+    };
+    setUsers(prevUsers => [...prevUsers, newUser]);
+    setIsAddUserModalOpen(false); // Закрываем модалку
+  };
+
+  const handleOpenAddUserModal = () => {
+    setIsAddUserModalOpen(true);
+  };
 
   if (!queueId) {
     return (
@@ -37,18 +66,21 @@ const QueueUserManagementPage: React.FC = () => {
     );
   }
 
+  const defaultShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+  const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
+
   const handleDeleteUser = (userId: string) => {
     setUsers(prevUsers => prevUsers.filter(user => user.id !== userId));
   };
 
-  const handleAddUser = () => {
-    const newUserId = `u${Date.now()}`;
-    const newUser: IQueueUser = {
-      id: newUserId,
-      name: `Пользователь ${users.length + 1}`,
-    };
-    setUsers(prevUsers => [...prevUsers, newUser]);
-  };
+  // const handleAddUser = () => {
+  //   const newUserId = `u${Date.now()}`;
+  //   const newUser: IQueueUser = {
+  //     id: newUserId,
+  //     name: `Пользователь ${users.length + 1}`,
+  //   };
+  //   setUsers(prevUsers => [...prevUsers, newUser]);
+  // };
 
   const MAX_CONTENT_WIDTH = '300px';
   const HORIZONTAL_PADDING = '16px';
@@ -106,18 +138,19 @@ const QueueUserManagementPage: React.FC = () => {
                 justifyContent: 'space-between',
               }}
             >
-              <Flex gap={ 130 }>
-                <Typography.Title
-                  style={{
-                    fontSize: '15px',
-                    fontWeight: 500,
-                    color: '#333333',
-                    margin: 0,
-                  }}
-                >
-                  {user.name}
-                </Typography.Title>
-              
+              <Flex>
+                <Flex align="flex-start">
+                  <Typography.Title
+                    style={{
+                      fontSize: '15px',
+                      fontWeight: 500,
+                      color: '#333333',
+                      margin: 0,
+                    }}
+                  >
+                    {user.name}
+                  </Typography.Title>
+                </Flex>
               <Button
                 mode="primary"
                 onClick={() => handleDeleteUser(user.id)}
@@ -162,32 +195,47 @@ const QueueUserManagementPage: React.FC = () => {
             </Panel>
           ))}
         </Flex>
-
-        <Button
-          mode="secondary"
-          onClick={handleAddUser}
+        <Flex
+          align="center"
+          justify="space-between"
+          onClick={handleOpenAddUserModal}
+          onMouseDown={handleAddUserMouseDown}
+          onMouseUp={handleAddUserMouseUp}
+          onMouseLeave={handleAddUserMouseLeave}
+          onTouchStart={handleAddUserMouseDown}
+          onTouchEnd={handleAddUserMouseUp}
+          onTouchCancel={handleAddUserMouseLeave}
           style={{
             width: '100%',
-            borderRadius: '12px',
             padding: '12px 16px',
             backgroundColor: '#FFFFFF',
             border: '0.3px solid rgba(0, 0, 0, 0.15)',
-            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+            borderRadius: '16px',
+            boxShadow: isAddQueue ? pressedShadow : defaultShadow,
+            cursor: 'pointer',
             marginBottom: '12px',
+            transform: isAddQueue ? 'scale(0.98)' : 'scale(1)',
+            transition: 'all 0.15s ease',
+            userSelect: 'none',
           }}
         >
           <Typography.Title
+            
             style={{
               fontSize: '15px',
               fontWeight: 500,
               color: '#333333',
-              margin: 0,
+              margin: '0 auto',
             }}
           >
             Добавить пользователя
           </Typography.Title>
-        </Button>
-
+        </Flex>
+        <AddUserModal 
+          isOpen={isAddUserModalOpen}
+          onClose={() => setIsAddUserModalOpen(false)}
+          onAddUser={handleAddUserSubmit}
+        />
       </Flex>
     </Container>
   );
