@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**user** | [**User**](User.md) |  | [optional] [default to undefined]
 **organizations** | [**Array&lt;Organization&gt;**](Organization.md) |  | [optional] [default to undefined]
+**queue_entries** | [**Array&lt;QueueEntry&gt;**](QueueEntry.md) |  | [optional] [default to undefined]
 
 ## Example
 
@@ -14,8 +14,8 @@ Name | Type | Description | Notes
 import { UserResponse } from './api';
 
 const instance: UserResponse = {
-    user,
     organizations,
+    queue_entries,
 };
 ```
 

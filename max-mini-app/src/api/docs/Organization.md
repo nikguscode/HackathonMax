@@ -7,8 +7,8 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **id** | **string** |  | [optional] [default to undefined]
 **name** | **string** |  | [optional] [default to undefined]
-**isModerator** | **boolean** |  | [optional] [default to undefined]
-**queueEntries** | [**Array&lt;QueueEntry&gt;**](QueueEntry.md) |  | [optional] [default to undefined]
+**role** | [**UserRole &amp; string**](UserRole &amp; string.md) |  | [optional] [default to undefined]
+**amountOfQueues** | **number** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -18,8 +18,8 @@ import { Organization } from './api';
 const instance: Organization = {
     id,
     name,
-    isModerator,
-    queueEntries,
+    role,
+    amountOfQueues,
 };
 ```
 

@@ -53,6 +53,7 @@ func (UserRole) TableName() string {
 	return `"user_roles"`
 }
 
+// таблица "user_queue"
 type UserQueue struct {
 	ID      uuid.UUID `gorm:"type: uuid; primaryKey"`
 	IDUser  uuid.UUID `gorm:"type: uuid; not null"`
