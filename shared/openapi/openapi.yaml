@@ -155,7 +155,7 @@ paths:
       summary: Add user in queue
       operationId: addQueueEntry
       requestBody:
-        description:
+        description: Add user in queue
         content:
           application/json:
             schema:
@@ -564,7 +564,12 @@ components:
     QueueCreatingRequest:
       type: object
       properties:
-
+        maxId:
+          type: string
+          format: uuid
+        queueId:
+          type: string
+          format: uuid
 
     BaseQueueResponse:
       type: object

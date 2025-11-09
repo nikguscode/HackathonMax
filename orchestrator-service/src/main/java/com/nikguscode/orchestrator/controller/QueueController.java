@@ -22,7 +22,7 @@ public class QueueController {
 
   @GetMapping("queues/{queueId}/members")
   public String getMembers(@PathVariable UUID queueId) {
-
+    return "";
   }
 
   // не определены
