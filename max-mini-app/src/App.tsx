@@ -30,7 +30,7 @@ const getMaxId = (): string | null => {
 };
 
 const createApiConfiguration = (): Configuration => {
-  const basePath = import.meta.env.VITE_API_BASE_PATH || 'http://api:8080';
+  const basePath = import.meta.env.VITE_API_BASE_PATH || 'http://localhost:8080';
   return new Configuration({
     basePath,
   });
