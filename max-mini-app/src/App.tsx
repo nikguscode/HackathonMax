@@ -31,7 +31,7 @@ const getMaxId = (): string | null => {
 };
 
 const createApiConfiguration = (): Configuration => {
-  const basePath = import.meta.env.VITE_API_BASE_PATH || 'http://localhost:8080';
+  const basePath = import.meta.env.VITE_API_BASE_PATH || 'http://api:8080';
   return new Configuration({
     basePath,
   });
@@ -46,7 +46,7 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     const loadUserData = async () => {
       const config = createApiConfiguration();
-      const apiBasePath = config.basePath || import.meta.env.VITE_API_BASE_PATH || 'http://orchestrator-service:8080';
+      const apiBasePath = config.basePath; 
       
       try {
         setLoading(true);

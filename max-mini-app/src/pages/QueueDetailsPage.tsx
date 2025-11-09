@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Container, Flex, Button, Panel } from '@maxhub/max-ui';
+import { Container, Flex, Typography, Panel } from '@maxhub/max-ui';
 import { QRCodeSVG } from 'qrcode.react';
 import logo from '/logo.jpg';
 
@@ -99,6 +99,10 @@ const QRCode: React.FC<QRCodeProps> = ({ userId, queueId }) => {
 const QueueDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [isExitQueue, setisExitQueue] = useState(false);
+
+  const defaultShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+  const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
 
   const userId = React.useMemo(() => {
     if (!id) return '';
@@ -138,12 +142,27 @@ const QueueDetailsPage: React.FC = () => {
     navigate('/');
   };
 
+  const handleExitQueueMouseDown = () => {
+    setisExitQueue(true);
+  };
+
+  const handleExitQueueMouseUp = () => {
+    setisExitQueue(false);
+  };
+
+  const handleExitQueueMouseLeave = () => {
+    setisExitQueue(false);
+  };
+
   return (
     <Container
+      align="center"
+      direction="column"
+      justify="center"
       style={{
         backgroundColor: '#FFFFFF',
         minHeight: '100vh',
-        padding: '0px',
+        padding: '0',
       }}
     >
       <Flex justify="center" align="center" style={{ marginBottom: '24px' }}>
@@ -159,8 +178,8 @@ const QueueDetailsPage: React.FC = () => {
       </Flex>
 
       <Flex direction="column" align="center" justify="center" style={{ width: '100%' }}>
-        <div style={{ width: '100%', maxWidth: '300px' }}>
-          <Flex direction="column" align="center">
+        {/* <div style={{ width: '100%', maxWidth: '300px' }}> */}
+          <Flex direction="column" align="center" justify="center">
             <InfoCard
               label="Название очереди"
               value={queueDetails.name}
@@ -183,7 +202,7 @@ const QueueDetailsPage: React.FC = () => {
             <QRCode userId={queueDetails.userId} queueId={queueDetails.id} />
           </Flex>
 
-          <Button
+          {/* <Button
             mode="primary"
             onClick={handleExitQueue}
             style={{
@@ -198,8 +217,46 @@ const QueueDetailsPage: React.FC = () => {
             }}
           >
             Выйти из очереди
-          </Button>
-        </div>
+          </Button> */}
+          <Flex
+            align="center"
+            justify="space-between"
+            onClick={handleExitQueue}
+            onMouseDown={handleExitQueueMouseDown}
+            onMouseUp={handleExitQueueMouseUp}
+            onMouseLeave={handleExitQueueMouseLeave}
+            onTouchStart={handleExitQueueMouseDown}
+            onTouchEnd={handleExitQueueMouseUp}
+            onTouchCancel={handleExitQueueMouseLeave}
+            style={{
+              width: '20%',
+              minWidth: '300px',
+              padding: '12px 16px',
+              backgroundColor: '#aa1818ff',
+              border: '0.3px solid rgba(0, 0, 0, 0.15)',
+              borderRadius: '16px',
+              boxShadow: isExitQueue ? pressedShadow : defaultShadow,
+              cursor: 'pointer',
+              marginBottom: '12px',
+              transform: isExitQueue ? 'scale(0.98)' : 'scale(1)',
+              transition: 'all 0.15s ease',
+              userSelect: 'none',
+            }}
+          >
+            <Typography.Title
+              
+              style={{
+                fontSize: '15px',
+                fontWeight: 500,
+                color: '#ffffffff',
+                margin: '0 auto',
+              }}
+            >
+              Добавить очередь
+            </Typography.Title>
+          </Flex>
+
+        {/* </div> */}
       </Flex>
     </Container>
   );
