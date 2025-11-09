@@ -21,51 +21,17 @@ tags:
     description: Queue-specific operations within organizations
 
 paths:
-  /users/{maxId}:
-    get:
+  /users:
+    post:
       tags: [users]
-      summary: Get user by Max Messenger ID
-      operationId: getUserByMaxId
-      parameters:
-        - name: maxId
-          in: path
-          required: true
-          description: Max Messenger user ID
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        default:
-          $ref: '#/components/responses/UnexpectedError'
-
-    put:
-      tags: [users]
-      summary: Update user in maxqueue system
-      operationId: updateUserInMaxQueueSystem
-      parameters:
-        - name: maxId
-          in: path
-          required: true
-          description: Max Messenger user ID
-          schema:
-            type: integer
-            format: int64
+      summary: Add user in maxqueue system
+      operationId: addUserInMaxQueueSystem
       requestBody:
-        description: Update user in maxqueue system
+        description: Add user in maxqueue system
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserUpdateRequest'
+              $ref: '#/components/schemas/UserCreatingRequest'
       responses:
         '200':
           description: Successful operation
@@ -109,17 +75,25 @@ paths:
         default:
           $ref: '#/components/responses/UnexpectedError'
 
-  /users:
-    post:
+  /users/{maxId}:
+    put:
       tags: [users]
-      summary: Add user in maxqueue system
-      operationId: addUserInMaxQueueSystem
+      summary: Update user in maxqueue system
+      operationId: updateUserInMaxQueueSystem
+      parameters:
+        - name: maxId
+          in: path
+          required: true
+          description: Max Messenger user ID
+          schema:
+            type: integer
+            format: int64
       requestBody:
-        description: Add user in maxqueue system
+        description: Update user in maxqueue system
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserRequest'
+              $ref: '#/components/schemas/UserUpdateRequest'
       responses:
         '200':
           description: Successful operation
@@ -130,21 +104,25 @@ paths:
         default:
           $ref: '#/components/responses/UnexpectedError'
 
-  /queue-entries/{entryId}:
-    delete:
-      tags: [queue-entries]
-      summary: Delete user from queue
-      operationId: deleteQueueEntry
+    get:
+      tags: [users]
+      summary: Get user by Max Messenger ID
+      operationId: getUserByMaxId
       parameters:
-        - name: entryId
+        - name: maxId
           in: path
           required: true
-          description: Queue Entry id
+          description: Max Messenger user ID
           schema:
-            type: string
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -166,6 +144,29 @@ paths:
       responses:
         '201':
           description: User added to queue
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /queue-entries/{entryId}:
+    delete:
+      tags: [queue-entries]
+      summary: Delete user from queue
+      operationId: deleteQueueEntry
+      parameters:
+        - name: entryId
+          in: path
+          required: true
+          description: Queue Entry id
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -211,6 +212,7 @@ paths:
           description: Organization ID
           schema:
             type: string
+            format: uuid
       responses:
         '200':
           description: Organization settings retrieved successfully
@@ -238,6 +240,7 @@ paths:
           description: Organization ID
           schema:
             type: string
+            format: uuid
       responses:
         '200':
           description: Organization metrics retrieved successfully
@@ -263,6 +266,7 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
       responses:
         '200':
           description: Queue members retrieved successfully
@@ -288,6 +292,7 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
       responses:
         '200':
           description: Queue settings retrieved successfully
@@ -314,6 +319,7 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
       responses:
         '200':
           description: Queue metrics retrieved successfully
@@ -338,14 +344,8 @@ components:
       description: Unexpected server error
 
   schemas:
-    User:
-      type: object
-      properties:
-        maxId:
-          type: string
-        username:
-          type: string
 
+    ##### Enums #####
     UserRole:
       type: string
       description: Role of user
@@ -355,34 +355,21 @@ components:
         - MODERATOR
         - ADMIN
 
-    UserRoleRequest:
-      type: object
-      properties:
-        organizationId:
-          type: string
-          format: uuid
-        role:
-          $ref: '#/components/schemas/UserRole'
+    QueueEntryStatus:
+      type: string
+      description: Status of queue entry
+      enum:
+        - WAITING
+        - SERVING
+        - SERVED
+        - CANCELLED
+        - MISSED
 
-    UserResponse:
-      type: object
-      properties:
-        user:
-          $ref: '#/components/schemas/User'
-        organizations:
-          type: array
-          items:
-            $ref: '#/components/schemas/Organization'
-      example:
-        user:
-          maxId: "u001"
-          username: "john_doe"
-        organizations:
-          - id: "org1"
-            name: "Main Office"
-            isModerator: true
+    ##### Frontend requests #####
 
-    UserRequest:
+    ### User Requests ###
+
+    UserCreatingRequest:
       type: object
       properties:
         maxId:
@@ -395,9 +382,23 @@ components:
           type: string
       required:
         - maxId
-        - username
-        - firstName
-        - secondName
+      example:
+        maxId: 123
+        username: asd
+        firstName: Alex
+        secondName: Novikov
+
+    UserRoleRequest:
+      type: object
+      properties:
+        organizationId:
+          type: string
+          format: uuid
+        role:
+          $ref: '#/components/schemas/UserRole'
+      required:
+        - organizationId
+        - role
 
     UserUpdateRequest:
       type: object
@@ -410,45 +411,76 @@ components:
           type: string
         createdAt:
           type: string
+          format: date-time
+      example:
+        username: asd
+        firstName: Alex
+        secondName: Novikov
+        createdAt: 2025-11-09T16:21:09Z
 
-    Organization:
+    ### Queue Entry Request ###
+
+    QueueEntryCreatingRequest:
       type: object
       properties:
-        id:
+        maxId:
+          type: integer
+          format: int64
+        queueId:
           type: string
-        name:
-          type: string
-        isModerator:
-          type: boolean
-        queueEntries:
+          format: uuid
+      required:
+        - maxId
+        - queueId
+
+
+    ##### Orchestrator responses #####
+
+    ### User Responses ###
+
+    UserResponse:
+      type: object
+      properties:
+        organizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Organization'
+        queue-entries:
           type: array
           items:
             $ref: '#/components/schemas/QueueEntry'
+
+    ### Queue Entry Responses ###
 
     QueueEntry:
       type: object
       properties:
         id:
           type: string
+          format: uuid
         name:
-          type: string
-        role:
           type: string
         peopleInFront:
           type: integer
         status:
-          type: string
-          enum: [active, paused, completed]
+          $ref: '#/components/schemas/QueueEntryStatus'
 
-    QueueEntryCreatingRequest:
+    ### Organization Responses ###
+
+    Organization:
       type: object
       properties:
-        maxId:
+        id:
           type: string
           format: uuid
-        queueId:
+        name:
           type: string
-          format: uuid
+        role:
+          allOf:
+            - $ref: '#/components/schemas/UserRole'
+            - enum: [ADMIN, MANAGER]
+        amountOfQueues:
+          type: integer
 
     OrganizationQueuesResponse:
       type: object
@@ -482,14 +514,12 @@ components:
           type: string
           format: date-time
 
-    #Analytics
     OrganizationMetricsResponse:
       type: object
       properties:
         metrics:
           $ref: '#/components/schemas/OrganizationMetrics'
 
-    #Analytics
     OrganizationMetrics:
       type: object
       properties:
@@ -517,7 +547,6 @@ components:
         settings:
           $ref: '#/components/schemas/QueueSettings'
 
-    #Analytics
     QueueMetricsResponse:
       properties:
         metrics:

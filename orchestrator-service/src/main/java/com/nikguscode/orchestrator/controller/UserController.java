@@ -1,6 +1,6 @@
 package com.nikguscode.orchestrator.controller;
 
-import com.nikguscode.openapi.model.UserRequestDto;
+import com.nikguscode.openapi.model.UserCreatingRequestDto;
 import com.nikguscode.orchestrator.dao.user.UserDao;
 import com.nikguscode.orchestrator.mapper.UserDtoMapper;
 import com.nikguscode.orchestrator.model.User;
@@ -33,14 +33,14 @@ public class UserController {
   }
 
   @PutMapping("/users/{maxId}")
-  public String editUser(@RequestBody UserRequestDto dto) {
+  public String editUser(@RequestBody UserCreatingRequestDto dto) {
     User user = userDtoMapper.dtoToUser(dto, OffsetDateTime.now());
     userDao.update(user);
     return "zaglushka";
   }
 
   @PostMapping("/users")
-  public String addUser(@RequestBody UserRequestDto dto) {
+  public String addUser(@RequestBody UserCreatingRequestDto dto) {
     User user = userDtoMapper.dtoToUser(dto, OffsetDateTime.now());
     userDao.add(user);
     return "zaglushka";
