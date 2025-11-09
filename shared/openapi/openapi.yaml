@@ -142,6 +142,7 @@ paths:
           description: Queue Entry id
           schema:
             type: string
+            format: uuid
       responses:
         '200':
           description: Successful operation
@@ -211,6 +212,7 @@ paths:
           description: Organization ID
           schema:
             type: string
+            format: uuid
       responses:
         '200':
           description: Organization settings retrieved successfully
@@ -238,6 +240,7 @@ paths:
           description: Organization ID
           schema:
             type: string
+            format: uuid
       responses:
         '200':
           description: Organization metrics retrieved successfully
@@ -263,6 +266,7 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
       responses:
         '200':
           description: Queue members retrieved successfully
@@ -288,6 +292,7 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
       responses:
         '200':
           description: Queue settings retrieved successfully
@@ -314,6 +319,7 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
       responses:
         '200':
           description: Queue metrics retrieved successfully
@@ -338,14 +344,8 @@ components:
       description: Unexpected server error
 
   schemas:
-    User:
-      type: object
-      properties:
-        maxId:
-          type: string
-        username:
-          type: string
 
+    ##### Enums #####
     UserRole:
       type: string
       description: Role of user
@@ -354,6 +354,20 @@ components:
         - EMPLOYEE
         - MODERATOR
         - ADMIN
+
+    QueueEntryStatus:
+      type: string
+      description: Status of queue entry
+      enum:
+        - WAITING
+        - SERVING
+        - SERVED
+        - CANCELLED
+        - MISSED
+
+    ##### Frontend requests #####
+
+    ##### Orchestrator responses #####
 
     UserRoleRequest:
       type: object
@@ -367,20 +381,14 @@ components:
     UserResponse:
       type: object
       properties:
-        user:
-          $ref: '#/components/schemas/User'
         organizations:
           type: array
           items:
             $ref: '#/components/schemas/Organization'
-      example:
-        user:
-          maxId: "u001"
-          username: "john_doe"
-        organizations:
-          - id: "org1"
-            name: "Main Office"
-            isModerator: true
+        queue-entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/QueueEntry'
 
     UserRequest:
       type: object
@@ -416,29 +424,28 @@ components:
       properties:
         id:
           type: string
+          format: uuid
         name:
           type: string
-        isModerator:
-          type: boolean
-        queueEntries:
-          type: array
-          items:
-            $ref: '#/components/schemas/QueueEntry'
+        role:
+          allOf:
+            - $ref: '#/components/schemas/UserRole'
+            - enum: [ADMIN, MANAGER]
+        amountOfQueues:
+          type: integer
 
     QueueEntry:
       type: object
       properties:
         id:
           type: string
+          format: uuid
         name:
-          type: string
-        role:
           type: string
         peopleInFront:
           type: integer
         status:
-          type: string
-          enum: [active, paused, completed]
+          $ref: '#/components/schemas/QueueEntryStatus'
 
     QueueEntryCreatingRequest:
       type: object
@@ -482,14 +489,12 @@ components:
           type: string
           format: date-time
 
-    #Analytics
     OrganizationMetricsResponse:
       type: object
       properties:
         metrics:
           $ref: '#/components/schemas/OrganizationMetrics'
 
-    #Analytics
     OrganizationMetrics:
       type: object
       properties:
