@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Flex, Typography, Panel } from '@maxhub/max-ui';
 import { QRCodeSVG } from 'qrcode.react';
 import logo from '/logo.jpg';
+import ConfirmationModal from '../components/ConfirmationModal';
 
 interface QueueDetails {
   id: string;
@@ -100,6 +101,7 @@ const QueueDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [isExitQueue, setisExitQueue] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const defaultShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
@@ -138,8 +140,8 @@ const QueueDetailsPage: React.FC = () => {
   }
 
   const handleExitQueue = () => {
-    console.log('Выход из очереди:', queueDetails.id);
-    navigate('/');
+    setIsModalOpen(true);
+    // navigate('/');
   };
 
   const handleExitQueueMouseDown = () => {
@@ -154,11 +156,21 @@ const QueueDetailsPage: React.FC = () => {
     setisExitQueue(false);
   };
 
+  const handleConfirmExit = () => {
+    console.log('Выход из очереди:', queueDetails.id);
+    setIsModalOpen(false);
+    navigate('/');
+  };
+  
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <Container
-      align="center"
-      direction="column"
-      justify="center"
+      // align="center"
+      // direction="column"
+      // justify="center"
       style={{
         backgroundColor: '#FFFFFF',
         minHeight: '100vh',
@@ -202,22 +214,6 @@ const QueueDetailsPage: React.FC = () => {
             <QRCode userId={queueDetails.userId} queueId={queueDetails.id} />
           </Flex>
 
-          {/* <Button
-            mode="primary"
-            onClick={handleExitQueue}
-            style={{
-              width: '100%',
-              backgroundColor: '#DC3545',
-              color: '#FFFFFF',
-              borderRadius: '12px',
-              padding: '14px',
-              fontSize: '16px',
-              fontWeight: 500,
-              marginTop: '16px',
-            }}
-          >
-            Выйти из очереди
-          </Button> */}
           <Flex
             align="center"
             justify="space-between"
@@ -255,9 +251,12 @@ const QueueDetailsPage: React.FC = () => {
               Добавить очередь
             </Typography.Title>
           </Flex>
-
-        {/* </div> */}
       </Flex>
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmExit}
+      />
     </Container>
   );
 };

@@ -4,6 +4,7 @@ import { Container, Flex, Panel, Typography } from '@maxhub/max-ui';
 import { OrganizationsApi, Configuration } from '../api';
 import logo from '/logo.jpg';
 
+
 const createApiConfiguration = (): Configuration => {
   const basePath = import.meta.env.VITE_API_BASE_PATH || 'http://localhost:8080';
   return new Configuration({
