@@ -27,9 +27,9 @@ public class UserController {
   }
 
   @GetMapping("/users/{maxId}")
-  public String getUser(@PathVariable Long maxId) {
-    System.out.println(userDao.findByMaxId(maxId));
-    return "zaglushka";
+  public User getUser(@PathVariable Long maxId) {
+    System.out.println("voshel");
+    return userDao.findByMaxId(maxId).get();
   }
 
   @PutMapping("/users/{maxId}")

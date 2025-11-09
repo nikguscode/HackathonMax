@@ -10,7 +10,7 @@ import lombok.ToString;
 @Getter
 @ToString
 public class User {
-  private final UUID idMax;
+  private final Long idMax;
   private final String username;
   private final String firstName;
   private final String secondName;
