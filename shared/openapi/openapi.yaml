@@ -437,8 +437,6 @@ components:
         waitingTime:
           type: number
           format: float
-        membersInFragment:
-          type: integer
         entriesInTheQueue:
           type: integer
         numberOfServedMembers:
