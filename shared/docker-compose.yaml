@@ -39,6 +39,10 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    profiles:
+      - dev
+      - local
+      - docker
 
   pgadmin:
     image: dpage/pgadmin4:8.13
@@ -56,7 +60,7 @@ services:
       - db
     profiles:
       - dev
-      - docker
+      - local
 
   api:
     container_name: api
@@ -73,6 +77,30 @@ services:
     ports:
       - "8081:8081"
     profiles:
+      - local
+      - docker
+
+  frontend:
+    build: ../max-mini-app
+    expose:
+      - "80"
+    profiles:
+      - dev
+      - local
+      - docker
+
+  caddy:
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    profiles:
+      - dev
+      - local
       - docker
 
 volumes:
@@ -80,3 +108,5 @@ volumes:
   rabbitmq_data:
   redis_data:
   pgadmin_data:
+  caddy_data:
+  caddy_config:

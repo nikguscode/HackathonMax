@@ -1,0 +1,7 @@
+maxqueue.freeddns.org {
+    reverse_proxy frontend:80
+    encode zstd gzip
+    header /* {
+      Cache-Control "public, max-age=31536000, immutable"
+    }
+}
