@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Flex, Typography } from '@maxhub/max-ui';
 
 interface OrganizationCardProps {
   name: string;
   count: number;
+  orgId: string;
   onClick?: () => void;
 }
 
-const OrganizationCard: React.FC<OrganizationCardProps> = ({ name, count, onClick }) => {
+const OrganizationCard: React.FC<OrganizationCardProps> = ({ name, count, orgId, onClick }) => {
   const [isPressed, setIsPressed] = useState(false);
+  const navigate = useNavigate();
 
   const handleMouseDown = () => {
     setIsPressed(true);
@@ -25,6 +28,8 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ name, count, onClic
   const handleClick = () => {
     if (onClick) {
       onClick();
+    } else {
+      navigate(`/managment/${orgId}`);
     }
   };
 
@@ -50,7 +55,7 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ name, count, onClic
         border: '0.3px solid rgba(0, 0, 0, 0.15)',
         borderRadius: '0px',
         boxShadow: isPressed ? pressedShadow : defaultShadow,
-        cursor: onClick ? 'pointer' : 'default',
+        cursor: 'pointer',
         marginBottom: '12px',
         transform: isPressed ? 'scale(0.98)' : 'scale(1)',
         transition: 'all 0.15s ease',
