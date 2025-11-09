@@ -74,6 +74,38 @@ paths:
         default:
           $ref: '#/components/responses/UnexpectedError'
 
+  /users/{maxId}/role:
+    put:
+      tags: [users]
+      summary: Update user role in organization
+      operationId: updateOrganizationUserRole
+      parameters:
+        - name: maxId
+          in: path
+          required: true
+          description: User MAX ID
+          schema:
+            type: string
+      requestBody:
+        description: Update user role in organization
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRoleRequest'
+      responses:
+        '200':
+          description: Organization with its queues
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationQueuesResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
   /users:
     post:
       tags: [users]
@@ -99,7 +131,7 @@ paths:
     delete:
       tags: [queue-entries]
       summary: Delete user from queue
-      operationId: deleteUserFromQueueEntry
+      operationId: deleteQueueEntry
       parameters:
         - name: entryId
           in: path
@@ -110,10 +142,6 @@ paths:
       responses:
         '200':
           description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -121,40 +149,20 @@ paths:
         default:
           $ref: '#/components/responses/UnexpectedError'
 
-  /organizations/{organizationId}/users/{maxId}/role:
-    put:
-      tags: [organizations]
-      summary: Update user role in organization
-      operationId: updateOrganizationUserRole
-      parameters:
-        - name: organizationId
-          in: path
-          required: true
-          description: Organization ID
-          schema:
-            type: string
-        - name: maxId
-          in: path
-          required: true
-          description: User MAX ID
-          schema:
-            type: string
+  /queue-entries:
+    post:
+      tags: [queue-entries]
+      summary: Add user in queue
+      operationId: addQueueEntry
       requestBody:
-        description: Update user role in organization
+        description:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                role:
-                  $ref: '#/components/schemas/UserRole'
+              $ref: '#/components/schemas/QueueEntryCreatingRequest'
       responses:
-        '200':
-          description: Organization with its queues
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OrganizationQueuesResponse'
+        '201':
+          description: User added to queue
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -240,7 +248,6 @@ paths:
           $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/UnexpectedError'
-
 
   /queues/{queueId}/members:
     get:
@@ -345,6 +352,15 @@ components:
         - MODERATOR
         - ADMIN
 
+    UserRoleRequest:
+      type: object
+      properties:
+        organizationId:
+          type: string
+          format: uuid
+        role:
+          $ref: '#/components/schemas/UserRole'
+
     UserResponse:
       type: object
       properties:
@@ -420,6 +436,16 @@ components:
         status:
           type: string
           enum: [active, paused, completed]
+
+    QueueEntryCreatingRequest:
+      type: object
+      properties:
+        maxId:
+          type: string
+          format: uuid
+        queueId:
+          type: string
+          format: uuid
 
     OrganizationQueuesResponse:
       type: object
@@ -534,6 +560,11 @@ components:
           type: integer
         averageInQueue:
           type: integer
+
+    QueueCreatingRequest:
+      type: object
+      properties:
+
 
     BaseQueueResponse:
       type: object

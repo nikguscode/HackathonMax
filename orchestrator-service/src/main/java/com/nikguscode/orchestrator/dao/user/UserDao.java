@@ -4,7 +4,7 @@ import com.nikguscode.orchestrator.model.User;
 import java.util.Optional;
 
 public interface UserDao {
-  Optional<User> get(Long maxId);
+  Optional<User> findByMaxId(Long maxId);
 
   void add(User user);
 

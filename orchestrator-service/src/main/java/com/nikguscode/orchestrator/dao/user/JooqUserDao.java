@@ -16,7 +16,7 @@ public class JooqUserDao implements UserDao {
   private final DSLContext dsl;
 
   @Override
-  public Optional<User> get(Long maxId) {
+  public Optional<User> findByMaxId(Long maxId) {
     return dsl.selectFrom(USER).where(USER.ID_MAX.eq(maxId)).fetchOptionalInto(User.class);
   }
 
