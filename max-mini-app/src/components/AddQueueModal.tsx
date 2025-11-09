@@ -8,7 +8,7 @@ interface AddQueueModalProps {
   orgId: string; // ID организации, для которой создается очередь
 }
 
-const AddQueueModal: React.FC<AddQueueModalProps> = ({ isOpen, onClose, onAddQueue, orgId }) => {
+const AddQueueModal: React.FC<AddQueueModalProps> = ({ isOpen, onClose, onAddQueue }) => {
   const [queueName, setQueueName] = useState('');
   const [isAddingPressed, setIsAddingPressed] = useState(false); // Состояние для кнопки "Добавить очередь" в модалке
 
