@@ -10,6 +10,7 @@ import QueueManagmentPage from './pages/QueueManagmentPage.tsx';
 import QueueUserManagementPage from './pages/QueueUserManagementPage.tsx';
 import ModeratorDashboardPage from './pages/ModeratorDashboardPage.tsx';
 import OrganizationDetailsPage from './pages/OrganizationDetailsPage.tsx';
+import ModeratorQueueDetailsPage from './pages/ModeratorQueueDetailsPage.tsx';
 import { UsersApi, OrganizationsApi, QueuesApi, Configuration } from './api';
 import type { QueueEntry } from './api';
 
@@ -286,6 +287,7 @@ function App() {
         <Route path="/managment/queue/:id" element={<QueueUserManagementPage />} />
         <Route path="/moderator" element={<ModeratorDashboardPage />} />
         <Route path="/organization/:id" element={<OrganizationDetailsPage />} />
+        <Route path="/moderator-queue/:id" element={<ModeratorQueueDetailsPage />} />
         <Route path="*" element={<div>404 | Страница не найдена</div>} />
       </Routes>
     </BrowserRouter>

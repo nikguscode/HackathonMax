@@ -9,7 +9,7 @@ interface ModeratorCardProps {
   onClick?: () => void;
 }
 
-const ModeratorCard: React.FC<ModeratorCardProps> = ({ name, count, queueId, onClick }) => {
+const ModeratorCard: React.FC<ModeratorCardProps> = ({ name, count, onClick }) => {
   const [isPressed, setIsPressed] = useState(false);
   const navigate = useNavigate();
 

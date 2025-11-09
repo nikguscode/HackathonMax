@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Flex, Button, Typography } from '@maxhub/max-ui';
+import { Container, Flex, Typography } from '@maxhub/max-ui';
 import { moderatorOrganizations } from '../mockData';
 import type { IModeratorQueue } from '../types';
 import logo from '/logo.jpg';
+import AddQueueModal from '../components/AddQueueModal';
 
 interface QueueCardProps {
   queue: IModeratorQueue;
@@ -109,6 +110,7 @@ const ModeratorDashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const [isModeratorButtonPressed, setIsModeratorButtonPressed] = useState(false);
   const [isAddQueue, setisAddQueue] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   
   const moderatorOrg = moderatorOrganizations[0];
   
@@ -121,13 +123,23 @@ const ModeratorDashboardPage: React.FC = () => {
   }
 
   const handleQueueClick = (queueId: string) => {
-    navigate(`/managment/queue/${queueId}`);
+    navigate(`/moderator-queue/${queueId}`);
   };
 
   const handleAddQueue = () => {
+    setIsModalOpen(true);
     console.log('Добавить очередь');
   };
   
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleAddQueueSubmit = (queueName: string) => {
+    console.log(`Добавляем очередь: "${queueName}" для организации ID: ${moderatorOrg.id}`);
+    handleCloseModal();
+  };
+
   const handleAddQueueMouseDown = () => {
     setisAddQueue(true);
   };
@@ -277,6 +289,12 @@ const ModeratorDashboardPage: React.FC = () => {
         </Flex>
         
       </Flex>
+      <AddQueueModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onAddQueue={handleAddQueueSubmit}
+        orgId={moderatorOrg.id}
+      />
     </Container>
   );
 };
