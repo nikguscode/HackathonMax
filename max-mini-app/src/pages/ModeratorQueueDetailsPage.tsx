@@ -108,7 +108,7 @@ const ModeratorQueueDetailsPage: React.FC = () => {
               fontFamily: 'system-ui, sans-serif',
             }}
           >
-            {queueName}
+            {queueName}ррррррррррррррррррррррррррррррррррррррррррррррррррррррррррррррррр
           </Typography.Title>
         </Panel>
 

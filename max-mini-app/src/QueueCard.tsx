@@ -71,6 +71,9 @@ const QueueCard: React.FC<QueueCardProps> = ({ name, peopleInFront, id, onClick 
           fontWeight: 500,
           color: '#333333',
           margin: 0,
+          overflow: 'hidden',      
+          whiteSpace: 'nowrap',    
+          textOverflow: 'ellipsis',
         }}
       >
         {name}
@@ -88,6 +91,7 @@ const QueueCard: React.FC<QueueCardProps> = ({ name, peopleInFront, id, onClick 
           textAlign: 'center',
           pointerEvents: 'none',
           boxShadow: '0 2px 4px #6A5ACD', 
+          marginLeft: '3%',
         }}
       >
         {peopleInFront}

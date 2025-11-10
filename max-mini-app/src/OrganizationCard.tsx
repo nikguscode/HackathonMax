@@ -73,6 +73,9 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ name, amountOfQueue
           fontWeight: 500,
           color: '#333333',
           margin: 0,
+          overflow: 'hidden',      
+          whiteSpace: 'nowrap',    
+          textOverflow: 'ellipsis',
         }}
       >
         {name}
@@ -90,6 +93,7 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ name, amountOfQueue
           textAlign: 'center',
           pointerEvents: 'none',
           boxShadow: '0 2px 4px #6A5ACD', 
+          marginLeft: '3%',
         }}
       >
         {amountOfQueues}

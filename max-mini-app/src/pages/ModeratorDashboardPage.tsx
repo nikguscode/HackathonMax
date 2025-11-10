@@ -58,7 +58,9 @@ const QueueCard: React.FC<QueueCardProps> = ({ queue, onClick }) => {
           fontSize: '15px',
           fontWeight: 500,
           color: '#333333',
-          margin: '0 0 8px 0',
+          margin: '0',
+          whiteSpace: 'normal',
+          wordBreak: 'break-word',
         }}
       >
         {queue.name}
@@ -79,6 +81,8 @@ const QueueCard: React.FC<QueueCardProps> = ({ queue, onClick }) => {
             fontSize: '14px',
             color: '#000000',
             margin: 0,
+            whiteSpace: 'normal',
+            wordBreak: 'break-word',
           }}
         >
           Кол-во сотрудников: {queue.employeeCount}
@@ -88,6 +92,8 @@ const QueueCard: React.FC<QueueCardProps> = ({ queue, onClick }) => {
             fontSize: '14px',
             color: '#000000',
             margin: 0,
+            whiteSpace: 'normal',
+            wordBreak: 'break-word',
           }}
         >
           Очередь в данный момент: {queue.currentQueue}
@@ -97,6 +103,8 @@ const QueueCard: React.FC<QueueCardProps> = ({ queue, onClick }) => {
             fontSize: '14px',
             color: '#000000',
             margin: 0,
+            whiteSpace: 'normal',
+            wordBreak: 'break-word',
           }}
         >
           Всего людей обслужено: {queue.totalServed}
@@ -235,6 +243,9 @@ const ModeratorDashboardPage: React.FC = () => {
               fontWeight: 500,
               color: '#333333',
               margin: '0 auto',
+              overflow: 'hidden',      
+              whiteSpace: 'nowrap',    
+              textOverflow: 'ellipsis',
             }}
           >
             {moderatorOrg.name}
