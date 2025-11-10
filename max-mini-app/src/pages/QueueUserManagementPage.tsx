@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Container, Flex, Button, Typography, Panel } from '@maxhub/max-ui';
 import type { IQueueUser } from '../types';
 import AddUserModal from '../components/AddUserModal';
+import Logo from '../components/Logo';
 
 const getMockQueueUsers = (queueId: string): IQueueUser[] => {
   if (queueId === 'q1') {
@@ -85,17 +86,7 @@ const QueueUserManagementPage: React.FC = () => {
         flexDirection: 'column',
       }}
     >
-      <Flex justify="center" align="center" style={{ padding: '0px 0 0px 0' }}>
-        <img 
-          src='/logo.jpg' 
-          alt="Logo" 
-          style={{ 
-            maxWidth: '300px',
-            height: 'auto',
-            objectFit: 'contain'
-          }} 
-            />
-      </Flex>
+      <Logo />
       <Flex
         direction="column"
         align="center"

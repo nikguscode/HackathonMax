@@ -10,8 +10,9 @@ import QueueUserManagementPage from './pages/QueueUserManagementPage.tsx';
 import ModeratorDashboardPage from './pages/ModeratorDashboardPage.tsx';
 import OrganizationDetailsPage from './pages/OrganizationDetailsPage.tsx';
 import ModeratorQueueDetailsPage from './pages/ModeratorQueueDetailsPage.tsx';
-import { UsersApi, Configuration } from './api';
+import { UsersApi, Configuration, OrganizationsApi } from './api';
 import logo from '/logo.jpg';
+import Logo from './components/Logo.tsx';
 
 const getMaxId = (): string | null => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -33,6 +34,7 @@ const createApiConfiguration = (): Configuration => {
     basePath,
   });
 };
+
 
 const HomePage: React.FC = () => {
   const [moderatorOrgs, setModeratorOrgs] = useState<Organization[]>([]);
@@ -96,8 +98,6 @@ const HomePage: React.FC = () => {
         for (const org of organizationsList) {
           if (!org.id || !org.name || !org.role) continue;
           
-          // let canManageQueues = false;
-          // let orgQueues: any[] = [];
           
           if (org.role === 'MODERATOR' || org.role === 'EMPLOYEE') {
 
@@ -194,7 +194,6 @@ const HomePage: React.FC = () => {
         }} 
       />
     </Flex>
-
       <Flex direction="column" align="center" style={{ width: '100%', maxWidth: '300px', margin: '0 auto', padding: '20px 16px' }}>
         <div style={{ width: '300px' }}>
           {moderatorOrgs.length > 0 && (
@@ -239,7 +238,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/queue/:id" element={ <QueueDetailsPage /> } />
-        <Route path="/managment/:id" element={<QueueManagmentPage />} />
+        <Route path="/managment/:id" element={<QueueManagmentPage />}  />
         <Route path="/managment/queue/:id" element={<QueueUserManagementPage />} />
         <Route path="/moderator" element={<ModeratorDashboardPage />} />
         <Route path="/organization/:id" element={<OrganizationDetailsPage />} />

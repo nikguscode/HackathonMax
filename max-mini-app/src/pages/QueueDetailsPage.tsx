@@ -5,6 +5,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import logo from '/logo.jpg';
 import ConfirmationModal from '../components/ConfirmationModal';
 
+
 interface QueueDetails {
   id: string;
   name: string;
