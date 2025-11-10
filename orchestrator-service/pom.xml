@@ -171,7 +171,6 @@
             </goals>
             <configuration>
               <inputSpec>${project.basedir}/src/main/resources/openapi.yaml</inputSpec>
-              <inputSpec>${project.basedir}/src/test</inputSpec>
               <generatorName>spring</generatorName>
 
               <modelNameSuffix>Dto</modelNameSuffix>
@@ -216,6 +215,7 @@
             <configuration>
               <sources>
                 <source>${project.build.directory}/generated-sources/openapi/src/main/java</source>
+                <source>${project.build.directory}/generated-source/openapi/src/test</source>
               </sources>
             </configuration>
           </execution>

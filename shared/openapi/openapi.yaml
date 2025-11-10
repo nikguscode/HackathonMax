@@ -151,6 +151,27 @@ paths:
         default:
           $ref: '#/components/responses/UnexpectedError'
 
+  # /queue-entries/manually:
+  #   post:
+  #     tags: [queue-entries]
+  #     summary: Add user in queue
+  #     operationId: addQueueEntry
+  #     requestBody:
+  #       description: Add user in queue
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: '#/components/schemas/QueueEntryCreatingRequest'
+  #     responses:
+  #       '201':
+  #         description: User added to queue
+  #       '400':
+  #         $ref: '#/components/responses/BadRequest'
+  #       '404':
+  #         $ref: '#/components/responses/NotFound'
+  #       default:
+  #         $ref: '#/components/responses/UnexpectedError'
+
   /queue-entries/{entryId}:
     delete:
       tags: [queue-entries]
@@ -432,6 +453,18 @@ components:
       required:
         - maxId
         - queueId
+
+    QueueEntryManuallyCreatingRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        firstName:
+          type: string
+        secondName:
+          type: string
+      required:
+        - username
 
 
     ##### Orchestrator responses #####
