@@ -141,7 +141,6 @@ const QueueDetailsPage: React.FC = () => {
 
   const handleExitQueue = () => {
     setIsModalOpen(true);
-    // navigate('/');
   };
 
   const handleExitQueueMouseDown = () => {
@@ -155,12 +154,12 @@ const QueueDetailsPage: React.FC = () => {
   const handleExitQueueMouseLeave = () => {
     setisExitQueue(false);
   };
-
-  const handleConfirmExit = () => {
-    console.log('Выход из очереди:', queueDetails.id);
+  
+  const handleConfirmExit = () => {
+    console.log('Выход из очереди:', queueDetails.id);
     setIsModalOpen(false);
-    navigate('/');
-  };
+    navigate('/');
+  };
   
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -168,9 +167,6 @@ const QueueDetailsPage: React.FC = () => {
 
   return (
     <Container
-      // align="center"
-      // direction="column"
-      // justify="center"
       style={{
         backgroundColor: '#FFFFFF',
         minHeight: '100vh',
@@ -190,7 +186,6 @@ const QueueDetailsPage: React.FC = () => {
       </Flex>
 
       <Flex direction="column" align="center" justify="center" style={{ width: '100%' }}>
-        {/* <div style={{ width: '100%', maxWidth: '300px' }}> */}
           <Flex direction="column" align="center" justify="center">
             <InfoCard
               label="Название очереди"

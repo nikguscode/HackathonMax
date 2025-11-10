@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { FC } from 'react';
 import { Flex, Typography } from '@maxhub/max-ui';
 
@@ -22,10 +22,9 @@ const ConfirmationModal: FC<ConfirmationModalProps> = ({
 
   const defaultShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
-  const blockColor = '#F7F7F7'; // Светло-серый фон для внутренних блоков
+  const blockColor = '#F7F7F7';
 
   return (
-    // Задний фон модального окна (Оверлей)
     <Flex
       justify="center"
       align="center"
@@ -35,13 +34,12 @@ const ConfirmationModal: FC<ConfirmationModalProps> = ({
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Тот же стиль, что и у AddQueueModal
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         zIndex: 1000,
         padding: '20px',
       }}
-      onClick={onClose} // Закрыть модалку при клике на фон
+      onClick={onClose}
     >
-      {/* Контент модального окна (Белая плашка) */}
       <Flex
         direction="column"
         align="center"
@@ -54,9 +52,8 @@ const ConfirmationModal: FC<ConfirmationModalProps> = ({
           boxShadow: defaultShadow,
           position: 'relative',
         }}
-        onClick={(e) => e.stopPropagation()} // Не закрывать при клике на контент
+        onClick={(e) => e.stopPropagation()}
       >
-        {/* Блок "Вы уверены?" (стиль как у <input> в AddQueueModal) */}
         <Flex
           align="center"
           justify="center"
@@ -68,7 +65,7 @@ const ConfirmationModal: FC<ConfirmationModalProps> = ({
             borderRadius: '16px',
             fontSize: '15px',
             color: '#333333',
-            marginBottom: '20px', // Отступ между заголовком и кнопками
+            marginBottom: '20px',
             minHeight: '50px',
           }}
         >
@@ -85,9 +82,7 @@ const ConfirmationModal: FC<ConfirmationModalProps> = ({
           </Typography.Title>
         </Flex>
 
-        {/* Блок кнопок "Да" и "Нет" */}
         <Flex justify="space-between" gap={10} style={{ width: '100%' }}>
-          {/* Кнопка "Да" (стиль как у "Добавить очередь") */}
           <Flex
             align="center"
             justify="center"
@@ -99,7 +94,7 @@ const ConfirmationModal: FC<ConfirmationModalProps> = ({
             onTouchEnd={() => setIsYesPressed(false)}
             onTouchCancel={() => setIsYesPressed(false)}
             style={{
-              flex: 1, // Занимает половину ширины
+              flex: 1, 
               padding: '12px 16px',
               backgroundColor: '#FFFFFF',
               border: '0.3px solid rgba(0, 0, 0, 0.15)',
@@ -123,7 +118,6 @@ const ConfirmationModal: FC<ConfirmationModalProps> = ({
             </Typography.Title>
           </Flex>
 
-          {/* Кнопка "Нет" (такой же стиль) */}
           <Flex
             align="center"
             justify="center"
@@ -135,7 +129,7 @@ const ConfirmationModal: FC<ConfirmationModalProps> = ({
             onTouchEnd={() => setIsNoPressed(false)}
             onTouchCancel={() => setIsNoPressed(false)}
             style={{
-              flex: 1, // Занимает половину ширины
+              flex: 1,
               padding: '12px 16px',
               backgroundColor: '#FFFFFF',
               border: '0.3px solid rgba(0, 0, 0, 0.15)',

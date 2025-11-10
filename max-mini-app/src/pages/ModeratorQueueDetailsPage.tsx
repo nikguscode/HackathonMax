@@ -1,15 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Flex, Panel, Typography } from '@maxhub/max-ui';
-// import { QueuesApi, Configuration } from '../api';
 import logo from '/logo.jpg';
 
-// const createApiConfiguration = (): Configuration => {
-//   const basePath = import.meta.env.VITE_API_BASE_PATH || 'http://localhost:8080';
-//   return new Configuration({
-//     basePath,  
-//   });
-// };
 
 const ModeratorQueueDetailsPage: React.FC = () => {
   const { id: queueId } = useParams<{ id: string }>();
@@ -42,11 +35,6 @@ const ModeratorQueueDetailsPage: React.FC = () => {
       }
 
       try {
-        // const config = createApiConfiguration();
-        // const queuesApi = new QueuesApi(config);
-        
-        // В будущем можно загружать название очереди из API
-        // Пока используем placeholder
         setQueueName(`Очередь ${queueId}`);
       } catch (err) {
         console.warn('Не удалось загрузить данные очереди:', err);
