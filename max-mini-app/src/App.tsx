@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Container, Flex } from '@maxhub/max-ui';
-
 import OrganizationCard from './OrganizationCard.tsx';
 import QueueCard from './QueueCard.tsx';
-import type { IOrganization, IQueue } from './types.ts';
+import type { Organization, QueueEntry } from './api';
 import QueueDetailsPage from './pages/QueueDetailsPage.tsx';
 import QueueManagmentPage from './pages/QueueManagmentPage.tsx';
 import QueueUserManagementPage from './pages/QueueUserManagementPage.tsx';
 import ModeratorDashboardPage from './pages/ModeratorDashboardPage.tsx';
 import OrganizationDetailsPage from './pages/OrganizationDetailsPage.tsx';
 import ModeratorQueueDetailsPage from './pages/ModeratorQueueDetailsPage.tsx';
-import { UsersApi, OrganizationsApi, QueuesApi, Configuration } from './api';
+import { UsersApi, Configuration } from './api';
 
 import logo from '/logo.jpg';
 
@@ -37,8 +36,8 @@ const createApiConfiguration = (): Configuration => {
 };
 
 const HomePage: React.FC = () => {
-  const [moderatorOrgs, setModeratorOrgs] = useState<IOrganization[]>([]);
-  const [userQueues, setUserQueues] = useState<IQueue[]>([]);
+  const [moderatorOrgs, setModeratorOrgs] = useState<Organization[]>([]);
+  const [userQueues, setUserQueues] = useState<QueueEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -65,13 +64,13 @@ const HomePage: React.FC = () => {
         console.log('API Base Path:', apiBasePath);
         
         const usersApi = new UsersApi(config);
-        const organizationsApi = new OrganizationsApi(config);
-        const queuesApi = new QueuesApi(config);
 
         console.log('Запрос к API:', `/users/${maxIdNum}`);
         
         const response = await usersApi.getUserByMaxId(maxIdNum);
         const userResponse = response.data;
+
+        
 
         console.log('API Response:', userResponse);
 
@@ -82,6 +81,7 @@ const HomePage: React.FC = () => {
         }
 
         const organizationsList = userResponse.organizations || [];
+        const queueList = userResponse['queue-entries'] || [];
         
         if (organizationsList.length === 0) {
           console.log('Список организаций пуст');
@@ -91,65 +91,34 @@ const HomePage: React.FC = () => {
           return;
         }
 
-        const organizations: IOrganization[] = [];
-        const queues: IQueue[] = [];
+        const adminOrgs: Organization[] = [];
+        const queues: QueueEntry[] = [];
 
         for (const org of organizationsList) {
-          if (!org.id || !org.name) continue;
+          if (!org.id || !org.name || !org.role) continue;
           
-          let canManageQueues = false;
-          let orgQueues: any[] = [];
+          // let canManageQueues = false;
+          // let orgQueues: any[] = [];
           
-          if (org.role == 'MODERATOR') {
-            canManageQueues = true;
-            try {
-              const queuesResponse = await organizationsApi.getOrganizationQueues(org.id);
-              orgQueues = queuesResponse.data.queues || [];
-            } catch (err) {
-              console.warn(`Не удалось получить очереди для организации ${org.id}:`, err);
-              orgQueues = [];
-            }
-          } else {
-            try {
-              const queuesResponse = await organizationsApi.getOrganizationQueues(org.id);
-              if (queuesResponse.data && queuesResponse.data.queues && queuesResponse.data.queues.length > 0) {
-                orgQueues = queuesResponse.data.queues || [];
-                canManageQueues = true; 
-              } else {
-                canManageQueues = false;
-                orgQueues = [];
-              }
-            } catch (err: any) {
-              canManageQueues = false;
-              orgQueues = [];
-            }
-          }
+          if (org.role === 'MODERATOR' || org.role === 'EMPLOYEE') {
 
-          if (canManageQueues) {
-            let totalQueueMembers = 0;
-            for (const queue of orgQueues) {
-              if (queue.id) {
-                try {
-                  const metricsResponse = await queuesApi.getQueueMetrics(queue.id);
-                  const metrics = metricsResponse.data.metrics;
-                  if (metrics?.entriesInTheQueue) {
-                    totalQueueMembers += metrics.entriesInTheQueue;
-                  }
-                } catch (err) {
-                  console.warn(`Не удалось получить метрики очереди ${queue.id}:`, err);
-                }
-              }
-            }
-            
-            organizations.push({
-              id: org.id,
-              name: org.name,
-              count: totalQueueMembers || orgQueues.length,
-            });
-          }
+              adminOrgs.push({
+                id: org.id,
+                name: org.name,
+                role: org.role,
+                amountOfQueues: org.amountOfQueues,
+              });
+          } 
         }
-
-        setModeratorOrgs(organizations);
+        for (const queue of queueList) {
+          if (!queue.id || !queue.name) continue;
+              queues.push({
+                id: queue.id,
+                name: queue.name,
+                peopleInFront: queue.peopleInFront,
+              });
+        }
+        setModeratorOrgs(adminOrgs);
         setUserQueues(queues);
         setLoading(false);
 
@@ -232,12 +201,12 @@ const HomePage: React.FC = () => {
           {moderatorOrgs.length > 0 && (
             <div style={{ marginBottom: 16 }}>
               <Flex direction="column" align="center">
-                {moderatorOrgs.map((org: IOrganization) => (
+                {moderatorOrgs.map((org: Organization) => (
                   <OrganizationCard
                     key={org.id}
                     name={org.name}
-                    count={org.count}
-                    orgId={org.id}
+                    amountOfQueues={org.amountOfQueues}
+                    id={org.id}
                   />
                 ))}
               </Flex>
@@ -247,12 +216,12 @@ const HomePage: React.FC = () => {
           {userQueues.length > 0 && (
             <div>
               <Flex direction="column" align="center">
-                {userQueues.map((queue: IQueue) => (
+                {userQueues.map((queue: QueueEntry) => (
                   <QueueCard
                   key={queue.id}
                   name={queue.name}
-                  count={queue.count}
-                  queueId={queue.id}
+                  peopleInFront={queue.peopleInFront}
+                  id={queue.id}
                   />
                   ))}
                   </Flex>
@@ -269,7 +238,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/queue/:id" element={<QueueDetailsPage />} />
+        <Route path="/queue/:id" element={ <QueueDetailsPage /> } />
         <Route path="/managment/:id" element={<QueueManagmentPage />} />
         <Route path="/managment/queue/:id" element={<QueueUserManagementPage />} />
         <Route path="/moderator" element={<ModeratorDashboardPage />} />

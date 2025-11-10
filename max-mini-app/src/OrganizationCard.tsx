@@ -3,13 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { Flex, Typography } from '@maxhub/max-ui';
 
 interface OrganizationCardProps {
-  name: string;
-  count: number;
-  orgId: string;
+  'id'?: string;
+  'name'?: string;
+  'role'?: string;
+  'amountOfQueues'?: number;
   onClick?: () => void;
 }
 
-const OrganizationCard: React.FC<OrganizationCardProps> = ({ name, count, orgId, onClick }) => {
+const OrganizationCard: React.FC<OrganizationCardProps> = ({ name, amountOfQueues, id, onClick }) => {
   const [isPressed, setIsPressed] = useState(false);
   const navigate = useNavigate();
 
@@ -29,7 +30,7 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ name, count, orgId,
     if (onClick) {
       onClick();
     } else {
-      navigate(`/managment/${orgId}`);
+      navigate(`/managment/${id}`);
     }
   };
 
@@ -87,7 +88,7 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ name, count, orgId,
           boxShadow: '0 2px 4px #6A5ACD', 
         }}
       >
-        {count}
+        {amountOfQueues}
       </div>
     </Flex>
   );
