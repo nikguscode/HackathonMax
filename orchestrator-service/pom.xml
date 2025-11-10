@@ -182,6 +182,12 @@
               <configOptions>
                 <useJakartaEe>true</useJakartaEe>
                 <delegatePattern>true</delegatePattern>
+
+                <typeMappings>
+                  <typeMapping name="enum">
+                    <modelNameSuffix></modelNameSuffix>
+                  </typeMapping>
+                </typeMappings>
               </configOptions>
 
               <additionalProperties>
@@ -215,7 +221,6 @@
             <configuration>
               <sources>
                 <source>${project.build.directory}/generated-sources/openapi/src/main/java</source>
-                <source>${project.build.directory}/generated-source/openapi/src/test</source>
               </sources>
             </configuration>
           </execution>

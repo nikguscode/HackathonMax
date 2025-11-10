@@ -16,4 +16,5 @@
   <include file="009-create-table-queue-entry-meta.sql" relativeToChangelogFile="true"/>
   <include file="010-recreate-table-user.sql" relativeToChangelogFile="true"/>
   <include file="011-alter-column-max-id.sql" relativeToChangelogFile="true"/>
+  <include file="012-alter-column-max-id.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>

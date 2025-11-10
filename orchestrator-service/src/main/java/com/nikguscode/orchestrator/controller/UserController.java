@@ -1,10 +1,16 @@
 package com.nikguscode.orchestrator.controller;
 
 import com.nikguscode.openapi.model.UserCreatingRequestDto;
+import com.nikguscode.openapi.model.UserResponseDto;
+import com.nikguscode.orchestrator.dao.organization.OrganizationDao;
+import com.nikguscode.orchestrator.dao.queueentry.QueueEntryDao;
 import com.nikguscode.orchestrator.dao.user.UserDao;
 import com.nikguscode.orchestrator.mapper.UserDtoMapper;
+import com.nikguscode.orchestrator.model.Organization;
+import com.nikguscode.orchestrator.model.QueueEntry;
 import com.nikguscode.orchestrator.model.User;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,24 +18,33 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/v1/api")
 public class UserController {
   private final UserDao userDao;
+  private final OrganizationDao organizationDao;
+  private final QueueEntryDao queueEntryDao;
   private final UserDtoMapper userDtoMapper;
 
   public UserController(
       @Qualifier("jooqUserDao") UserDao userDao,
+      @Qualifier("jooqOrganizationDao") OrganizationDao organizationDao,
+      @Qualifier("jooqQueueEntryDao") QueueEntryDao queueEntryDao,
       UserDtoMapper userDtoMapper) {
     this.userDao = userDao;
+    this.organizationDao = organizationDao;
+    this.queueEntryDao = queueEntryDao;
     this.userDtoMapper = userDtoMapper;
   }
 
   @GetMapping("/users/{maxId}")
-  public User getUser(@PathVariable Long maxId) {
-    System.out.println("voshel");
-    return userDao.findByMaxId(maxId).get();
+  public UserResponseDto getUser(@PathVariable Long maxId) {
+    List<Organization> organizations = organizationDao.findByMaxId(maxId);
+    List<QueueEntry> queueEntries = queueEntryDao.findByMaxId(maxId);
+    return userDtoMapper.entitiesToDto(organizations, queueEntries);
   }
 
   @PutMapping("/users/{maxId}")
