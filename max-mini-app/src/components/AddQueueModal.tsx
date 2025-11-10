@@ -5,12 +5,12 @@ interface AddQueueModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAddQueue: (queueName: string) => void;
-  orgId: string; // ID организации, для которой создается очередь
+  orgId: string;
 }
 
 const AddQueueModal: React.FC<AddQueueModalProps> = ({ isOpen, onClose, onAddQueue }) => {
   const [queueName, setQueueName] = useState('');
-  const [isAddingPressed, setIsAddingPressed] = useState(false); // Состояние для кнопки "Добавить очередь" в модалке
+  const [isAddingPressed, setIsAddingPressed] = useState(false);
 
   if (!isOpen) return null;
 
@@ -20,12 +20,11 @@ const AddQueueModal: React.FC<AddQueueModalProps> = ({ isOpen, onClose, onAddQue
   const handleAddQueue = () => {
     if (queueName.trim()) {
       onAddQueue(queueName.trim());
-      setQueueName(''); // Сброс поля после добавления
+      setQueueName('');
     }
   };
 
   return (
-    // Задний фон модального окна
     <Flex
       justify="center"
       align="center"
@@ -39,9 +38,8 @@ const AddQueueModal: React.FC<AddQueueModalProps> = ({ isOpen, onClose, onAddQue
         zIndex: 1000,
         padding: '20px',
       }}
-      onClick={onClose} // Закрыть модалку при клике на фон
+      onClick={onClose}
     >
-      {/* Контент модального окна */}
       <Flex
         direction="column"
         align="center"
@@ -54,7 +52,7 @@ const AddQueueModal: React.FC<AddQueueModalProps> = ({ isOpen, onClose, onAddQue
           boxShadow: defaultShadow,
           position: 'relative',
         }}
-        onClick={(e) => e.stopPropagation()} // Предотвратить закрытие при клике на сам контент
+        onClick={(e) => e.stopPropagation()}
       >
         <Typography.Title
           style={{
@@ -68,73 +66,45 @@ const AddQueueModal: React.FC<AddQueueModalProps> = ({ isOpen, onClose, onAddQue
           Создать новую очередь
         </Typography.Title>
 
-        {/* Поле для ввода названия очереди */}
         <input
           type="text"
           placeholder="Название очереди"
           value={queueName}
           onChange={(e) => setQueueName(e.target.value)}
           style={{
-            width: 'calc(100% - 32px)', // Ширина минус padding
-            padding: '12px 16px',
-            backgroundColor: '#F7F7F7', // Светло-серый фон
-            border: '0.3px solid rgba(0, 0, 0, 0.15)',
-            borderRadius: '16px', // Закругленные края как на карточках
-            fontSize: '15px',
-            color: '#333333',
-            marginBottom: '16px',
-            outline: 'none', // Убираем стандартную обводку при фокусе
-          }}
-        />
-
-        {/* Параметры очереди (заглушка) */}
-        {/* <Flex
-          direction="column"
-          justify="center"
-          align="center"
-          style={{
             width: 'calc(100% - 32px)',
-            padding: '16px',
+            padding: '12px 16px',
             backgroundColor: '#F7F7F7',
             border: '0.3px solid rgba(0, 0, 0, 0.15)',
             borderRadius: '16px',
-            boxShadow: defaultShadow,
-            marginBottom: '20px',
-            minHeight: '80px', // Для визуального соответствия
-            textAlign: 'center',
+            fontSize: '15px',
+            color: '#333333',
+            marginBottom: '16px',
+            outline: 'none',
           }}
-        >
-          <Typography.Body
-            style={{
-              fontSize: '14px',
-              color: '#666666',
-            }}
-          >
-            Какие-то параметры очереди, которые определим потом
-          </Typography.Body>
-        </Flex> */}
+        />
+
         <input
           type="text"
           placeholder="Какие-то параметры очереди, которые определим потом"
           value={queueName}
           onChange={(e) => setQueueName(e.target.value)}
           style={{
-            width: 'calc(100% - 32px)', // Ширина минус padding
+            width: 'calc(100% - 32px)', 
             padding: '12px 16px',
-            backgroundColor: '#F7F7F7', // Светло-серый фон
+            backgroundColor: '#F7F7F7',
             border: '0.3px solid rgba(0, 0, 0, 0.15)',
-            borderRadius: '16px', // Закругленные края как на карточках
+            borderRadius: '16px',
             fontSize: '15px',
             color: '#333333',
             marginBottom: '16px',
-            outline: 'none', // Убираем стандартную обводку при фокусе
+            outline: 'none', 
           }}
         />
 
-        {/* Кнопка "Добавить очередь" */}
         <Flex
           align="center"
-          justify="center" // Центрируем текст
+          justify="center" 
           onClick={handleAddQueue}
           onMouseDown={() => setIsAddingPressed(true)}
           onMouseUp={() => setIsAddingPressed(false)}
@@ -160,7 +130,7 @@ const AddQueueModal: React.FC<AddQueueModalProps> = ({ isOpen, onClose, onAddQue
               fontSize: '15px',
               fontWeight: 500,
               color: '#333333',
-              margin: '0', // Убираем margin: '0 auto' для Flex justify="center"
+              margin: '0',
             }}
           >
             Добавить очередь

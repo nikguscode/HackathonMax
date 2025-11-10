@@ -19,12 +19,11 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose, onAddUser 
   const handleAddClick = () => {
     if (userName.trim()) {
       onAddUser(userName.trim());
-      setUserName(''); // Сброс поля
+      setUserName('');
     }
   };
 
   return (
-    // Задний фон (Оверлей)
     <Flex
       justify="center"
       align="center"
@@ -40,7 +39,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose, onAddUser 
       }}
       onClick={onClose}
     >
-      {/* Контент модального окна */}
+
       <Flex
         direction="column"
         align="center"
@@ -67,7 +66,6 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose, onAddUser 
           Добавить пользователя
         </Typography.Title>
 
-        {/* Поле для ввода имени пользователя */}
         <input
           type="text"
           placeholder="Имя пользователя"
@@ -86,9 +84,6 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose, onAddUser 
           }}
         />
 
-        {/* Мы убрали второе поле "Параметры", так как нужно только имя */}
-
-        {/* Кнопка "Добавить пользователя" */}
         <Flex
           align="center"
           justify="center"

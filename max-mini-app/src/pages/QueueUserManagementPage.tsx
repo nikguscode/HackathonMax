@@ -42,17 +42,16 @@ const QueueUserManagementPage: React.FC = () => {
   const handleAddUserMouseLeave = () => {
     setisAddQueue(false);
   };
-
-
-  const handleAddUserSubmit = (userName: string) => {
-    const newUserId = `u${Date.now()}`;
-    const newUser: IQueueUser = {
-      id: newUserId,
-      name: userName, // Используем имя из модального окна
-    };
-    setUsers(prevUsers => [...prevUsers, newUser]);
-    setIsAddUserModalOpen(false); // Закрываем модалку
-  };
+  
+  const handleAddUserSubmit = (userName: string) => {
+    const newUserId = `u${Date.now()}`;
+    const newUser: IQueueUser = {
+      id: newUserId,
+      name: userName,
+    };
+    setUsers(prevUsers => [...prevUsers, newUser]);
+    setIsAddUserModalOpen(false); 
+  };
 
   const handleOpenAddUserModal = () => {
     setIsAddUserModalOpen(true);
@@ -72,15 +71,6 @@ const QueueUserManagementPage: React.FC = () => {
   const handleDeleteUser = (userId: string) => {
     setUsers(prevUsers => prevUsers.filter(user => user.id !== userId));
   };
-
-  // const handleAddUser = () => {
-  //   const newUserId = `u${Date.now()}`;
-  //   const newUser: IQueueUser = {
-  //     id: newUserId,
-  //     name: `Пользователь ${users.length + 1}`,
-  //   };
-  //   setUsers(prevUsers => [...prevUsers, newUser]);
-  // };
 
   const MAX_CONTENT_WIDTH = '300px';
   const HORIZONTAL_PADDING = '16px';

@@ -147,20 +147,6 @@ const HomePage: React.FC = () => {
               count: totalQueueMembers || orgQueues.length,
             });
           }
-
-          // if (org.amountOfQueues) {
-          //   org.queueEntries.forEach((entry: QueueEntry) => {
-          //     if (entry.id && entry.name && entry.status === 'active') {
-          //       if (!queues.find(q => q.id === entry.id)) {
-          //         queues.push({
-          //           id: entry.id,
-          //           name: entry.name,
-          //           count: entry.peopleInFront || 0,
-          //         });
-          //       }
-          //     }
-          //   });
-          // }
         }
 
         setModeratorOrgs(organizations);
@@ -193,53 +179,53 @@ const HomePage: React.FC = () => {
     loadUserData();
   }, []);
 
-  if (loading) {
-    return (
-      <Container style={{ 
-        backgroundColor: '#FFFFFF',
-        minHeight: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-      }}>
-        <div>Загрузка...</div>
-      </Container>
-    );
-  }
+  if (loading) {
+    return (
+      <Container style={{ 
+        backgroundColor: '#FFFFFF',
+        minHeight: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}>
+        <div>Загрузка...</div>
+      </Container>
+    );
+  }
 
-  if (error) {
-    return (
-      <Container style={{ 
-        backgroundColor: '#FFFFFF',
-        minHeight: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: '20px'
-      }}>
-        <div style={{ color: '#DC3545', textAlign: 'center' }}>
-          {error}
-        </div>
-      </Container>
-    );
-  }
+  if (error) {
+    return (
+      <Container style={{ 
+        backgroundColor: '#FFFFFF',
+        minHeight: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: '20px'
+      }}>
+        <div style={{ color: '#DC3545', textAlign: 'center' }}>
+          {error}
+        </div>
+      </Container>
+    );
+  }
 
-  return (
-    <Container style={{ 
-      backgroundColor: '#FFFFFF',
-      minHeight: '100vh'
-    }}>
-      <Flex justify="center" align="center" gap={ 0 } style={{  }}>
-        <img 
-          src={logo} 
-          alt="Logo" 
-          style={{ 
-            maxWidth: '300px', 
-            height: 'auto',
-            objectFit: 'contain'
-          }} 
-        />
-      </Flex>
+  return (
+  <Container style={{ 
+    backgroundColor: '#FFFFFF',
+    minHeight: '100vh'
+  }}>
+    <Flex justify="center" align="center" gap={ 0 } style={{  }}>
+      <img 
+        src={logo} 
+        alt="Logo" 
+        style={{ 
+          maxWidth: '300px', 
+          height: 'auto',
+          objectFit: 'contain'
+        }} 
+      />
+    </Flex>
 
       <Flex direction="column" align="center" style={{ width: '100%', maxWidth: '300px', margin: '0 auto', padding: '20px 16px' }}>
         <div style={{ width: '300px' }}>
@@ -258,30 +244,30 @@ const HomePage: React.FC = () => {
             </div>
           )}
 
-          {userQueues.length > 0 && (
-            <div>
-              <Flex direction="column" align="center">
-              {userQueues.map((queue: IQueue) => (
-                <QueueCard
-                  key={queue.id}
-                  name={queue.name}
-                  count={queue.count}
-                  queueId={queue.id}
-                />
-              ))}
-              </Flex>
-            </div>
-          )}
-        </div>
-      </Flex>
-    </Container>
-  );
+          {userQueues.length > 0 && (
+            <div>
+              <Flex direction="column" align="center">
+                {userQueues.map((queue: IQueue) => (
+                  <QueueCard
+                  key={queue.id}
+                  name={queue.name}
+                  count={queue.count}
+                  queueId={queue.id}
+                  />
+                  ))}
+                  </Flex>
+              </div>
+            )}
+          </div>
+        </Flex>
+      </Container>
+    );
 };
 
 function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
+  return (
+    <BrowserRouter>
+      <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/queue/:id" element={<QueueDetailsPage />} />
         <Route path="/managment/:id" element={<QueueManagmentPage />} />
@@ -290,9 +276,9 @@ function App() {
         <Route path="/organization/:id" element={<OrganizationDetailsPage />} />
         <Route path="/moderator-queue/:id" element={<ModeratorQueueDetailsPage />} />
         <Route path="*" element={<div>404 | Страница не найдена</div>} />
-      </Routes>
-    </BrowserRouter>
-  );
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;
