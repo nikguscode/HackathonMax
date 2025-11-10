@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Flex, Typography } from '@maxhub/max-ui';
-import { SimpleQueue } from '../api';
 
 interface QueueCardProps {
   'id'?: string;

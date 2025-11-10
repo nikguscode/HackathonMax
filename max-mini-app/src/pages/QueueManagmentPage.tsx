@@ -3,8 +3,7 @@ import { Container, Flex } from '@maxhub/max-ui';
 import { useParams } from 'react-router-dom';
 import logo from '/logo.jpg'; 
 import QueueManagmentButton from '../components/QueueManagmentButton';
-import { OrganizationQueuesResponse } from '../api';
-import { OrganizationsApi, Configuration, SimpleQueue, Organization } from '../api';
+import { OrganizationsApi, Configuration, SimpleQueue } from '../api';
 
 
 const createApiConfiguration = (): Configuration => {

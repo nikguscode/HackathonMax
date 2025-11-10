@@ -10,9 +10,8 @@ import QueueUserManagementPage from './pages/QueueUserManagementPage.tsx';
 import ModeratorDashboardPage from './pages/ModeratorDashboardPage.tsx';
 import OrganizationDetailsPage from './pages/OrganizationDetailsPage.tsx';
 import ModeratorQueueDetailsPage from './pages/ModeratorQueueDetailsPage.tsx';
-import { UsersApi, Configuration, OrganizationsApi } from './api';
+import { UsersApi, Configuration } from './api';
 import logo from '/logo.jpg';
-import Logo from './components/Logo.tsx';
 
 const getMaxId = (): string | null => {
   const urlParams = new URLSearchParams(window.location.search);
