@@ -30,9 +30,9 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ name, amountOfQueue
     if (onClick) {
       onClick();
     } else {
-      if (role == 'EMPLOYEE'){
+      if (role === 'EMPLOYEE'){
         navigate(`/managment/${id}`);
-      } else {
+      } else if (role === 'MODERATOR'){
         navigate(`/moderator`);
       }
     }
