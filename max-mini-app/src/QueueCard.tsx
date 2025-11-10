@@ -3,13 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { Flex, Typography } from '@maxhub/max-ui';
 
 interface QueueCardProps {
-  name: string;
-  count: number;
-  queueId: string;
+  'id'?: string;
+  'name'?: string;
+  'peopleInFront'?: number;
   onClick?: () => void;
 }
 
-const QueueCard: React.FC<QueueCardProps> = ({ name, count, queueId, onClick }) => {
+const QueueCard: React.FC<QueueCardProps> = ({ name, peopleInFront, id, onClick }) => {
   const navigate = useNavigate();
   const [isPressed, setIsPressed] = useState(false);
 
@@ -29,7 +29,7 @@ const QueueCard: React.FC<QueueCardProps> = ({ name, count, queueId, onClick }) 
     if (onClick) {
       onClick();
     } else {
-      navigate(`/queue/${queueId}`);
+      navigate(`/queue/${id}`);
     }
   };
 
@@ -90,7 +90,7 @@ const QueueCard: React.FC<QueueCardProps> = ({ name, count, queueId, onClick }) 
           boxShadow: '0 2px 4px #6A5ACD', 
         }}
       >
-        {count}
+        {peopleInFront}
       </div>
     </Flex>
   );
