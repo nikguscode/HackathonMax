@@ -222,7 +222,7 @@ const QueueDetailsPage: React.FC = () => {
             onTouchEnd={handleExitQueueMouseUp}
             onTouchCancel={handleExitQueueMouseLeave}
             style={{
-              width: '20%',
+              width: 'auto',
               minWidth: '300px',
               padding: '12px 16px',
               backgroundColor: '#aa1818ff',
