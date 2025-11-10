@@ -111,7 +111,7 @@ const QueueUserManagementPage: React.FC = () => {
           paddingBottom: '100px',
         }}
       >
-        <Flex direction="column" align="center" style={{ width: '100%', gap: '12px', marginBottom: '12px' }}>
+        <Flex direction="column" align="center" style={{ width: '100%', gap: '16px', marginBottom: '12px'  }}>
           {users.map((user) => (
             <Panel
               key={user.id}
@@ -142,8 +142,12 @@ const QueueUserManagementPage: React.FC = () => {
                       fontWeight: 500,
                       color: '#333333',
                       margin: 0,
-                      flexShrink: 1,
-                      minWidth: 0,
+                      flexGrow: 1,           
+                      flexShrink: 1,           
+                      minWidth: 0,             
+                      overflow: 'hidden',      
+                      whiteSpace: 'nowrap',    
+                      textOverflow: 'ellipsis',
                       textAlign: 'left',
                     }}
                   >
@@ -165,7 +169,7 @@ const QueueUserManagementPage: React.FC = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0,
-                  marginLeft: '70%',
+                  marginLeft: '2%',
                 }}
               >
                 <svg

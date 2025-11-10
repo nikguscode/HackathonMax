@@ -52,7 +52,7 @@ const QueueCard: React.FC<QueueCardProps> = ({ name, peopleInFront, id, onClick 
         width: '100%',
         padding: '12px 16px',
         backgroundColor: '#FFFFFF',
-        borderRadius: '50px',
+        borderRadius: '16px',
         border: '0.3px solid rgba(0, 0, 0, 0.15)',
         boxShadow: isPressed ? pressedShadow : defaultShadow,
         cursor: onClick ? 'pointer' : 'default',

@@ -11,7 +11,6 @@ import ModeratorDashboardPage from './pages/ModeratorDashboardPage.tsx';
 import OrganizationDetailsPage from './pages/OrganizationDetailsPage.tsx';
 import ModeratorQueueDetailsPage from './pages/ModeratorQueueDetailsPage.tsx';
 import { UsersApi, Configuration } from './api';
-
 import logo from '/logo.jpg';
 
 const getMaxId = (): string | null => {

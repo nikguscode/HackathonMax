@@ -52,7 +52,7 @@ const QueueManagmentButton: React.FC<QueueCardProps> = ({ name, queueId, onClick
         padding: '12px 16px',
         backgroundColor: '#FFFFFF',
         border: '0.3px solid rgba(0, 0, 0, 0.15)',
-        borderRadius: '0px',
+        borderRadius: '16px',
         boxShadow: isPressed ? pressedShadow : defaultShadow,
         cursor: 'pointer',
         marginBottom: '12px',

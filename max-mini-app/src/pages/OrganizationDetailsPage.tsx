@@ -86,7 +86,7 @@ const OrganizationDetailsPage: React.FC = () => {
           style={{
             width: '100%',
             padding: '16px',
-            borderRadius: '12px',
+            borderRadius: '0px',
             backgroundColor: '#F0F0F0',
             textAlign: 'center',
           }}
@@ -110,7 +110,7 @@ const OrganizationDetailsPage: React.FC = () => {
           style={{
             width: '100%',
             padding: '16px',
-            borderRadius: '12px',
+            borderRadius: '0px',
             backgroundColor: '#F0F0F0',
             textAlign: 'center',
             minHeight: '200px',
@@ -164,7 +164,7 @@ const OrganizationDetailsPage: React.FC = () => {
           style={{
             width: '100%',
             padding: '16px',
-            borderRadius: '12px',
+            borderRadius: '0px',
             backgroundColor: '#F0F0F0',
             textAlign: 'center',
           }}
