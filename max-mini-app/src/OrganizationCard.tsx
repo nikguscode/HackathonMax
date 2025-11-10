@@ -10,7 +10,7 @@ interface OrganizationCardProps {
   onClick?: () => void;
 }
 
-const OrganizationCard: React.FC<OrganizationCardProps> = ({ name, amountOfQueues, id, onClick }) => {
+const OrganizationCard: React.FC<OrganizationCardProps> = ({ name, amountOfQueues, id, role, onClick }) => {
   const [isPressed, setIsPressed] = useState(false);
   const navigate = useNavigate();
 
@@ -30,7 +30,11 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ name, amountOfQueue
     if (onClick) {
       onClick();
     } else {
-      navigate(`/managment/${id}`);
+      if (role === 'EMPLOYEE'){
+        navigate(`/managment/${id}`);
+      } else if (role === 'MODERATOR'){
+        navigate(`/moderator`);
+      }
     }
   };
 

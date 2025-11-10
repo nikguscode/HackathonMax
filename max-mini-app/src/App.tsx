@@ -11,7 +11,6 @@ import ModeratorDashboardPage from './pages/ModeratorDashboardPage.tsx';
 import OrganizationDetailsPage from './pages/OrganizationDetailsPage.tsx';
 import ModeratorQueueDetailsPage from './pages/ModeratorQueueDetailsPage.tsx';
 import { UsersApi, Configuration } from './api';
-
 import logo from '/logo.jpg';
 
 const getMaxId = (): string | null => {
@@ -29,7 +28,7 @@ const getMaxId = (): string | null => {
 };
 
 const createApiConfiguration = (): Configuration => {
-  const basePath = import.meta.env.VITE_API_BASE_PATH || 'http://localhost:8080';
+  const basePath = import.meta.env.VITE_API_BASE_PATH || 'http://v1/localhost:8080';
   return new Configuration({
     basePath,
   });
@@ -206,6 +205,7 @@ const HomePage: React.FC = () => {
                     key={org.id}
                     name={org.name}
                     amountOfQueues={org.amountOfQueues}
+                    role={org.role}
                     id={org.id}
                   />
                 ))}

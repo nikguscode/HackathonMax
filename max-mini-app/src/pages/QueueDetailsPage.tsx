@@ -34,10 +34,12 @@ const InfoCard: React.FC<InfoCardProps> = ({ label, value }) => {
     <Panel
       mode="secondary"
       style={{
-        width: '100%',
+        minWidth: '300px',
+        maxWidth: '300px',
         padding: '16px',
         borderRadius: '12px',
         marginBottom: '12px',
+        
         backgroundColor: '#F0F0F0',
       }}
     >
