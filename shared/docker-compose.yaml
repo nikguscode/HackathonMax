@@ -13,6 +13,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     profiles:
+      - api-only
       - dev
       - local
       - docker
@@ -29,6 +30,7 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     profiles:
+      - api-only
       - dev
       - local
       - docker
@@ -39,6 +41,11 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    profiles:
+      - api-only
+      - dev
+      - local
+      - docker
 
   pgadmin:
     image: dpage/pgadmin4:8.13
@@ -55,8 +62,9 @@ services:
     depends_on:
       - db
     profiles:
+      - api-only
       - dev
-      - docker
+      - local
 
   api:
     container_name: api
@@ -71,8 +79,37 @@ services:
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
     ports:
-      - "8081:8081"
+      - "8080:8080"
     profiles:
+      - api-only
+      - local
+      - docker
+
+  frontend:
+    build:
+      context: ../max-mini-app
+      args:
+        VITE_API_BASE_PATH: ${VITE_API_BASE_PATH:-/api}
+        VITE_MAX_ID: ${VITE_MAX_ID:-1}
+    expose:
+      - "80"
+    profiles:
+      - dev
+      - local
+      - docker
+
+  caddy:
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    profiles:
+      - dev
+      - local
       - docker
 
 volumes:
@@ -80,3 +117,5 @@ volumes:
   rabbitmq_data:
   redis_data:
   pgadmin_data:
+  caddy_data:
+  caddy_config:
