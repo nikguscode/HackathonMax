@@ -1,37 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Container, Flex, Button, Typography, Panel } from '@maxhub/max-ui';
-import type { IQueueUser } from '../types';
 import AddUserModal from '../components/AddUserModal';
 import Logo from '../components/Logo';
+import { SimpleMember, QueuesApi, Configuration } from '../api'
 
-const getMockQueueUsers = (queueId: string): IQueueUser[] => {
-  if (queueId === 'q1') {
-    return [
-      { id: 'u1', name: 'Пользователь 1' },
-      { id: 'u2', name: 'Пользователь 2' },
-      { id: 'u3', name: 'Пользователь 3' },
-      { id: 'u4', name: 'Пользователь 4' },
-      { id: 'u5', name: 'Пользователь 5' },
-      { id: 'u6', name: 'Пользователь 6' },
-      { id: 'u7', name: 'Пользователь 7' },
-      { id: 'u8', name: 'Пользователь 8' },
-    ];
-  }
-  return [
-    { id: 'u1', name: 'Пользователь 1' },
-    { id: 'u2', name: 'Пользователь 2' },
-  ];
+
+const createApiConfiguration = (): Configuration => {
+  const basePath = import.meta.env.VITE_API_BASE_PATH || 'http://localhost:8080/v1/api';
+  return new Configuration({
+    basePath,
+  });
 };
 
 const QueueUserManagementPage: React.FC = () => {
   const { id: queueId } = useParams<{ id: string }>();
-  const [users, setUsers] = useState<IQueueUser[]>(() => {
-    if (!queueId) return [];
-    return getMockQueueUsers(queueId);
-  });
+  const [users, setUsers] = useState<SimpleMember[]>([]);
   const [isAddQueue, setisAddQueue] = useState(false);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+
+  
   const handleAddUserMouseDown = () => {
     setisAddQueue(true);
   };
@@ -46,9 +34,9 @@ const QueueUserManagementPage: React.FC = () => {
   
   const handleAddUserSubmit = (userName: string) => {
     const newUserId = `u${Date.now()}`;
-    const newUser: IQueueUser = {
-      id: newUserId,
-      name: userName,
+    const newUser: SimpleMember = {
+      maxId: newUserId,
+      username: userName,
     };
     setUsers(prevUsers => [...prevUsers, newUser]);
     setIsAddUserModalOpen(false); 
@@ -69,10 +57,26 @@ const QueueUserManagementPage: React.FC = () => {
   const defaultShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
 
-  const handleDeleteUser = (userId: string) => {
-    setUsers(prevUsers => prevUsers.filter(user => user.id !== userId));
+  const handleDeleteUser = (userId?: string) => {
+    setUsers(prevUsers => prevUsers.filter(user => user.maxId !== userId));
   };
 
+  useEffect(() => { 
+    const config = createApiConfiguration();
+    const queueApi = new QueuesApi(config);
+
+    queueApi.getQueueMembers(queueId)
+      .then(res => {
+      const members: SimpleMember[] = (res.data.members || []).map(
+        q=> ({
+            maxId: q.maxId || '',
+            username: q.username || '',
+            entryId: q.enryId,
+        }));
+        setUsers(members);
+    }) 
+    .catch(console.error);
+  }, [queueId])
   const MAX_CONTENT_WIDTH = '300px';
   const HORIZONTAL_PADDING = '16px';
 
@@ -105,7 +109,7 @@ const QueueUserManagementPage: React.FC = () => {
         <Flex direction="column" align="center" style={{ width: '100%', gap: '16px', marginBottom: '12px'  }}>
           {users.map((user) => (
             <Panel
-              key={user.id}
+              key={user.maxId}
               mode="secondary"
               style={{
                 width: '100%',
@@ -142,12 +146,12 @@ const QueueUserManagementPage: React.FC = () => {
                       textAlign: 'left',
                     }}
                   >
-                    {user.name}
+                    {user.username}
                   </Typography.Title>
                 
               <Button
                 mode="primary"
-                onClick={() => handleDeleteUser(user.id)}
+                onClick={() => handleDeleteUser(user.maxId)}
                 style={{
                   minWidth: '24px',
                   width: '24px',

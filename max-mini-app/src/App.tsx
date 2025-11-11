@@ -82,14 +82,6 @@ const HomePage: React.FC = () => {
 
         const organizationsList = userResponse.organizations || [];
         const queueList = userResponse['queue-entries'] || [];
-        
-        if (organizationsList.length === 0) {
-          console.log('Список организаций пуст');
-          setModeratorOrgs([]);
-          setUserQueues([]);
-          setLoading(false);
-          return;
-        }
 
         const adminOrgs: Organization[] = [];
         const queues: QueueEntry[] = [];
