@@ -121,6 +121,7 @@ export interface QueueSettingsResponse {
 export interface SimpleMember {
     'maxId'?: string;
     'username'?: string;
+    'enryId'?: string;
 }
 export interface SimpleOrganization {
     'id'?: string;
