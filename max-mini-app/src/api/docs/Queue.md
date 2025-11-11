@@ -1,19 +1,21 @@
-# QueueMembersResponse
+# Queue
 
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**members** | [**Array&lt;QueueMember&gt;**](QueueMember.md) |  | [optional] [default to undefined]
+**id** | **string** |  | [optional] [default to undefined]
+**name** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
 ```typescript
-import { QueueMembersResponse } from './api';
+import { Queue } from './api';
 
-const instance: QueueMembersResponse = {
-    members,
+const instance: Queue = {
+    id,
+    name,
 };
 ```
 
