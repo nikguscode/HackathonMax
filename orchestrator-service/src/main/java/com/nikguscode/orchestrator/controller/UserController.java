@@ -4,10 +4,10 @@ import com.nikguscode.openapi.model.UserCreatingRequestDto;
 import com.nikguscode.openapi.model.UserResponseDto;
 import com.nikguscode.orchestrator.dao.organization.OrganizationDao;
 import com.nikguscode.orchestrator.dao.queueentry.QueueEntryDao;
+import com.nikguscode.orchestrator.dao.result.OrganizationRecord;
+import com.nikguscode.orchestrator.dao.result.QueueEntryActiveRecord;
 import com.nikguscode.orchestrator.dao.user.UserDao;
 import com.nikguscode.orchestrator.mapper.UserDtoMapper;
-import com.nikguscode.orchestrator.model.Organization;
-import com.nikguscode.orchestrator.model.QueueEntry;
 import com.nikguscode.orchestrator.model.User;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -42,9 +42,9 @@ public class UserController {
 
   @GetMapping("/users/{maxId}")
   public UserResponseDto getUser(@PathVariable Long maxId) {
-    List<Organization> organizations = organizationDao.findByMaxId(maxId);
-    List<QueueEntry> queueEntries = queueEntryDao.findByMaxId(maxId);
-    return userDtoMapper.entitiesToDto(organizations, queueEntries);
+    List<OrganizationRecord> organizations = organizationDao.findByMaxId(maxId);
+    List<QueueEntryActiveRecord> queueEntries = queueEntryDao.findActiveByMaxId(maxId);
+    return userDtoMapper.dtoToResponse(organizations, queueEntries);
   }
 
   @PutMapping("/users/{maxId}")

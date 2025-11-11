@@ -1,17 +1,17 @@
-package com.nikguscode.orchestrator.model;
+package com.nikguscode.orchestrator.dao.result;
 
 import com.nikguscode.openapi.model.QueueEntryStatusDto;
 import java.util.UUID;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 
-@Builder
+@AllArgsConstructor
 @Getter
 @ToString
-public class QueueEntry {
+public class QueueEntryActiveRecord {
   private final UUID id;
-  private final UUID queueId;
-  private final Long maxId;
+  private final String name;
+  private final Integer peopleInFront;
   private final QueueEntryStatusDto status;
 }

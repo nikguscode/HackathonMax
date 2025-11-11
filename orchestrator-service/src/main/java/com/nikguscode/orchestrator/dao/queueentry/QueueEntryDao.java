@@ -1,11 +1,11 @@
 package com.nikguscode.orchestrator.dao.queueentry;
 
-import com.nikguscode.orchestrator.model.QueueEntry;
+import com.nikguscode.orchestrator.dao.result.QueueEntryActiveRecord;
 import java.util.List;
 import java.util.UUID;
 
 public interface QueueEntryDao {
-  List<QueueEntry> findByMaxId(Long maxId);
+  List<QueueEntryActiveRecord> findActiveByMaxId(Long maxId);
 
   void delete(UUID entryId);
 }

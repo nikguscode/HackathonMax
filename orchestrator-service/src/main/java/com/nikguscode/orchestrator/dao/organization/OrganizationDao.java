@@ -1,8 +1,8 @@
 package com.nikguscode.orchestrator.dao.organization;
 
-import com.nikguscode.orchestrator.model.Organization;
+import com.nikguscode.orchestrator.dao.result.OrganizationRecord;
 import java.util.List;
 
 public interface OrganizationDao {
-  List<Organization> findByMaxId(Long maxId);
+  List<OrganizationRecord> findByMaxId(Long maxId);
 }

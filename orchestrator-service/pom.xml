@@ -1,39 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.7</version>
-		<relativePath/>
-	</parent>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.5.7</version>
+    <relativePath/>
+  </parent>
 
-	<groupId>com.nikguscode</groupId>
-	<artifactId>orchestrator-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>orchestrator-service</name>
-	<description>Orchestrator service for MaxQueue</description>
+  <groupId>com.nikguscode</groupId>
+  <artifactId>orchestrator-service</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>orchestrator-service</name>
+  <description>Orchestrator service for MaxQueue</description>
 
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
+  <url/>
+  <licenses>
+    <license/>
+  </licenses>
 
-	<developers>
-		<developer/>
-	</developers>
+  <developers>
+    <developer/>
+  </developers>
 
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
+  <scm>
+    <connection/>
+    <developerConnection/>
+    <tag/>
+    <url/>
+  </scm>
 
-	<properties>
-		<java.version>21</java.version>
+  <properties>
+    <java.version>21</java.version>
     <liquibase-core.version>4.33.0</liquibase-core.version>
     <lombok.version>1.18.36</lombok.version>
     <mapstruct.version>1.6.3</mapstruct.version>
@@ -45,15 +46,15 @@
     <!-- Configuration variables -->
     <jooq.codegen.jdbc.username>postgres</jooq.codegen.jdbc.username>
     <jooq.codegen.jdbc.password>postgres</jooq.codegen.jdbc.password>
-	</properties>
+  </properties>
 
-	<dependencies>
+  <dependencies>
 
     <!-- Spring Starters -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -123,7 +124,7 @@
       <artifactId>jackson-databind-nullable</artifactId>
       <version>0.2.6</version>
     </dependency>
-	</dependencies>
+  </dependencies>
 
   <build>
     <plugins>
@@ -185,7 +186,7 @@
 
                 <typeMappings>
                   <typeMapping name="enum">
-                    <modelNameSuffix></modelNameSuffix>
+                    <modelNameSuffix/>
                   </typeMapping>
                 </typeMappings>
               </configOptions>
@@ -193,10 +194,10 @@
               <additionalProperties>
                 <useSpringBoot3>true</useSpringBoot3>
                 <library>spring-boot</library>
-
-                <generateApiTests>false</generateApiTests>
-                <generateModelTests>false</generateModelTests>
               </additionalProperties>
+
+              <generateModelTests>false</generateModelTests>
+              <generateApiTests>false</generateApiTests>
 
               <globalProperties>
                 <models/>
@@ -247,12 +248,13 @@
         <executions>
           <execution>
             <id>delete-generated-test-sources</id>
-            <phase>generate-sources</phase> <goals>
-            <goal>run</goal>
-          </goals>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
             <configuration>
               <target>
-                <delete dir="${project.build.directory}/generated-sources/openapi/src/test" />
+                <delete dir="${project.build.directory}/generated-sources/openapi/src/test"/>
               </target>
             </configuration>
           </execution>
