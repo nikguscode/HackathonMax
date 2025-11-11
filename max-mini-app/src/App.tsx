@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Container, Flex } from "@maxhub/max-ui";
 import OrganizationCard from "./OrganizationCard.tsx";
 import QueueCard from "./QueueCard.tsx";
-import type { Organization, QueueEntryInUserResponse  } from "./api";
+import type { Organization, QueueEntryInUserResponse } from "./api";
 import QueueDetailsPage from "./pages/QueueDetailsPage.tsx";
 import QueueManagmentPage from "./pages/QueueManagmentPage.tsx";
 import QueueUserManagementPage from "./pages/QueueUserManagementPage.tsx";
@@ -24,7 +24,7 @@ const getMaxId = (): string | null => {
   if (maxIdFromEnv) {
     return maxIdFromEnv;
   }
-  return "1";
+  return "4";
 };
 
 const createApiConfiguration = (): Configuration => {
@@ -84,7 +84,7 @@ const HomePage: React.FC = () => {
         const queueList = userResponse["queue-entries"] || [];
 
         const adminOrgs: Organization[] = [];
-        const queues: QueueEntryInUserResponse [] = [];
+        const queues: QueueEntryInUserResponse[] = [];
 
         for (const org of organizationsList) {
           if (!org.id || !org.name || !org.role) continue;
@@ -218,7 +218,7 @@ const HomePage: React.FC = () => {
           {userQueues.length > 0 && (
             <div>
               <Flex direction="column" align="center">
-                {userQueues.map((queue: QueueEntryInUserResponse ) => (
+                {userQueues.map((queue: QueueEntryInUserResponse) => (
                   <QueueCard
                     key={queue.id}
                     name={queue.name}

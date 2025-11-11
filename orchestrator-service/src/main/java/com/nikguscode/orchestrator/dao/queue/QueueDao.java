@@ -6,4 +6,6 @@ import java.util.UUID;
 
 public interface QueueDao {
   List<Queue> findByOrganizationId(UUID organizationId);
+
+//  List<>
 }

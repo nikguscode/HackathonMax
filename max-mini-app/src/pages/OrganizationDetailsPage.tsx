@@ -14,7 +14,7 @@ const createApiConfiguration = (): Configuration => {
 
 const OrganizationDetailsPage: React.FC = () => {
   const { id: orgId } = useParams<{ id: string }>();
-  const [organizationName, setOrganizationName] = useState<string>();
+  const [organizationName, setOrganizationName] = useState<string>(orgId ?? '');
 
   const MAX_CONTENT_WIDTH = '300px';
   const HORIZONTAL_PADDING = '16px';
