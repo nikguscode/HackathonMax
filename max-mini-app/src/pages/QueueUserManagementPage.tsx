@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Container, Flex, Button, Typography, Panel } from '@maxhub/max-ui';
 import AddUserModal from '../components/AddUserModal';
 import Logo from '../components/Logo';
-import { SimpleMember, QueuesApi, Configuration } from '../api'
+import { QueueMember, QueuesApi, Configuration, QueueEntriesApi } from '../api'
 
 
 const createApiConfiguration = (): Configuration => {
@@ -15,7 +15,7 @@ const createApiConfiguration = (): Configuration => {
 
 const QueueUserManagementPage: React.FC = () => {
   const { id: queueId } = useParams<{ id: string }>();
-  const [users, setUsers] = useState<SimpleMember[]>([]);
+  const [users, setUsers] = useState<QueueMember[]>([]);
   const [isAddQueue, setisAddQueue] = useState(false);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
 
@@ -34,7 +34,7 @@ const QueueUserManagementPage: React.FC = () => {
   
   const handleAddUserSubmit = (userName: string) => {
     const newUserId = `u${Date.now()}`;
-    const newUser: SimpleMember = {
+    const newUser: QueueMember = {
       maxId: newUserId,
       username: userName,
     };
@@ -57,8 +57,26 @@ const QueueUserManagementPage: React.FC = () => {
   const defaultShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
 
-  const handleDeleteUser = (userId?: string) => {
-    setUsers(prevUsers => prevUsers.filter(user => user.maxId !== userId));
+  const handleDeleteUser = async (entryId: string) => {
+    if (!entryId) {
+      console.warn('⚠️ entryId is undefined — пропускаем удаление');
+      return;
+    }
+    try {
+      console.log('🟡 Отправляем запрос на удаление:', entryId);
+
+      const config = createApiConfiguration();
+      const queueEntriesApi = new QueueEntriesApi(config);
+
+      await queueEntriesApi.deleteQueueEntry(entryId);
+
+      setUsers(prevUsers => prevUsers.filter(user => user.queueEntryId!== entryId));
+
+      console.log('✅ Пользователь удалён локально:', entryId);
+    } catch (err){
+      console.error('Ошибка при удалении пользователя:', err);
+    }
+    
   };
 
   useEffect(() => { 
@@ -67,11 +85,11 @@ const QueueUserManagementPage: React.FC = () => {
 
     queueApi.getQueueMembers(queueId)
       .then(res => {
-      const members: SimpleMember[] = (res.data.members || []).map(
+      const members: QueueMember[] = (res.data.members || []).map(
         q=> ({
             maxId: q.maxId || '',
             username: q.username || '',
-            entryId: q.enryId,
+            entryId: q.queueEntryId,
         }));
         setUsers(members);
     }) 
@@ -151,7 +169,11 @@ const QueueUserManagementPage: React.FC = () => {
                 
               <Button
                 mode="primary"
-                onClick={() => handleDeleteUser(user.maxId)}
+                onClick={() => {
+                      if (user.queueEntryId) {
+                        handleDeleteUser(user.queueEntryId);
+                      }
+                    }}
                 style={{
                   minWidth: '24px',
                   width: '24px',

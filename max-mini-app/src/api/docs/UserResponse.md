@@ -6,7 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **organizations** | [**Array&lt;Organization&gt;**](Organization.md) |  | [optional] [default to undefined]
-**queue_entries** | [**Array&lt;QueueEntry&gt;**](QueueEntry.md) |  | [optional] [default to undefined]
+**queue_entries** | [**Array&lt;QueueEntryInUserResponse&gt;**](QueueEntryInUserResponse.md) |  | [optional] [default to undefined]
 
 ## Example
 

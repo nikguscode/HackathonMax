@@ -23,11 +23,6 @@ import type { RequestArgs } from './base';
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError, operationServerMap } from './base';
 
-export interface BaseQueueResponse {
-    'organization'?: SimpleOrganization;
-    'queue'?: SimpleQueue;
-}
-
 export interface Organization {
     'id'?: string;
     'name'?: string;
@@ -50,7 +45,6 @@ export interface OrganizationMetricsResponse {
 export interface OrganizationQueuesResponse {
     'queues'?: Array<SimpleQueue>;
 }
-
 export interface OrganizationSettings {
     'id'?: string;
     'name'?: string;
@@ -62,22 +56,30 @@ export interface OrganizationSettings {
 export interface OrganizationSettingsResponse {
     'organization'?: OrganizationSettings;
 }
-export interface QueueCreatingRequest {
-    'maxId'?: string;
-    'queueId'?: string;
+export interface Queue {
+    'id'?: string;
+    'name'?: string;
 }
-export interface QueueEntry {
+export interface QueueEntryCreatingRequest {
+    'maxId': number;
+    'queueId': string;
+}
+
+export interface QueueEntryInUserResponse {
     'id'?: string;
     'name'?: string;
     'peopleInFront'?: number;
     'status'?: QueueEntryStatus;
 }
 
-
-export interface QueueEntryCreatingRequest {
-    'maxId': number;
-    'queueId': string;
+export interface QueueEntryResponse {
+    'name'?: string;
+    'login'?: string;
+    'peopleInFront'?: number;
+    'status'?: QueueEntryStatus;
 }
+
+
 /**
  * Status of queue entry
  */
@@ -93,8 +95,13 @@ export const QueueEntryStatus = {
 export type QueueEntryStatus = typeof QueueEntryStatus[keyof typeof QueueEntryStatus];
 
 
+export interface QueueMember {
+    'maxId'?: string;
+    'queueEntryId'?: string;
+    'username'?: string;
+}
 export interface QueueMembersResponse {
-    'members'?: Array<SimpleMember>;
+    'members'?: Array<QueueMember>;
 }
 export interface QueueMetrics {
     'waitingTime'?: number;
@@ -110,6 +117,9 @@ export interface QueueMetrics {
 export interface QueueMetricsResponse {
     'metrics'?: QueueMetrics;
 }
+export interface QueueResponse {
+    'queues'?: Array<Queue>;
+}
 export interface QueueSettings {
     'arrivalGracePeriod'?: number;
     'maxQueueSize'?: number;
@@ -117,11 +127,6 @@ export interface QueueSettings {
 }
 export interface QueueSettingsResponse {
     'settings'?: QueueSettings;
-}
-export interface SimpleMember {
-    'maxId'?: string;
-    'username'?: string;
-    'enryId'?: string;
 }
 export interface SimpleOrganization {
     'id'?: string;
@@ -139,7 +144,7 @@ export interface UserCreatingRequest {
 }
 export interface UserResponse {
     'organizations'?: Array<Organization>;
-    'queue-entries'?: Array<QueueEntry>;
+    'queue-entries'?: Array<QueueEntryInUserResponse>;
 }
 /**
  * Role of user
@@ -304,7 +309,7 @@ export const OrganizationsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getOrganizationQueues(organizationId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrganizationQueuesResponse>> {
+        async getOrganizationQueues(organizationId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QueueResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getOrganizationQueues(organizationId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['OrganizationsApi.getOrganizationQueues']?.[localVarOperationServerIndex]?.url;
@@ -349,7 +354,7 @@ export const OrganizationsApiFactory = function (configuration?: Configuration, 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getOrganizationQueues(organizationId: string, options?: RawAxiosRequestConfig): AxiosPromise<OrganizationQueuesResponse> {
+        getOrganizationQueues(organizationId: string, options?: RawAxiosRequestConfig): AxiosPromise<QueueResponse> {
             return localVarFp.getOrganizationQueues(organizationId, options).then((request) => request(axios, basePath));
         },
         /**
@@ -478,6 +483,40 @@ export const QueueEntriesApiAxiosParamCreator = function (configuration?: Config
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @summary Get queue entry
+         * @param {string} entryId Queue Entry id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getQueueEntry: async (entryId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'entryId' is not null or undefined
+            assertParamExists('getQueueEntry', 'entryId', entryId)
+            const localVarPath = `/queue-entries/{entryId}`
+                .replace(`{${"entryId"}}`, encodeURIComponent(String(entryId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -513,6 +552,19 @@ export const QueueEntriesApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['QueueEntriesApi.deleteQueueEntry']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * 
+         * @summary Get queue entry
+         * @param {string} entryId Queue Entry id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getQueueEntry(entryId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QueueEntryResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getQueueEntry(entryId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['QueueEntriesApi.getQueueEntry']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -542,6 +594,16 @@ export const QueueEntriesApiFactory = function (configuration?: Configuration, b
         deleteQueueEntry(entryId: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
             return localVarFp.deleteQueueEntry(entryId, options).then((request) => request(axios, basePath));
         },
+        /**
+         * 
+         * @summary Get queue entry
+         * @param {string} entryId Queue Entry id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getQueueEntry(entryId: string, options?: RawAxiosRequestConfig): AxiosPromise<QueueEntryResponse> {
+            return localVarFp.getQueueEntry(entryId, options).then((request) => request(axios, basePath));
+        },
     };
 };
 
@@ -569,6 +631,17 @@ export class QueueEntriesApi extends BaseAPI {
      */
     public deleteQueueEntry(entryId: string, options?: RawAxiosRequestConfig) {
         return QueueEntriesApiFp(this.configuration).deleteQueueEntry(entryId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Get queue entry
+     * @param {string} entryId Queue Entry id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public getQueueEntry(entryId: string, options?: RawAxiosRequestConfig) {
+        return QueueEntriesApiFp(this.configuration).getQueueEntry(entryId, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
