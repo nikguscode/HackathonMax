@@ -1,8 +1,8 @@
 package com.nikguscode.orchestrator.controller;
 
-import com.nikguscode.orchestrator.dao.queue.QueueDao;
+import com.nikguscode.openapi.model.QueueResponseDto;
+import com.nikguscode.orchestrator.service.QueueService;
 import java.util.UUID;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,15 +11,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/v1/api")
 public class QueueController {
-  private final QueueDao queueDao;
+  private final QueueService queueService;
 
-  public QueueController(@Qualifier("jooqQueueDao") QueueDao queueDao) {
-    this.queueDao = queueDao;
+  public QueueController(QueueService queueService) {
+    this.queueService = queueService;
   }
 
   @GetMapping("organizations/{organizationId}/queues")
-  public String getQueues(@PathVariable UUID organizationId) {
-    return queueDao.findByOrganizationId(organizationId).toString();
+  public QueueResponseDto getQueues(@PathVariable UUID organizationId) {
+    return queueService.getQueues(organizationId);
   }
 
   @GetMapping("queues/{queueId}/members")
