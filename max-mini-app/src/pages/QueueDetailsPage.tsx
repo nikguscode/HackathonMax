@@ -1,27 +1,17 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Flex, Typography, Panel } from '@maxhub/max-ui';
 import { QRCodeSVG } from 'qrcode.react';
 import logo from '/logo.jpg';
 import ConfirmationModal from '../components/ConfirmationModal';
+import { QueueEntryResponse, QueueEntriesApi, Configuration } from '../api';
 
-interface QueueDetails {
-  id: string;
-  name: string;
-  uniqueId: string;
-  position: number;
-  employeeName: string;
-  userId: string;
-}
-
-const getQueueDetails = (queueId: string): Omit<QueueDetails, 'userId'> | null => {
-  return {
-    id: queueId,
-    name: 'Буфет "Сигма"',
-    uniqueId: queueId,
-    position: 32,
-    employeeName: 'dqwdqw',
-  };
+const createApiConfiguration = (): Configuration => {
+  const basePath =
+    import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
+  return new Configuration({
+    basePath,
+  });
 };
 
 interface InfoCardProps {
@@ -39,6 +29,7 @@ const InfoCard: React.FC<InfoCardProps> = ({ label, value }) => {
         padding: '16px',
         borderRadius: '12px',
         marginBottom: '12px',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
         
         backgroundColor: '#F0F0F0',
       }}
@@ -81,7 +72,7 @@ const QRCode: React.FC<QRCodeProps> = ({ userId, queueId }) => {
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#FFFFFF',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
         marginTop: '24px',
         marginBottom: '24px',
         padding: '20px',
@@ -100,43 +91,60 @@ const QRCode: React.FC<QRCodeProps> = ({ userId, queueId }) => {
 };
 
 const QueueDetailsPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id: entryId } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [queueDetails, setQueueDetails] = useState<QueueEntryResponse | null>(null);
   const [isExitQueue, setisExitQueue] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isQRCodeOpen, setIsQRCodeOpen] = useState(false);
 
-  const defaultShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+  useEffect(() => { 
+    if (!entryId) return;
+    const fetchQueueEntry = async () => {
+    
+      try{
+        const config = createApiConfiguration();
+        const userInfoApi = new QueueEntriesApi(config);
+
+        const response = await userInfoApi.getQueueEntry(entryId);
+        setQueueDetails(response.data);
+        
+        console.log('Ответ API:', response.data);
+        
+      } catch (err) {
+        console.error('Ошибка при получении информации о пользователе:', err);
+      }
+    }
+    fetchQueueEntry();
+  }, [entryId]);
+
+  const handleDeleteQueue = async () => {
+    if (!entryId) return;
+
+    try {
+      const config = createApiConfiguration();
+      const queueApi = new QueueEntriesApi(config);
+
+      await queueApi.deleteQueueEntry(entryId);
+      console.log('Очередь успешно удалена:', entryId);
+
+      navigate('/');
+    } catch (err) {
+      console.error('Ошибка при удалении очереди:', err);
+    }
+  };
+
+  if (!queueDetails) {
+  return <div>Загрузка данных о пользователе...</div>;
+  }
+
+  const defaultShadow = '0 2px 4px rgba(0, 0, 0, 0.2)';
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
 
-  const userId = React.useMemo(() => {
-    if (!id) return '';
-    const seed = id.split('').reduce((acc, char, idx) => acc + char.charCodeAt(0) * (idx + 1), 0);
-    const randomStr = Math.sin(seed).toString(36).substring(2, 11);
-    return `user_${randomStr}`;
-  }, [id]);
-
-  if (!id) {
+  if (!entryId) {
     return (
       <Container>
         <div>Ошибка: ID очереди не указан</div>
-      </Container>
-    );
-  }
-
-  const baseQueueDetails = getQueueDetails(id);
-  
-  const queueDetails = React.useMemo(() => {
-    if (!baseQueueDetails) return null;
-    return {
-      ...baseQueueDetails,
-      userId,
-    };
-  }, [baseQueueDetails, userId]);
-
-  if (!queueDetails) {
-    return (
-      <Container>
-        <div>Очередь не найдена</div>
       </Container>
     );
   }
@@ -157,10 +165,9 @@ const QueueDetailsPage: React.FC = () => {
     setisExitQueue(false);
   };
   
-  const handleConfirmExit = () => {
-    console.log('Выход из очереди:', queueDetails.id);
+  const handleConfirmExit = async () => {
+    await handleDeleteQueue();
     setIsModalOpen(false);
-    navigate('/');
   };
   
   const handleCloseModal = () => {
@@ -191,24 +198,26 @@ const QueueDetailsPage: React.FC = () => {
           <Flex direction="column" align="center" justify="center">
             <InfoCard
               label="Название очереди"
-              value={queueDetails.name}
+              value={queueDetails?.name ?? 'Неизвестно'}
             />
             <InfoCard
-              label="Уникальный идентификатор"
-              value={queueDetails.uniqueId}
+              label="Логин"
+              value={queueDetails?.login ?? 'Неизвестно'}
             />
             <InfoCard
               label="Позиция в очереди"
-              value={queueDetails.position}
+              value={queueDetails?.peopleInFront ?? 'Неизвестно'}
             />
             <InfoCard
-              label="Имя сотрудника"
-              value={queueDetails.employeeName}
+              label="Статус очереди"
+              value={queueDetails?.status ?? 'Неизвестно'}
             />
           </Flex>
 
           <Flex justify="center" align="center">
-            <QRCode userId={queueDetails.userId} queueId={queueDetails.id} />
+            <div onClick={() => setIsQRCodeOpen(true)} style={{ cursor: 'pointer' }}> 
+              <QRCode userId={entryId} queueId={entryId} />
+            </div>
           </Flex>
 
           <Flex
@@ -245,7 +254,7 @@ const QueueDetailsPage: React.FC = () => {
                 margin: '0 auto',
               }}
             >
-              Добавить очередь
+              Выйти из очереди
             </Typography.Title>
           </Flex>
       </Flex>
@@ -254,6 +263,47 @@ const QueueDetailsPage: React.FC = () => {
         onClose={handleCloseModal}
         onConfirm={handleConfirmExit}
       />
+      {isQRCodeOpen && (
+      <div
+        onClick={() => setIsQRCodeOpen(false)}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          backgroundColor: 'rgba(0,0,0,0.7)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          cursor: 'pointer',
+        }}
+      >
+        <Panel
+          mode="secondary"
+          style={{
+            width: '270px',
+            height: '270px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 5px 15px rgba(235, 235, 235, 1)',
+            borderRadius: '16px',
+            backgroundColor: '#FFFFFF',
+          }}
+        >
+          <QRCodeSVG
+            value={JSON.stringify({ userId: entryId, queueId: entryId })}
+            size={250}
+            level="M"
+            includeMargin={false}
+            fgColor="#000000"
+            bgColor="#FFFFFF"
+          />
+        </Panel>
+      </div>
+    )}
     </Container>
   );
 };
