@@ -4,6 +4,7 @@ import static com.nikguscode.jooq.tables.Queue.QUEUE;
 import static com.nikguscode.jooq.tables.QueueEntry.QUEUE_ENTRY;
 import static com.nikguscode.jooq.tables.User.USER;
 
+import com.nikguscode.jooq.enums.QueueStatus;
 import com.nikguscode.orchestrator.dao.result.QueueMemberRecord;
 import com.nikguscode.orchestrator.model.Queue;
 import java.util.List;
@@ -29,6 +30,8 @@ public class JooqQueueDao implements QueueDao {
 
   @Override
   public List<QueueMemberRecord> findByQueueId(UUID queueId) {
+    List<QueueStatus> excludedStatuses = List.of(QueueStatus.CANCELED, QueueStatus.SERVED);
+
     return dsl
         .select(QUEUE_ENTRY.ID_MAX, QUEUE_ENTRY.ID, USER.USERNAME)
         .from(QUEUE)
@@ -39,7 +42,9 @@ public class JooqQueueDao implements QueueDao {
         .join(USER)
         .on(USER.ID_MAX.eq(QUEUE_ENTRY.ID_MAX))
 
-        .where(QUEUE_ENTRY.ID_QUEUE.eq(queueId))
+        .where(
+            QUEUE_ENTRY.ID_QUEUE.eq(queueId)
+                .and(QUEUE_ENTRY.STATUS.notIn(excludedStatuses)))
         .fetchInto(QueueMemberRecord.class);
   }
 }

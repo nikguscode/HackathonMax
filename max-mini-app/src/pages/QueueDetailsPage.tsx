@@ -5,6 +5,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import Logo from '../components/Logo';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { QueueEntryResponse, QueueEntriesApi, Configuration } from '../api';
+import InfoCard from '../components/InfoCard';
 
 const createApiConfiguration = (): Configuration => {
   const basePath =
@@ -12,40 +13,6 @@ const createApiConfiguration = (): Configuration => {
   return new Configuration({
     basePath,
   });
-};
-
-interface InfoCardProps {
-  label: string;
-  value: string | number;
-}
-
-const InfoCard: React.FC<InfoCardProps> = ({ label, value }) => {
-  return (
-    <Panel
-      mode="secondary"
-      style={{
-        minWidth: '300px',
-        maxWidth: '300px',
-        padding: '16px',
-        borderRadius: '12px',
-        marginBottom: '12px',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-        
-        backgroundColor: '#F0F0F0',
-      }}
-    >
-      <span
-        style={{
-          fontSize: '16px',
-          fontWeight: 400,
-          color: '#000000',
-          fontFamily: 'system-ui, sans-serif',
-        }}
-      >
-        {label}: {value}
-      </span>
-    </Panel>
-  );
 };
 
 interface QRCodeProps {
