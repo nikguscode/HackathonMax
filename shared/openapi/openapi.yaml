@@ -578,7 +578,23 @@ components:
         numberOfServedMembers:
           type: integer
 
+    SimpleOrganization:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+
     ### Queue Response ###
+
+    SimpleQueue:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
 
     Queue:
       type: object
