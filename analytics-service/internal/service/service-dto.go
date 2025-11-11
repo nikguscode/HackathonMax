@@ -44,8 +44,8 @@ type OrganizationMetricsResponse struct {
 // QueueGraphics defines model for QueueGraphics.
 type QueueGraphics struct {
 	AverageWaitingTimeByTime *[]struct {
-		Time        *string  `json:"time,omitempty"`
-		WaitingTime *float32 `json:"waitingTime,omitempty"`
+		Time        *time.Time `json:"time,omitempty"`
+		WaitingTime *float32   `json:"waitingTime,omitempty"`
 	} `json:"averageWaitingTimeByTime,omitempty"`
 	MembersInQueueByTime *[]struct {
 		Count *int       `json:"count,omitempty"`

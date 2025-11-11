@@ -173,6 +173,7 @@ components:
             properties:
               time:
                 type: string
+                format: date-time
               waitingTime:
                 type: number
                 format: float
