@@ -9,6 +9,7 @@ import com.nikguscode.openapi.model.QueueEntryStatusDto;
 import com.nikguscode.orchestrator.dao.result.QueueEntryActiveRecord;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
@@ -34,10 +35,6 @@ public class JooqQueueEntryDao implements QueueEntryDao {
     var cteRank = subquery.field("rank_in_queue", Integer.class);
     var cteIdMax = subquery.field(QUEUE_ENTRY.ID_MAX);
 
-    if (cteIdMax == null) {
-      return Collections.emptyList();
-    }
-
     return dsl
         .select(cteId, cteName, cteRank, cteStatus)
         .from(subquery)
@@ -46,9 +43,8 @@ public class JooqQueueEntryDao implements QueueEntryDao {
   }
 
   @Override
-  public QueueEntryActiveRecord findByEntryId(UUID entryId) {
+  public Optional<QueueEntryActiveRecord> findByEntryId(UUID entryId) {
     var query = createRankedQueueEntriesQuery();
-
     var subquery = query.asTable("t_ranked");
 
     var cteId = subquery.field(QUEUE_ENTRY.ID);
@@ -56,15 +52,12 @@ public class JooqQueueEntryDao implements QueueEntryDao {
     var cteStatus = subquery.field(QUEUE_ENTRY.STATUS);
     var cteRank = subquery.field("rank_in_queue", Integer.class);
 
-    if (cteId == null) {
-      throw new RuntimeException();
-    }
-
     return dsl
         .select(cteId, cteName, cteRank, cteStatus)
         .from(subquery)
         .where(cteId.eq(entryId))
-        .fetchOne(record -> mapToRecord(record, cteRank, cteStatus, cteId, cteName));
+        .fetchOptional(
+            record -> mapToRecord(record, cteRank, cteStatus, cteId, cteName));
   }
 
   @Override
