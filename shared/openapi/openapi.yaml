@@ -213,7 +213,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OrganizationQueuesResponse'
+                $ref: '#/components/schemas/QueueResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -454,19 +454,6 @@ components:
         - maxId
         - queueId
 
-    QueueEntryManuallyCreatingRequest:
-      type: object
-      properties:
-        username:
-          type: string
-        firstName:
-          type: string
-        secondName:
-          type: string
-      required:
-        - username
-
-
     ##### Orchestrator responses #####
 
     ### User Responses ###
@@ -575,6 +562,24 @@ components:
         numberOfServedMembers:
           type: integer
 
+    ### Queue Response ###
+
+    Queue:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+
+    QueueResponse:
+      properties:
+        queues:
+          type: array
+          items:
+            $ref: '#/components/schemas/Queue'
+
     QueueSettingsResponse:
       properties:
         settings:
@@ -590,7 +595,7 @@ components:
         members:
           type: array
           items:
-            $ref: '#/components/schemas/SimpleMember'
+            $ref: '#/components/schemas/QueueMember'
 
     QueueSettings:
       type: object
@@ -626,44 +631,14 @@ components:
         averageInQueue:
           type: integer
 
-    QueueCreatingRequest:
+    QueueMember:
       type: object
       properties:
         maxId:
           type: string
           format: uuid
-        queueId:
+        queueEntryId:
           type: string
           format: uuid
-
-    BaseQueueResponse:
-      type: object
-      properties:
-        organization:
-          $ref: '#/components/schemas/SimpleOrganization'
-        queue:
-          $ref: '#/components/schemas/SimpleQueue'
-
-    SimpleOrganization:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-
-    SimpleQueue:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-
-    SimpleMember:
-      type: object
-      properties:
-        maxId:
-          type: string
         username:
           type: string
