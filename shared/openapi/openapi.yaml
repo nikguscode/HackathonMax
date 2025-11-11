@@ -151,27 +151,6 @@ paths:
         default:
           $ref: '#/components/responses/UnexpectedError'
 
-  # /queue-entries/manually:
-  #   post:
-  #     tags: [queue-entries]
-  #     summary: Add user in queue
-  #     operationId: addQueueEntry
-  #     requestBody:
-  #       description: Add user in queue
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/schemas/QueueEntryCreatingRequest'
-  #     responses:
-  #       '201':
-  #         description: User added to queue
-  #       '400':
-  #         $ref: '#/components/responses/BadRequest'
-  #       '404':
-  #         $ref: '#/components/responses/NotFound'
-  #       default:
-  #         $ref: '#/components/responses/UnexpectedError'
-
   /queue-entries/{entryId}:
     delete:
       tags: [queue-entries]
@@ -188,6 +167,32 @@ paths:
       responses:
         '200':
           description: Successful operation
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+    get:
+      tags: [queue-entries]
+      summary: Get queue entry
+      operationId: getQueueEntry
+      parameters:
+        - name: entryId
+          in: path
+          required: true
+          description: Queue Entry id
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueEntryResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -248,7 +253,6 @@ paths:
         default:
           $ref: '#/components/responses/UnexpectedError'
 
-  #Analytics
   /organizations/{organizationId}/metrics:
     get:
       tags: [organizations]
@@ -468,17 +472,29 @@ components:
         queue-entries:
           type: array
           items:
-            $ref: '#/components/schemas/QueueEntry'
+            $ref: '#/components/schemas/QueueEntryInUserResponse'
 
-    ### Queue Entry Responses ###
-
-    QueueEntry:
+    QueueEntryInUserResponse:
       type: object
       properties:
         id:
           type: string
           format: uuid
         name:
+          type: string
+        peopleInFront:
+          type: integer
+        status:
+          $ref: '#/components/schemas/QueueEntryStatus'
+
+    ### Queue Entry Responses ###
+
+    QueueEntryResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        login:
           type: string
         peopleInFront:
           type: integer
