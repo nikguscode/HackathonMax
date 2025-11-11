@@ -1,6 +1,7 @@
 package com.nikguscode.orchestrator.dao.queue;
 
 import static com.nikguscode.jooq.tables.Queue.QUEUE;
+import static com.nikguscode.jooq.tables.QueueStaff.QUEUE_STAFF;
 
 import com.nikguscode.orchestrator.model.Queue;
 import java.util.List;
@@ -17,7 +18,9 @@ public class JooqQueueDao implements QueueDao {
   @Override
   public List<Queue> findByOrganizationId(UUID organizationId) {
     return dsl
-        .selectFrom(QUEUE)
+        .select(QUEUE.fields())
+        .from(QUEUE)
+
         .where(QUEUE.ID_ORGANIZATION.eq(organizationId))
         .fetchInto(Queue.class);
   }

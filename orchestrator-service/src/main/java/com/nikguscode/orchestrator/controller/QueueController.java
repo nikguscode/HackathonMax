@@ -18,7 +18,8 @@ public class QueueController {
   }
 
   @GetMapping("organizations/{organizationId}/queues")
-  public QueueResponseDto getQueues(@PathVariable UUID organizationId) {
+  public QueueResponseDto getQueues(
+      @PathVariable UUID organizationId) {
     return queueService.getQueues(organizationId);
   }
 
