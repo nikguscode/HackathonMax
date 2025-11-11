@@ -33,7 +33,7 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ name, amountOfQueue
       if (role === 'EMPLOYEE'){
         navigate(`/managment/${id}`);
       } else if (role === 'MODERATOR'){
-        navigate(`/moderator`);
+        navigate(`/moderator/${name}`);
       }
     }
   };

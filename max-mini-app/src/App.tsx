@@ -246,7 +246,7 @@ function App() {
           path="/managment/queue/:id"
           element={<QueueUserManagementPage />}
         />
-        <Route path="/moderator" element={<ModeratorDashboardPage />} />
+        <Route path="/moderator/:name" element={<ModeratorDashboardPage />} />
         <Route path="/organization/:id" element={<OrganizationDetailsPage />} />
         <Route
           path="/moderator-queue/:id"

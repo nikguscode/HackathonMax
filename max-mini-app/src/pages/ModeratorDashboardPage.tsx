@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Container, Flex, Typography } from '@maxhub/max-ui';
 import { moderatorOrganizations } from '../mockData';
 import type { IModeratorQueue } from '../types';
@@ -118,6 +118,7 @@ const ModeratorDashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const [isModeratorButtonPressed, setIsModeratorButtonPressed] = useState(false);
   const [isAddQueue, setisAddQueue] = useState(false);
+  const { name: orgName } = useParams<{ name: string }>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   const moderatorOrg = moderatorOrganizations[0];
@@ -161,7 +162,7 @@ const ModeratorDashboardPage: React.FC = () => {
   };
 
   const handleModeratorButtonClick = () => {
-    navigate(`/organization/${moderatorOrg.id}`);
+    navigate(`/organization/${orgName}`);
   };
 
   const handleModeratorMouseDown = () => {
@@ -248,7 +249,7 @@ const ModeratorDashboardPage: React.FC = () => {
               textOverflow: 'ellipsis',
             }}
           >
-            {moderatorOrg.name}
+            {orgName}
           </Typography.Title>
         </Flex>
 
