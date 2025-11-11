@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Typography, Flex, Container, Panel } from '@maxhub/max-ui';
-import logo from '/logo.jpg';
+import Logo from '../components/Logo';
 
 interface FAQItemData {
   id: number;
@@ -153,17 +153,7 @@ const FAQPage: React.FC = () => {
         padding: '0',
       }}
     >
-      <Flex justify="center" align="center" style={{ padding: '0 0 16px 0' }}>
-        <img
-          src={logo} 
-          alt="Логотип"
-          style={{
-            maxWidth: '300px',
-            height: 'auto',
-            objectFit: 'contain',
-          }}
-        />
-      </Flex>
+      <Logo />
 
       <Flex
         direction="column"

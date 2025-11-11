@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Flex, Typography } from '@maxhub/max-ui';
-import {QueueEntryStatus} from './api';
+import {QueueEntryStatus} from '../api';
 
 interface QueueCardProps {
   'id'?: string;

@@ -2,7 +2,7 @@ import React, {useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Flex, Typography, Panel } from '@maxhub/max-ui';
 import { QRCodeSVG } from 'qrcode.react';
-import logo from '/logo.jpg';
+import Logo from '../components/Logo';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { QueueEntryResponse, QueueEntriesApi, Configuration } from '../api';
 
@@ -182,17 +182,7 @@ const QueueDetailsPage: React.FC = () => {
         padding: '0',
       }}
     >
-      <Flex justify="center" align="center" style={{ marginBottom: '24px' }}>
-        <img
-          src={logo}
-          alt="Logo"
-          style={{
-            width: '300px',
-            height: 'auto',
-            objectFit: 'contain',
-          }}
-        />
-      </Flex>
+      <Logo/>
 
       <Flex direction="column" align="center" justify="center" style={{ width: '100%' }}>
           <Flex direction="column" align="center" justify="center">

@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Container, Flex, Button, Typography, Panel } from '@maxhub/max-ui';
 import AddUserModal from '../components/AddUserModal';
 import Logo from '../components/Logo';
-import { QueueMember, QueuesApi, Configuration, QueueEntriesApi } from '../api'
+import { QueueMember, QueuesApi, Configuration, QueueEntriesApi } from '../api';
 
 
 const createApiConfiguration = (): Configuration => {
@@ -89,7 +89,7 @@ const QueueUserManagementPage: React.FC = () => {
         q=> ({
             maxId: q.maxId,
             username: q.username || '',
-            entryId: q.queueEntryId,
+            queueEntryId: q.queueEntryId,
         }));
         setUsers(members);
     }) 
@@ -117,7 +117,7 @@ const QueueUserManagementPage: React.FC = () => {
           maxWidth: MAX_CONTENT_WIDTH,
           height: 'auto',
           margin: '0 auto',
-          padding: `20px ${HORIZONTAL_PADDING}`,
+          padding: `0px ${HORIZONTAL_PADDING}`,
           boxSizing: 'border-box',
           gap: '12px',
           flex: 1,
