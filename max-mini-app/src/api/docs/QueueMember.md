@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**maxId** | **string** |  | [optional] [default to undefined]
+**maxId** | **number** |  | [optional] [default to undefined]
 **queueEntryId** | **string** |  | [optional] [default to undefined]
 **username** | **string** |  | [optional] [default to undefined]
 

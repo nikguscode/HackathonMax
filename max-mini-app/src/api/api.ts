@@ -64,13 +64,13 @@ export interface QueueEntryCreatingRequest {
     'maxId': number;
     'queueId': string;
 }
-
 export interface QueueEntryInUserResponse {
     'id'?: string;
     'name'?: string;
     'peopleInFront'?: number;
     'status'?: QueueEntryStatus;
 }
+
 
 export interface QueueEntryResponse {
     'name'?: string;
@@ -96,7 +96,7 @@ export type QueueEntryStatus = typeof QueueEntryStatus[keyof typeof QueueEntrySt
 
 
 export interface QueueMember {
-    'maxId'?: string;
+    'maxId'?: number;
     'queueEntryId'?: string;
     'username'?: string;
 }

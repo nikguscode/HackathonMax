@@ -33,7 +33,7 @@ const QueueUserManagementPage: React.FC = () => {
   };
   
   const handleAddUserSubmit = (userName: string) => {
-    const newUserId = `u${Date.now()}`;
+    const newUserId = Date.now();
     const newUser: QueueMember = {
       maxId: newUserId,
       username: userName,
@@ -87,7 +87,7 @@ const QueueUserManagementPage: React.FC = () => {
       .then(res => {
       const members: QueueMember[] = (res.data.members || []).map(
         q=> ({
-            maxId: q.maxId || '',
+            maxId: q.maxId,
             username: q.username || '',
             entryId: q.queueEntryId,
         }));
