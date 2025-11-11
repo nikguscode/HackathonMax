@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { Flex, Typography } from '@maxhub/max-ui';
 
 interface QueueCardProps {
-  name: string;
-  queueId: string;
+  'id'?: string;
+  'name'?: string;
   onClick?: () => void;
 }
 
-const QueueManagmentButton: React.FC<QueueCardProps> = ({ name, queueId, onClick }) => {
+const QueueManagmentButton: React.FC<QueueCardProps> = ({ name, id, onClick }) => {
   const [isPressed, setIsPressed] = useState(false);
   const navigate = useNavigate();
 
@@ -28,7 +28,7 @@ const QueueManagmentButton: React.FC<QueueCardProps> = ({ name, queueId, onClick
     if (onClick) {
       onClick();
     } else {
-      navigate(`/managment/queue/${queueId}`);
+      navigate(`/managment/queue/${id}`);
     }
   };
 

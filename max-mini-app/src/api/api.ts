@@ -27,6 +27,7 @@ export interface BaseQueueResponse {
     'organization'?: SimpleOrganization;
     'queue'?: SimpleQueue;
 }
+
 export interface Organization {
     'id'?: string;
     'name'?: string;
@@ -49,6 +50,7 @@ export interface OrganizationMetricsResponse {
 export interface OrganizationQueuesResponse {
     'queues'?: Array<SimpleQueue>;
 }
+
 export interface OrganizationSettings {
     'id'?: string;
     'name'?: string;

@@ -1,39 +1,42 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { Container, Flex } from '@maxhub/max-ui';
 import { useParams } from 'react-router-dom';
 import logo from '/logo.jpg'; 
 import QueueManagmentButton from '../components/QueueManagmentButton';
+import { OrganizationsApi, Configuration, SimpleQueue } from '../api';
 
-interface QueueToManage {
-    id: string;
-    name: string;
-}
 
-const getMockQueues = (orgId: string): QueueToManage[] => {
-  if (orgId === 'org_mod_1') {
-    return [
-      { id: 'q1', name: 'Очередь 1' },
-      { id: 'q2', name: 'Очередь 2' },
-      { id: 'q3', name: 'Очередь 3' },
-    ];
-  } else if (orgId === 'org2') {
-    return [
-      { id: 'q4', name: 'Очередь 1' },
-    ];
-  }
-  return [];
+const createApiConfiguration = (): Configuration => {
+  const basePath = import.meta.env.VITE_API_BASE_PATH || 'http://localhost:8080/v1/api';
+  return new Configuration({
+    basePath,
+  });
 };
 
 const QueueManagementPage: React.FC = () => {
     const { id: orgId } = useParams<{ id: string }>();
+    const [userQueues, setUserQueues] = useState<SimpleQueue[]>([]);
 
+    useEffect(() => {
+        if (!orgId) return;
+
+
+        const config = createApiConfiguration();
+        const orgApi = new OrganizationsApi(config);
+
+        orgApi.getOrganizationQueues(orgId)
+        .then(res => {
+        const queues: SimpleQueue[] = res.data.queues?.map(q => ({
+            id: q.id,
+            name: q.name
+        })) || [];
+
+        setUserQueues(queues);
+        })
+    .catch(console.error);
+    }, [orgId]);
     const MAX_CONTENT_WIDTH = '300px'; 
     const HORIZONTAL_PADDING = '16px'; 
-    
-    const mockManagedQueues = React.useMemo(() => {
-        if (!orgId) return [];
-        return getMockQueues(orgId);
-    }, [orgId]);
     
     if (!orgId) {   
         return (
@@ -76,13 +79,13 @@ const QueueManagementPage: React.FC = () => {
                 }}
             >
                     <div style={{ width: '300px' }}>
-                        {mockManagedQueues.length > 0 && (
+                        {userQueues.length > 0 && (
                             <Flex direction="column" align="center">
-                               { mockManagedQueues.map((queue) => (
+                               { userQueues.map((queue) => (
                                     <QueueManagmentButton 
                                         key={queue.id}
                                         name={queue.name}
-                                        queueId={queue.id}
+                                        id={queue.id}
                                     />
                                 ))}
                             </Flex>
