@@ -1,5 +1,6 @@
 package com.nikguscode.orchestrator.controller;
 
+import com.nikguscode.openapi.model.QueueMembersResponseDto;
 import com.nikguscode.openapi.model.QueueResponseDto;
 import com.nikguscode.orchestrator.service.QueueService;
 import java.util.UUID;
@@ -24,8 +25,8 @@ public class QueueController {
   }
 
   @GetMapping("queues/{queueId}/members")
-  public String getMembers(@PathVariable UUID queueId) {
-    return "";
+  public QueueMembersResponseDto getMembers(@PathVariable UUID queueId) {
+    return queueService.getMembers(queueId);
   }
 
   // не определены

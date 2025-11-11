@@ -7,10 +7,14 @@ import static com.nikguscode.jooq.tables.QueueEntryMeta.QUEUE_ENTRY_META;
 import com.nikguscode.jooq.enums.QueueStatus;
 import com.nikguscode.openapi.model.QueueEntryStatusDto;
 import com.nikguscode.orchestrator.dao.result.QueueEntryActiveRecord;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +25,56 @@ public class JooqQueueEntryDao implements QueueEntryDao {
 
   @Override
   public List<QueueEntryActiveRecord> findActiveByMaxId(Long maxId) {
-    var statusPriorityExpression = DSL.when(QUEUE_ENTRY.STATUS.eq(QueueStatus.SERVING), 0)
+    var query = createRankedQueueEntriesQuery();
+    var subquery = query.asTable("t_ranked");
+
+    var cteId = subquery.field(QUEUE_ENTRY.ID);
+    var cteName = subquery.field(QUEUE.NAME);
+    var cteStatus = subquery.field(QUEUE_ENTRY.STATUS);
+    var cteRank = subquery.field("rank_in_queue", Integer.class);
+    var cteIdMax = subquery.field(QUEUE_ENTRY.ID_MAX);
+
+    if (cteIdMax == null) {
+      return Collections.emptyList();
+    }
+
+    return dsl
+        .select(cteId, cteName, cteRank, cteStatus)
+        .from(subquery)
+        .where(cteIdMax.eq(maxId))
+        .fetch(record -> mapToRecord(record, cteRank, cteStatus, cteId, cteName));
+  }
+
+  @Override
+  public QueueEntryActiveRecord findByEntryId(UUID entryId) {
+    var query = createRankedQueueEntriesQuery();
+
+    var subquery = query.asTable("t_ranked");
+
+    var cteId = subquery.field(QUEUE_ENTRY.ID);
+    var cteName = subquery.field(QUEUE.NAME);
+    var cteStatus = subquery.field(QUEUE_ENTRY.STATUS);
+    var cteRank = subquery.field("rank_in_queue", Integer.class);
+
+    if (cteId == null) {
+      throw new RuntimeException();
+    }
+
+    return dsl
+        .select(cteId, cteName, cteRank, cteStatus)
+        .from(subquery)
+        .where(cteId.eq(entryId))
+        .fetchOne(record -> mapToRecord(record, cteRank, cteStatus, cteId, cteName));
+  }
+
+  @Override
+  public void delete(UUID entryId) {
+    dsl.deleteFrom(QUEUE_ENTRY).where(QUEUE_ENTRY.ID.eq(entryId)).execute();
+  }
+
+  private SelectConditionStep<?> createRankedQueueEntriesQuery() {
+    var statusPriorityExpression = DSL
+        .when(QUEUE_ENTRY.STATUS.eq(QueueStatus.SERVING), 0)
         .else_(1);
 
     var rankField = DSL.rank()
@@ -29,17 +82,15 @@ public class JooqQueueEntryDao implements QueueEntryDao {
         .partitionBy(QUEUE_ENTRY.ID_QUEUE)
         .orderBy(
             statusPriorityExpression.asc(),
-            QUEUE_ENTRY_META.JOINED_AT.asc()
-        )
+            QUEUE_ENTRY_META.JOINED_AT.asc())
         .as("rank_in_queue");
 
     List<QueueStatus> excludedStatuses = List.of(
         QueueStatus.MISSED,
         QueueStatus.CANCELED,
-        QueueStatus.SERVED
-    );
+        QueueStatus.SERVED);
 
-    var subquery = dsl.select(
+    return dsl.select(
             QUEUE_ENTRY.ID,
             QUEUE_ENTRY.ID_MAX,
             QUEUE.NAME,
@@ -52,43 +103,24 @@ public class JooqQueueEntryDao implements QueueEntryDao {
         .join(QUEUE)
         .on(QUEUE.ID.eq(QUEUE_ENTRY.ID_QUEUE))
         .where(
-            QUEUE_ENTRY.STATUS.notIn(excludedStatuses)
-        )
-        .asTable("t_ranked");
-
-    var cteId = subquery.field(QUEUE_ENTRY.ID);
-    var cteName = subquery.field(QUEUE.NAME);
-    var cteStatus = subquery.field(QUEUE_ENTRY.STATUS);
-    var cteRank = subquery.field(rankField);
-    var cteIdMax = subquery.field(QUEUE_ENTRY.ID_MAX);
-
-    return dsl
-        .select(
-            cteId,
-            cteName,
-            cteRank,
-            cteStatus
-        )
-        .from(subquery)
-        .where(cteIdMax.eq(maxId))
-        .fetch(record -> {
-          Integer rank = record.get(cteRank, Integer.class);
-
-          QueueEntryStatusDto statusDto = QueueEntryStatusDto.fromValue(
-              record.get(cteStatus).toString()
-          );
-
-          return new QueueEntryActiveRecord(
-              record.get(cteId),
-              record.get(cteName),
-              rank != null ? rank - 1 : 0,
-              statusDto
-          );
-        });
+            QUEUE_ENTRY.STATUS.notIn(excludedStatuses));
   }
 
-  @Override
-  public void delete(UUID entryId) {
-    dsl.deleteFrom(QUEUE_ENTRY).where(QUEUE_ENTRY.ID.eq(entryId)).execute();
+  private QueueEntryActiveRecord mapToRecord(
+      Record record,
+      Field<Integer> rankField,
+      Field<QueueStatus> statusField,
+      Field<UUID> idField,
+      Field<String> nameField) {
+    Integer rank = record.get(rankField, Integer.class);
+    QueueEntryStatusDto statusDto =
+        QueueEntryStatusDto.fromValue(record.get(statusField).toString());
+
+    return new QueueEntryActiveRecord(
+        record.get(idField),
+        record.get(nameField),
+        rank != null ? rank - 1 : 0,
+        statusDto
+    );
   }
 }

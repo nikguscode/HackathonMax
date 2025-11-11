@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/queue-entries")
+@RequestMapping("v1/api/queue-entries")
 public class QueueEntryController {
   private final QueueEntryDao queueEntryDao;
 
@@ -17,9 +17,13 @@ public class QueueEntryController {
     this.queueEntryDao = queueEntryDao;
   }
 
+//  @GetMapping("/{entryId}")
+//  public QueueEntryResponseDto getQueueEntry(@PathVariable UUID entryId) {
+//    return queueEntryDao.findByEntryId(entryId);
+//  }
+
   @DeleteMapping("/{entryId}")
-  public String deleteQueueEntry(@PathVariable UUID entryId) {
+  public void deleteQueueEntry(@PathVariable UUID entryId) {
     queueEntryDao.delete(entryId);
-    return "zaglushka";
   }
 }

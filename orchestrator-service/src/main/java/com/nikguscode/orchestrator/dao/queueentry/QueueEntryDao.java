@@ -7,5 +7,7 @@ import java.util.UUID;
 public interface QueueEntryDao {
   List<QueueEntryActiveRecord> findActiveByMaxId(Long maxId);
 
+  QueueEntryActiveRecord findByEntryId(UUID entryId);
+
   void delete(UUID entryId);
 }

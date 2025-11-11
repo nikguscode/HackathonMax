@@ -24,7 +24,7 @@ const getMaxId = (): string | null => {
   if (maxIdFromEnv) {
     return maxIdFromEnv;
   }
-  return "4";
+  return "1";
 };
 
 const createApiConfiguration = (): Configuration => {
