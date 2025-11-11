@@ -12,7 +12,7 @@ const InfoCard: React.FC<InfoCardProps> = ({ label, value }) => {
     <Panel
       mode="secondary"
       style={{
-        width: '100%', // <-- Займет ширину родителя
+        minWidth: '300px',
         maxWidth: '300px',
         padding: '16px',
         borderRadius: '12px',
