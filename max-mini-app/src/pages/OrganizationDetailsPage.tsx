@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Container, Flex, Panel, Typography } from '@maxhub/max-ui';
 import { OrganizationsApi, Configuration } from '../api';
-import logo from '/logo.jpg';
+import Logo from '../components/Logo';
 
 
 const createApiConfiguration = (): Configuration => {
@@ -57,17 +57,7 @@ const OrganizationDetailsPage: React.FC = () => {
         padding: '0',
       }}
     >
-      <Flex justify="center" align="center" style={{ padding: '0px 0 16px 0' }}>
-        <img
-          src={logo}
-          alt="Logo"
-          style={{
-            maxWidth: '300px',
-            height: 'auto',
-            objectFit: 'contain',
-          }}
-        />
-      </Flex>
+      <Logo />
 
       <Flex
         direction="column"

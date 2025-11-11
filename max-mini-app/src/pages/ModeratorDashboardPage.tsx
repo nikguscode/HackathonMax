@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Container, Flex, Typography } from '@maxhub/max-ui';
 import { moderatorOrganizations } from '../mockData';
 import type { IModeratorQueue } from '../types';
-import logo from '/logo.jpg';
+import Logo from '../components/Logo';
 import AddQueueModal from '../components/AddQueueModal';
 
 interface QueueCardProps {
@@ -190,17 +190,7 @@ const ModeratorDashboardPage: React.FC = () => {
         padding: '0',
       }}
     >
-      <Flex justify="center" align="center" style={{ padding: '0px 0 16px 0' }}>
-        <img
-          src={logo}
-          alt="Logo"
-          style={{
-            maxWidth: '300px',
-            height: 'auto',
-            objectFit: 'contain',
-          }}
-        />
-      </Flex>
+      <Logo />
 
       <Flex
         direction="column"

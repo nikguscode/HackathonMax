@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { Container, Flex } from '@maxhub/max-ui';
 import { useParams } from 'react-router-dom';
-import logo from '/logo.jpg'; 
+import Logo from '../components/Logo';
 import QueueManagmentButton from '../components/QueueManagmentButton';
 import { OrganizationsApi, Configuration, SimpleQueue } from '../api';
 
@@ -54,17 +54,7 @@ const QueueManagementPage: React.FC = () => {
                 padding: '0',
             }}
         >
-            <Flex justify="center" align="center" style={{ padding: '0px 0 0px 0' }}>
-                <img 
-                    src={logo} 
-                    alt="Logo" 
-                    style={{ 
-                        maxWidth: '300px',
-                        height: 'auto',
-                        objectFit: 'contain'
-                    }} 
-                />
-            </Flex>
+            <Logo />
 
             <Flex
                 direction="column"
@@ -73,7 +63,7 @@ const QueueManagementPage: React.FC = () => {
                     width: '100%',
                     maxWidth: MAX_CONTENT_WIDTH,
                     margin: '0 auto', 
-                    padding: `20px ${HORIZONTAL_PADDING}`,
+                    padding: `0px ${HORIZONTAL_PADDING}`,
                     boxSizing: 'border-box',
                     gap: '12px', 
                 }}
