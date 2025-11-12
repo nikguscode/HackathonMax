@@ -21,6 +21,7 @@
         const initDataToken = WebApp.initData;
         if (user) {
           console.log("Данные пользователя:", user);
+          console.log(initDataToken);
           fetch('https://httpbin.org/post', {
             method: 'POST',
             headers: {
