@@ -44,10 +44,10 @@ services:
       - docker
     
   analytics_service:
+    container_name: analytics_service
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: analytics_service
     env_file:
       - .env
     depends_on:
