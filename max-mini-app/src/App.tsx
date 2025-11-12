@@ -12,6 +12,8 @@ import OrganizationDetailsPage from "./pages/OrganizationDetailsPage.tsx";
 import ModeratorQueueDetailsPage from "./pages/ModeratorQueueDetailsPage.tsx";
 import { UsersApi, Configuration } from "./api";
 import Logo from "./components/Logo.tsx";
+import SkeletonCard from "./components/Skeletons/Skeleton.tsx";
+import QueueUserModeratorPage from "./pages/QueueUserModeratorPage.tsx";
 
 <script src="https://st.max.ru/js/max-web-app.js"></script>
 
@@ -105,7 +107,7 @@ const HomePage: React.FC = () => {
           return;
         }
 
-        const organizationsList = userResponse.organizations|| [];
+        const organizationsList = userResponse.organizations || [];
         const queueList = userResponse["queue-entries"] || [];
 
         const adminOrgs: Organization[] = [];
@@ -123,6 +125,7 @@ const HomePage: React.FC = () => {
             });
           }
         }
+
         for (const queue of queueList) {
           if (!queue.id || !queue.name) continue;
           queues.push({
@@ -131,8 +134,9 @@ const HomePage: React.FC = () => {
             peopleInFront: queue.peopleInFront,
           });
         }
-        setModeratorOrgs(adminOrgs);
         setUserQueues(queues);
+        setModeratorOrgs(adminOrgs);
+        
         setLoading(false);
       } catch (err: any) {
         console.error("Ошибка при загрузке данных:", err);
@@ -163,19 +167,33 @@ const HomePage: React.FC = () => {
   }, []);
 
   if (loading) {
-    return (
-      <Container
-        style={{
-          backgroundColor: "#FFFFFF",
-          minHeight: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <div>Загрузка...</div>
-      </Container>
-    );
+return (
+      <Container
+        style={{
+          backgroundColor: "#FFFFFF",
+          minHeight: "100vh",
+        }}
+      >
+        <Logo />
+        {/* Контейнер, имитирующий расположение карточек */}
+        <Flex
+          direction="column"
+          align="center"
+          style={{
+            width: "100%",
+            maxWidth: "300px",
+            margin: "0 auto",
+            padding: "0px 16px",
+          }}
+        >
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+        </Flex>
+      </Container>
+    );
   }
 
   if (error) {
@@ -265,12 +283,12 @@ function App() {
         <Route path="/organization/:id" element={<OrganizationDetailsPage />} />
         <Route
           path="/moderator-queue/:id"
-          element={<ModeratorQueueDetailsPage />}
+          element={<QueueUserModeratorPage />}
         />
         <Route path="*" element={<div>404 | Страница не найдена</div>} />
       </Routes>
     </BrowserRouter>
   );
 }
-
+{/* <ModeratorQueueDetailsPage /> */}
 export default App;

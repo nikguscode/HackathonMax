@@ -10,6 +10,8 @@ interface AddQueueModalProps {
 
 const AddQueueModal: React.FC<AddQueueModalProps> = ({ isOpen, onClose, onAddQueue }) => {
   const [queueName, setQueueName] = useState('');
+  const [queueMaxTime, setQueueMaxTime] = useState('');
+  const [queueMaxMembers, setQueueMaxMembers] = useState('');
   const [isAddingPressed, setIsAddingPressed] = useState(false);
 
   if (!isOpen) return null;
@@ -86,9 +88,9 @@ const AddQueueModal: React.FC<AddQueueModalProps> = ({ isOpen, onClose, onAddQue
 
         <input
           type="text"
-          placeholder="Какие-то параметры очереди, которые определим потом"
-          value={queueName}
-          onChange={(e) => setQueueName(e.target.value)}
+          placeholder="Максимальное время ожидание"
+          value={queueMaxTime}
+          onChange={(e) => setQueueMaxTime(e.target.value)}
           style={{
             width: 'calc(100% - 32px)', 
             padding: '12px 16px',
@@ -101,7 +103,23 @@ const AddQueueModal: React.FC<AddQueueModalProps> = ({ isOpen, onClose, onAddQue
             outline: 'none', 
           }}
         />
-
+        <input
+          type="text"
+          placeholder="Максимальное количество участников"
+          value={queueMaxMembers}
+          onChange={(e) => setQueueMaxMembers(e.target.value)}
+          style={{
+            width: 'calc(100% - 32px)', 
+            padding: '12px 16px',
+            backgroundColor: '#F7F7F7',
+            border: '0.3px solid rgba(0, 0, 0, 0.15)',
+            borderRadius: '16px',
+            fontSize: '15px',
+            color: '#333333',
+            marginBottom: '16px',
+            outline: 'none', 
+          }}
+        />
         <Flex
           align="center"
           justify="center" 
