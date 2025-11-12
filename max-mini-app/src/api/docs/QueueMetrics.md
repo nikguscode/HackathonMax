@@ -1,48 +1,34 @@
-
 # QueueMetrics
 
 
 ## Properties
 
-Name | Type
------------- | -------------
-`waitingTime` | number
-`entriesInTheQueue` | number
-`numberOfServedMembers` | number
-`serviceTime` | number
-`totalLeft` | number
-`maxInQueue` | number
-`minInQueue` | number
-`averageInQueue` | number
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**waitingTime** | **number** |  | [optional] [default to undefined]
+**entriesInTheQueue** | **number** |  | [optional] [default to undefined]
+**numberOfServedMembers** | **number** |  | [optional] [default to undefined]
+**serviceTime** | **number** |  | [optional] [default to undefined]
+**totalLeft** | **number** |  | [optional] [default to undefined]
+**maxInQueue** | **number** |  | [optional] [default to undefined]
+**minInQueue** | **number** |  | [optional] [default to undefined]
+**averageInQueue** | **number** |  | [optional] [default to undefined]
 
 ## Example
 
 ```typescript
-import type { QueueMetrics } from ''
+import { QueueMetrics } from './api';
 
-// TODO: Update the object below with actual values
-const example = {
-  "waitingTime": null,
-  "entriesInTheQueue": null,
-  "numberOfServedMembers": null,
-  "serviceTime": null,
-  "totalLeft": null,
-  "maxInQueue": null,
-  "minInQueue": null,
-  "averageInQueue": null,
-} satisfies QueueMetrics
-
-console.log(example)
-
-// Convert the instance to a JSON string
-const exampleJSON: string = JSON.stringify(example)
-console.log(exampleJSON)
-
-// Parse the JSON string back to an object
-const exampleParsed = JSON.parse(exampleJSON) as QueueMetrics
-console.log(exampleParsed)
+const instance: QueueMetrics = {
+    waitingTime,
+    entriesInTheQueue,
+    numberOfServedMembers,
+    serviceTime,
+    totalLeft,
+    maxInQueue,
+    minInQueue,
+    averageInQueue,
+};
 ```
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
-
-
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

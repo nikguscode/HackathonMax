@@ -1,34 +1,20 @@
-
 # OrganizationGraphicsResponse
 
 
 ## Properties
 
-Name | Type
------------- | -------------
-`graphics` | [OrganizationGraphics](OrganizationGraphics.md)
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**graphics** | [**OrganizationGraphics**](OrganizationGraphics.md) |  | [optional] [default to undefined]
 
 ## Example
 
 ```typescript
-import type { OrganizationGraphicsResponse } from ''
+import { OrganizationGraphicsResponse } from './api';
 
-// TODO: Update the object below with actual values
-const example = {
-  "graphics": null,
-} satisfies OrganizationGraphicsResponse
-
-console.log(example)
-
-// Convert the instance to a JSON string
-const exampleJSON: string = JSON.stringify(example)
-console.log(exampleJSON)
-
-// Parse the JSON string back to an object
-const exampleParsed = JSON.parse(exampleJSON) as OrganizationGraphicsResponse
-console.log(exampleParsed)
+const instance: OrganizationGraphicsResponse = {
+    graphics,
+};
 ```
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
-
-
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

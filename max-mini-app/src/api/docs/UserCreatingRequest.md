@@ -1,40 +1,26 @@
-
 # UserCreatingRequest
 
 
 ## Properties
 
-Name | Type
------------- | -------------
-`maxId` | string
-`username` | string
-`firstName` | string
-`secondName` | string
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**maxId** | **string** |  | [default to undefined]
+**username** | **string** |  | [optional] [default to undefined]
+**firstName** | **string** |  | [optional] [default to undefined]
+**secondName** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
 ```typescript
-import type { UserCreatingRequest } from ''
+import { UserCreatingRequest } from './api';
 
-// TODO: Update the object below with actual values
-const example = {
-  "maxId": null,
-  "username": null,
-  "firstName": null,
-  "secondName": null,
-} satisfies UserCreatingRequest
-
-console.log(example)
-
-// Convert the instance to a JSON string
-const exampleJSON: string = JSON.stringify(example)
-console.log(exampleJSON)
-
-// Parse the JSON string back to an object
-const exampleParsed = JSON.parse(exampleJSON) as UserCreatingRequest
-console.log(exampleParsed)
+const instance: UserCreatingRequest = {
+    maxId,
+    username,
+    firstName,
+    secondName,
+};
 ```
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
-
-
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

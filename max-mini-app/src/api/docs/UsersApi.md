@@ -2,62 +2,47 @@
 
 All URIs are relative to *http://orchestrator-service:8080*
 
-| Method | HTTP request | Description |
+|Method | HTTP request | Description|
 |------------- | ------------- | -------------|
-| [**addUserInMaxQueueSystem**](UsersApi.md#adduserinmaxqueuesystem) | **POST** /users | Add user in maxqueue system |
-| [**getUserByMaxId**](UsersApi.md#getuserbymaxid) | **GET** /users/{maxId} | Get user by Max Messenger ID |
-| [**sendUserMiniAppData**](UsersApi.md#senduserminiappdataoperation) | **POST** /users/{maxId}/mini-app | Transfer data after opening the mini-app |
-| [**updateOrganizationUserRole**](UsersApi.md#updateorganizationuserrole) | **PUT** /users/{maxId}/role | Update user role in organization |
-| [**updateUserInMaxQueueSystem**](UsersApi.md#updateuserinmaxqueuesystem) | **PUT** /users/{maxId} | Update user in maxqueue system |
+|[**addUserInMaxQueueSystem**](#adduserinmaxqueuesystem) | **POST** /users | Add user in maxqueue system|
+|[**getUserByMaxId**](#getuserbymaxid) | **GET** /users/{maxId} | Get user by Max Messenger ID|
+|[**sendUserMiniAppData**](#senduserminiappdata) | **POST** /users/{maxId}/mini-app | Transfer data after opening the mini-app|
+|[**updateOrganizationUserRole**](#updateorganizationuserrole) | **PUT** /users/{maxId}/role | Update user role in organization|
+|[**updateUserInMaxQueueSystem**](#updateuserinmaxqueuesystem) | **PUT** /users/{maxId} | Update user in maxqueue system|
 
+# **addUserInMaxQueueSystem**
+> addUserInMaxQueueSystem()
 
-
-## addUserInMaxQueueSystem
-
-> addUserInMaxQueueSystem(userCreatingRequest)
-
-Add user in maxqueue system
 
 ### Example
 
-```ts
+```typescript
 import {
-  Configuration,
-  UsersApi,
-} from '';
-import type { AddUserInMaxQueueSystemRequest } from '';
+    UsersApi,
+    Configuration,
+    UserCreatingRequest
+} from './api';
 
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const api = new UsersApi();
+const configuration = new Configuration();
+const apiInstance = new UsersApi(configuration);
 
-  const body = {
-    // UserCreatingRequest | Add user in maxqueue system (optional)
-    userCreatingRequest: ...,
-  } satisfies AddUserInMaxQueueSystemRequest;
+let userCreatingRequest: UserCreatingRequest; //Add user in maxqueue system (optional)
 
-  try {
-    const data = await api.addUserInMaxQueueSystem(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
+const { status, data } = await apiInstance.addUserInMaxQueueSystem(
+    userCreatingRequest
+);
 ```
 
 ### Parameters
 
-
-| Name | Type | Description  | Notes |
+|Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **userCreatingRequest** | [UserCreatingRequest](UserCreatingRequest.md) | Add user in maxqueue system | [Optional] |
+| **userCreatingRequest** | **UserCreatingRequest**| Add user in maxqueue system | |
+
 
 ### Return type
 
-`void` (Empty response body)
+void (empty response body)
 
 ### Authorization
 
@@ -65,67 +50,52 @@ No authorization required
 
 ### HTTP request headers
 
-- **Content-Type**: `application/json`
-- **Accept**: Not defined
+ - **Content-Type**: application/json
+ - **Accept**: Not defined
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | Successful operation |  -  |
-| **400** | Invalid request parameters |  -  |
-| **404** | Resource not found |  -  |
-| **0** | Unexpected server error |  -  |
+|**200** | Successful operation |  -  |
+|**400** | Invalid request parameters |  -  |
+|**404** | Resource not found |  -  |
+|**0** | Unexpected server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **getUserByMaxId**
+> UserResponse getUserByMaxId()
 
-## getUserByMaxId
-
-> UserResponse getUserByMaxId(maxId)
-
-Get user by Max Messenger ID
 
 ### Example
 
-```ts
+```typescript
 import {
-  Configuration,
-  UsersApi,
-} from '';
-import type { GetUserByMaxIdRequest } from '';
+    UsersApi,
+    Configuration
+} from './api';
 
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const api = new UsersApi();
+const configuration = new Configuration();
+const apiInstance = new UsersApi(configuration);
 
-  const body = {
-    // number | Max Messenger user ID
-    maxId: 789,
-  } satisfies GetUserByMaxIdRequest;
+let maxId: number; //Max Messenger user ID (default to undefined)
 
-  try {
-    const data = await api.getUserByMaxId(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
+const { status, data } = await apiInstance.getUserByMaxId(
+    maxId
+);
 ```
 
 ### Parameters
 
-
-| Name | Type | Description  | Notes |
+|Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **maxId** | `number` | Max Messenger user ID | [Defaults to `undefined`] |
+| **maxId** | [**number**] | Max Messenger user ID | defaults to undefined|
+
 
 ### Return type
 
-[**UserResponse**](UserResponse.md)
+**UserResponse**
 
 ### Authorization
 
@@ -133,70 +103,56 @@ No authorization required
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
-- **Accept**: `application/json`
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | Successful operation |  -  |
-| **400** | Invalid request parameters |  -  |
-| **404** | Resource not found |  -  |
-| **0** | Unexpected server error |  -  |
+|**200** | Successful operation |  -  |
+|**400** | Invalid request parameters |  -  |
+|**404** | Resource not found |  -  |
+|**0** | Unexpected server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **sendUserMiniAppData**
+> sendUserMiniAppData()
 
-## sendUserMiniAppData
-
-> sendUserMiniAppData(maxId, sendUserMiniAppDataRequest)
-
-Transfer data after opening the mini-app
 
 ### Example
 
-```ts
+```typescript
 import {
-  Configuration,
-  UsersApi,
-} from '';
-import type { SendUserMiniAppDataOperationRequest } from '';
+    UsersApi,
+    Configuration,
+    SendUserMiniAppDataRequest
+} from './api';
 
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const api = new UsersApi();
+const configuration = new Configuration();
+const apiInstance = new UsersApi(configuration);
 
-  const body = {
-    // number | User MAX ID
-    maxId: 789,
-    // SendUserMiniAppDataRequest | Transfer data after opening the mini-app (optional)
-    sendUserMiniAppDataRequest: ...,
-  } satisfies SendUserMiniAppDataOperationRequest;
+let maxId: number; //User MAX ID (default to undefined)
+let sendUserMiniAppDataRequest: SendUserMiniAppDataRequest; //Transfer data after opening the mini-app (optional)
 
-  try {
-    const data = await api.sendUserMiniAppData(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
+const { status, data } = await apiInstance.sendUserMiniAppData(
+    maxId,
+    sendUserMiniAppDataRequest
+);
 ```
 
 ### Parameters
 
-
-| Name | Type | Description  | Notes |
+|Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **maxId** | `number` | User MAX ID | [Defaults to `undefined`] |
-| **sendUserMiniAppDataRequest** | [SendUserMiniAppDataRequest](SendUserMiniAppDataRequest.md) | Transfer data after opening the mini-app | [Optional] |
+| **sendUserMiniAppDataRequest** | **SendUserMiniAppDataRequest**| Transfer data after opening the mini-app | |
+| **maxId** | [**number**] | User MAX ID | defaults to undefined|
+
 
 ### Return type
 
-`void` (Empty response body)
+void (empty response body)
 
 ### Authorization
 
@@ -204,70 +160,56 @@ No authorization required
 
 ### HTTP request headers
 
-- **Content-Type**: `application/json`
-- **Accept**: Not defined
+ - **Content-Type**: application/json
+ - **Accept**: Not defined
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | Successful operation |  -  |
-| **400** | Invalid request parameters |  -  |
-| **404** | Resource not found |  -  |
-| **0** | Unexpected server error |  -  |
+|**200** | Successful operation |  -  |
+|**400** | Invalid request parameters |  -  |
+|**404** | Resource not found |  -  |
+|**0** | Unexpected server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **updateOrganizationUserRole**
+> OrganizationQueuesResponse updateOrganizationUserRole()
 
-## updateOrganizationUserRole
-
-> OrganizationQueuesResponse updateOrganizationUserRole(maxId, userRoleRequest)
-
-Update user role in organization
 
 ### Example
 
-```ts
+```typescript
 import {
-  Configuration,
-  UsersApi,
-} from '';
-import type { UpdateOrganizationUserRoleRequest } from '';
+    UsersApi,
+    Configuration,
+    UserRoleRequest
+} from './api';
 
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const api = new UsersApi();
+const configuration = new Configuration();
+const apiInstance = new UsersApi(configuration);
 
-  const body = {
-    // number | User MAX ID
-    maxId: 789,
-    // UserRoleRequest | Update user role in organization (optional)
-    userRoleRequest: ...,
-  } satisfies UpdateOrganizationUserRoleRequest;
+let maxId: number; //User MAX ID (default to undefined)
+let userRoleRequest: UserRoleRequest; //Update user role in organization (optional)
 
-  try {
-    const data = await api.updateOrganizationUserRole(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
+const { status, data } = await apiInstance.updateOrganizationUserRole(
+    maxId,
+    userRoleRequest
+);
 ```
 
 ### Parameters
 
-
-| Name | Type | Description  | Notes |
+|Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **maxId** | `number` | User MAX ID | [Defaults to `undefined`] |
-| **userRoleRequest** | [UserRoleRequest](UserRoleRequest.md) | Update user role in organization | [Optional] |
+| **userRoleRequest** | **UserRoleRequest**| Update user role in organization | |
+| **maxId** | [**number**] | User MAX ID | defaults to undefined|
+
 
 ### Return type
 
-[**OrganizationQueuesResponse**](OrganizationQueuesResponse.md)
+**OrganizationQueuesResponse**
 
 ### Authorization
 
@@ -275,70 +217,56 @@ No authorization required
 
 ### HTTP request headers
 
-- **Content-Type**: `application/json`
-- **Accept**: `application/json`
+ - **Content-Type**: application/json
+ - **Accept**: application/json
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | Organization with its queues |  -  |
-| **400** | Invalid request parameters |  -  |
-| **404** | Resource not found |  -  |
-| **0** | Unexpected server error |  -  |
+|**200** | Organization with its queues |  -  |
+|**400** | Invalid request parameters |  -  |
+|**404** | Resource not found |  -  |
+|**0** | Unexpected server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **updateUserInMaxQueueSystem**
+> updateUserInMaxQueueSystem()
 
-## updateUserInMaxQueueSystem
-
-> updateUserInMaxQueueSystem(maxId, userUpdateRequest)
-
-Update user in maxqueue system
 
 ### Example
 
-```ts
+```typescript
 import {
-  Configuration,
-  UsersApi,
-} from '';
-import type { UpdateUserInMaxQueueSystemRequest } from '';
+    UsersApi,
+    Configuration,
+    UserUpdateRequest
+} from './api';
 
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const api = new UsersApi();
+const configuration = new Configuration();
+const apiInstance = new UsersApi(configuration);
 
-  const body = {
-    // number | Max Messenger user ID
-    maxId: 789,
-    // UserUpdateRequest | Update user in maxqueue system (optional)
-    userUpdateRequest: ...,
-  } satisfies UpdateUserInMaxQueueSystemRequest;
+let maxId: number; //Max Messenger user ID (default to undefined)
+let userUpdateRequest: UserUpdateRequest; //Update user in maxqueue system (optional)
 
-  try {
-    const data = await api.updateUserInMaxQueueSystem(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
+const { status, data } = await apiInstance.updateUserInMaxQueueSystem(
+    maxId,
+    userUpdateRequest
+);
 ```
 
 ### Parameters
 
-
-| Name | Type | Description  | Notes |
+|Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **maxId** | `number` | Max Messenger user ID | [Defaults to `undefined`] |
-| **userUpdateRequest** | [UserUpdateRequest](UserUpdateRequest.md) | Update user in maxqueue system | [Optional] |
+| **userUpdateRequest** | **UserUpdateRequest**| Update user in maxqueue system | |
+| **maxId** | [**number**] | Max Messenger user ID | defaults to undefined|
+
 
 ### Return type
 
-`void` (Empty response body)
+void (empty response body)
 
 ### Authorization
 
@@ -346,17 +274,17 @@ No authorization required
 
 ### HTTP request headers
 
-- **Content-Type**: `application/json`
-- **Accept**: Not defined
+ - **Content-Type**: application/json
+ - **Accept**: Not defined
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | Successful operation |  -  |
-| **400** | Invalid request parameters |  -  |
-| **404** | Resource not found |  -  |
-| **0** | Unexpected server error |  -  |
+|**200** | Successful operation |  -  |
+|**400** | Invalid request parameters |  -  |
+|**404** | Resource not found |  -  |
+|**0** | Unexpected server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

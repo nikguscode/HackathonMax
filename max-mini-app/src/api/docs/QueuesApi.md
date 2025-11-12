@@ -2,61 +2,45 @@
 
 All URIs are relative to *http://orchestrator-service:8080*
 
-| Method | HTTP request | Description |
+|Method | HTTP request | Description|
 |------------- | ------------- | -------------|
-| [**getQueueGraphics**](QueuesApi.md#getqueuegraphics) | **GET** /queues/{queueId}/graphics | Get queue graphics |
-| [**getQueueMembers**](QueuesApi.md#getqueuemembers) | **GET** /queues/{queueId}/members | Get members of a queue |
-| [**getQueueMetrics**](QueuesApi.md#getqueuemetrics) | **GET** /queues/{queueId}/metrics | Get queue metrics |
-| [**getQueueSettings**](QueuesApi.md#getqueuesettings) | **GET** /queues/{queueId}/settings | Get queue settings |
+|[**getQueueGraphics**](#getqueuegraphics) | **GET** /queues/{queueId}/graphics | Get queue graphics|
+|[**getQueueMembers**](#getqueuemembers) | **GET** /queues/{queueId}/members | Get members of a queue|
+|[**getQueueMetrics**](#getqueuemetrics) | **GET** /queues/{queueId}/metrics | Get queue metrics|
+|[**getQueueSettings**](#getqueuesettings) | **GET** /queues/{queueId}/settings | Get queue settings|
 
+# **getQueueGraphics**
+> QueueGraphicsResponse getQueueGraphics()
 
-
-## getQueueGraphics
-
-> QueueGraphicsResponse getQueueGraphics(queueId)
-
-Get queue graphics
 
 ### Example
 
-```ts
+```typescript
 import {
-  Configuration,
-  QueuesApi,
-} from '';
-import type { GetQueueGraphicsRequest } from '';
+    QueuesApi,
+    Configuration
+} from './api';
 
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const api = new QueuesApi();
+const configuration = new Configuration();
+const apiInstance = new QueuesApi(configuration);
 
-  const body = {
-    // string | Queue ID
-    queueId: 38400000-8cf0-11bd-b23e-10b96e4ef00d,
-  } satisfies GetQueueGraphicsRequest;
+let queueId: string; //Queue ID (default to undefined)
 
-  try {
-    const data = await api.getQueueGraphics(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
+const { status, data } = await apiInstance.getQueueGraphics(
+    queueId
+);
 ```
 
 ### Parameters
 
-
-| Name | Type | Description  | Notes |
+|Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **queueId** | `string` | Queue ID | [Defaults to `undefined`] |
+| **queueId** | [**string**] | Queue ID | defaults to undefined|
+
 
 ### Return type
 
-[**QueueGraphicsResponse**](QueueGraphicsResponse.md)
+**QueueGraphicsResponse**
 
 ### Authorization
 
@@ -64,67 +48,52 @@ No authorization required
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
-- **Accept**: `application/json`
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | Queue graphics retrieved successfully |  -  |
-| **400** | Invalid request parameters |  -  |
-| **404** | Resource not found |  -  |
-| **0** | Unexpected server error |  -  |
+|**200** | Queue graphics retrieved successfully |  -  |
+|**400** | Invalid request parameters |  -  |
+|**404** | Resource not found |  -  |
+|**0** | Unexpected server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **getQueueMembers**
+> QueueMembersResponse getQueueMembers()
 
-## getQueueMembers
-
-> QueueMembersResponse getQueueMembers(queueId)
-
-Get members of a queue
 
 ### Example
 
-```ts
+```typescript
 import {
-  Configuration,
-  QueuesApi,
-} from '';
-import type { GetQueueMembersRequest } from '';
+    QueuesApi,
+    Configuration
+} from './api';
 
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const api = new QueuesApi();
+const configuration = new Configuration();
+const apiInstance = new QueuesApi(configuration);
 
-  const body = {
-    // string
-    queueId: 38400000-8cf0-11bd-b23e-10b96e4ef00d,
-  } satisfies GetQueueMembersRequest;
+let queueId: string; // (default to undefined)
 
-  try {
-    const data = await api.getQueueMembers(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
+const { status, data } = await apiInstance.getQueueMembers(
+    queueId
+);
 ```
 
 ### Parameters
 
-
-| Name | Type | Description  | Notes |
+|Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **queueId** | `string` |  | [Defaults to `undefined`] |
+| **queueId** | [**string**] |  | defaults to undefined|
+
 
 ### Return type
 
-[**QueueMembersResponse**](QueueMembersResponse.md)
+**QueueMembersResponse**
 
 ### Authorization
 
@@ -132,67 +101,52 @@ No authorization required
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
-- **Accept**: `application/json`
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | Queue members retrieved successfully |  -  |
-| **400** | Invalid request parameters |  -  |
-| **404** | Resource not found |  -  |
-| **0** | Unexpected server error |  -  |
+|**200** | Queue members retrieved successfully |  -  |
+|**400** | Invalid request parameters |  -  |
+|**404** | Resource not found |  -  |
+|**0** | Unexpected server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **getQueueMetrics**
+> QueueMetricsResponse getQueueMetrics()
 
-## getQueueMetrics
-
-> QueueMetricsResponse getQueueMetrics(queueId)
-
-Get queue metrics
 
 ### Example
 
-```ts
+```typescript
 import {
-  Configuration,
-  QueuesApi,
-} from '';
-import type { GetQueueMetricsRequest } from '';
+    QueuesApi,
+    Configuration
+} from './api';
 
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const api = new QueuesApi();
+const configuration = new Configuration();
+const apiInstance = new QueuesApi(configuration);
 
-  const body = {
-    // string
-    queueId: 38400000-8cf0-11bd-b23e-10b96e4ef00d,
-  } satisfies GetQueueMetricsRequest;
+let queueId: string; // (default to undefined)
 
-  try {
-    const data = await api.getQueueMetrics(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
+const { status, data } = await apiInstance.getQueueMetrics(
+    queueId
+);
 ```
 
 ### Parameters
 
-
-| Name | Type | Description  | Notes |
+|Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **queueId** | `string` |  | [Defaults to `undefined`] |
+| **queueId** | [**string**] |  | defaults to undefined|
+
 
 ### Return type
 
-[**QueueMetricsResponse**](QueueMetricsResponse.md)
+**QueueMetricsResponse**
 
 ### Authorization
 
@@ -200,67 +154,52 @@ No authorization required
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
-- **Accept**: `application/json`
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | Queue metrics retrieved successfully |  -  |
-| **400** | Invalid request parameters |  -  |
-| **404** | Resource not found |  -  |
-| **0** | Unexpected server error |  -  |
+|**200** | Queue metrics retrieved successfully |  -  |
+|**400** | Invalid request parameters |  -  |
+|**404** | Resource not found |  -  |
+|**0** | Unexpected server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **getQueueSettings**
+> QueueSettingsResponse getQueueSettings()
 
-## getQueueSettings
-
-> QueueSettingsResponse getQueueSettings(queueId)
-
-Get queue settings
 
 ### Example
 
-```ts
+```typescript
 import {
-  Configuration,
-  QueuesApi,
-} from '';
-import type { GetQueueSettingsRequest } from '';
+    QueuesApi,
+    Configuration
+} from './api';
 
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const api = new QueuesApi();
+const configuration = new Configuration();
+const apiInstance = new QueuesApi(configuration);
 
-  const body = {
-    // string
-    queueId: 38400000-8cf0-11bd-b23e-10b96e4ef00d,
-  } satisfies GetQueueSettingsRequest;
+let queueId: string; // (default to undefined)
 
-  try {
-    const data = await api.getQueueSettings(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
+const { status, data } = await apiInstance.getQueueSettings(
+    queueId
+);
 ```
 
 ### Parameters
 
-
-| Name | Type | Description  | Notes |
+|Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **queueId** | `string` |  | [Defaults to `undefined`] |
+| **queueId** | [**string**] |  | defaults to undefined|
+
 
 ### Return type
 
-[**QueueSettingsResponse**](QueueSettingsResponse.md)
+**QueueSettingsResponse**
 
 ### Authorization
 
@@ -268,17 +207,17 @@ No authorization required
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
-- **Accept**: `application/json`
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | Queue settings retrieved successfully |  -  |
-| **400** | Invalid request parameters |  -  |
-| **404** | Resource not found |  -  |
-| **0** | Unexpected server error |  -  |
+|**200** | Queue settings retrieved successfully |  -  |
+|**400** | Invalid request parameters |  -  |
+|**404** | Resource not found |  -  |
+|**0** | Unexpected server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

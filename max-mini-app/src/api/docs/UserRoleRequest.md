@@ -1,36 +1,22 @@
-
 # UserRoleRequest
 
 
 ## Properties
 
-Name | Type
------------- | -------------
-`organizationId` | string
-`role` | [UserRole](UserRole.md)
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**organizationId** | **string** |  | [default to undefined]
+**role** | [**UserRole**](UserRole.md) |  | [default to undefined]
 
 ## Example
 
 ```typescript
-import type { UserRoleRequest } from ''
+import { UserRoleRequest } from './api';
 
-// TODO: Update the object below with actual values
-const example = {
-  "organizationId": null,
-  "role": null,
-} satisfies UserRoleRequest
-
-console.log(example)
-
-// Convert the instance to a JSON string
-const exampleJSON: string = JSON.stringify(example)
-console.log(exampleJSON)
-
-// Parse the JSON string back to an object
-const exampleParsed = JSON.parse(exampleJSON) as UserRoleRequest
-console.log(exampleParsed)
+const instance: UserRoleRequest = {
+    organizationId,
+    role,
+};
 ```
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
-
-
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

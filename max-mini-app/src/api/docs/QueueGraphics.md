@@ -1,36 +1,22 @@
-
 # QueueGraphics
 
 
 ## Properties
 
-Name | Type
------------- | -------------
-`membersInQueueByTime` | [Array&lt;QueueGraphicsMembersInQueueByTimeInner&gt;](QueueGraphicsMembersInQueueByTimeInner.md)
-`averageWaitingTimeByTime` | [Array&lt;QueueGraphicsAverageWaitingTimeByTimeInner&gt;](QueueGraphicsAverageWaitingTimeByTimeInner.md)
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**membersInQueueByTime** | [**Array&lt;QueueGraphicsMembersInQueueByTimeInner&gt;**](QueueGraphicsMembersInQueueByTimeInner.md) |  | [optional] [default to undefined]
+**averageWaitingTimeByTime** | [**Array&lt;QueueGraphicsAverageWaitingTimeByTimeInner&gt;**](QueueGraphicsAverageWaitingTimeByTimeInner.md) |  | [optional] [default to undefined]
 
 ## Example
 
 ```typescript
-import type { QueueGraphics } from ''
+import { QueueGraphics } from './api';
 
-// TODO: Update the object below with actual values
-const example = {
-  "membersInQueueByTime": null,
-  "averageWaitingTimeByTime": null,
-} satisfies QueueGraphics
-
-console.log(example)
-
-// Convert the instance to a JSON string
-const exampleJSON: string = JSON.stringify(example)
-console.log(exampleJSON)
-
-// Parse the JSON string back to an object
-const exampleParsed = JSON.parse(exampleJSON) as QueueGraphics
-console.log(exampleParsed)
+const instance: QueueGraphics = {
+    membersInQueueByTime,
+    averageWaitingTimeByTime,
+};
 ```
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
-
-
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

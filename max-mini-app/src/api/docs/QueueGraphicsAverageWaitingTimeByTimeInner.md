@@ -1,36 +1,22 @@
-
 # QueueGraphicsAverageWaitingTimeByTimeInner
 
 
 ## Properties
 
-Name | Type
------------- | -------------
-`time` | Date
-`waitingTime` | number
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**time** | **string** |  | [optional] [default to undefined]
+**waitingTime** | **number** |  | [optional] [default to undefined]
 
 ## Example
 
 ```typescript
-import type { QueueGraphicsAverageWaitingTimeByTimeInner } from ''
+import { QueueGraphicsAverageWaitingTimeByTimeInner } from './api';
 
-// TODO: Update the object below with actual values
-const example = {
-  "time": null,
-  "waitingTime": null,
-} satisfies QueueGraphicsAverageWaitingTimeByTimeInner
-
-console.log(example)
-
-// Convert the instance to a JSON string
-const exampleJSON: string = JSON.stringify(example)
-console.log(exampleJSON)
-
-// Parse the JSON string back to an object
-const exampleParsed = JSON.parse(exampleJSON) as QueueGraphicsAverageWaitingTimeByTimeInner
-console.log(exampleParsed)
+const instance: QueueGraphicsAverageWaitingTimeByTimeInner = {
+    time,
+    waitingTime,
+};
 ```
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
-
-
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

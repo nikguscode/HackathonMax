@@ -96,18 +96,17 @@ const HomePage: React.FC = () => {
         console.log("Запрос к API:", `/users/${maxIdNum}`);
 
         const response = await usersApi.getUserByMaxId({ maxId: maxIdNum } as any);
-        const userResponseOrg = response.organizations;
-        const userResponseQueue = response.queueEntries;
+        const userResponse = response.data;
         
 
-        if (!userResponseOrg || !userResponseQueue) {
+        if (!userResponse) {
           setError("Ответ от сервера пустой. Проверьте подключение к API");
           setLoading(false);
           return;
         }
 
-        const organizationsList = userResponseOrg|| [];
-        const queueList = userResponseQueue || [];
+        const organizationsList = userResponse.organizations|| [];
+        const queueList = userResponse["queue-entries"] || [];
 
         const adminOrgs: Organization[] = [];
         const queues: QueueEntryInUserResponse[] = [];

@@ -2,60 +2,44 @@
 
 All URIs are relative to *http://orchestrator-service:8080*
 
-| Method | HTTP request | Description |
+|Method | HTTP request | Description|
 |------------- | ------------- | -------------|
-| [**getOrganizationGraphics**](OrganizationsApi.md#getorganizationgraphics) | **GET** /organizations/{organizationId}/graphics | Get organization graphics |
-| [**getOrganizationMetrics**](OrganizationsApi.md#getorganizationmetrics) | **GET** /organizations/{organizationId}/metrics | Get organization metrics |
-| [**getOrganizationSettings**](OrganizationsApi.md#getorganizationsettings) | **GET** /organizations/{organizationId}/settings | Get organization settings |
+|[**getOrganizationGraphics**](#getorganizationgraphics) | **GET** /organizations/{organizationId}/graphics | Get organization graphics|
+|[**getOrganizationMetrics**](#getorganizationmetrics) | **GET** /organizations/{organizationId}/metrics | Get organization metrics|
+|[**getOrganizationSettings**](#getorganizationsettings) | **GET** /organizations/{organizationId}/settings | Get organization settings|
 
+# **getOrganizationGraphics**
+> OrganizationGraphicsResponse getOrganizationGraphics()
 
-
-## getOrganizationGraphics
-
-> OrganizationGraphicsResponse getOrganizationGraphics(organizationId)
-
-Get organization graphics
 
 ### Example
 
-```ts
+```typescript
 import {
-  Configuration,
-  OrganizationsApi,
-} from '';
-import type { GetOrganizationGraphicsRequest } from '';
+    OrganizationsApi,
+    Configuration
+} from './api';
 
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const api = new OrganizationsApi();
+const configuration = new Configuration();
+const apiInstance = new OrganizationsApi(configuration);
 
-  const body = {
-    // string | Organization ID
-    organizationId: 38400000-8cf0-11bd-b23e-10b96e4ef00d,
-  } satisfies GetOrganizationGraphicsRequest;
+let organizationId: string; //Organization ID (default to undefined)
 
-  try {
-    const data = await api.getOrganizationGraphics(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
+const { status, data } = await apiInstance.getOrganizationGraphics(
+    organizationId
+);
 ```
 
 ### Parameters
 
-
-| Name | Type | Description  | Notes |
+|Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **organizationId** | `string` | Organization ID | [Defaults to `undefined`] |
+| **organizationId** | [**string**] | Organization ID | defaults to undefined|
+
 
 ### Return type
 
-[**OrganizationGraphicsResponse**](OrganizationGraphicsResponse.md)
+**OrganizationGraphicsResponse**
 
 ### Authorization
 
@@ -63,67 +47,52 @@ No authorization required
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
-- **Accept**: `application/json`
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | Organization graphics retrieved successfully |  -  |
-| **400** | Invalid request parameters |  -  |
-| **404** | Resource not found |  -  |
-| **0** | Unexpected server error |  -  |
+|**200** | Organization graphics retrieved successfully |  -  |
+|**400** | Invalid request parameters |  -  |
+|**404** | Resource not found |  -  |
+|**0** | Unexpected server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **getOrganizationMetrics**
+> OrganizationMetricsResponse getOrganizationMetrics()
 
-## getOrganizationMetrics
-
-> OrganizationMetricsResponse getOrganizationMetrics(organizationId)
-
-Get organization metrics
 
 ### Example
 
-```ts
+```typescript
 import {
-  Configuration,
-  OrganizationsApi,
-} from '';
-import type { GetOrganizationMetricsRequest } from '';
+    OrganizationsApi,
+    Configuration
+} from './api';
 
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const api = new OrganizationsApi();
+const configuration = new Configuration();
+const apiInstance = new OrganizationsApi(configuration);
 
-  const body = {
-    // string | Organization ID
-    organizationId: 38400000-8cf0-11bd-b23e-10b96e4ef00d,
-  } satisfies GetOrganizationMetricsRequest;
+let organizationId: string; //Organization ID (default to undefined)
 
-  try {
-    const data = await api.getOrganizationMetrics(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
+const { status, data } = await apiInstance.getOrganizationMetrics(
+    organizationId
+);
 ```
 
 ### Parameters
 
-
-| Name | Type | Description  | Notes |
+|Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **organizationId** | `string` | Organization ID | [Defaults to `undefined`] |
+| **organizationId** | [**string**] | Organization ID | defaults to undefined|
+
 
 ### Return type
 
-[**OrganizationMetricsResponse**](OrganizationMetricsResponse.md)
+**OrganizationMetricsResponse**
 
 ### Authorization
 
@@ -131,67 +100,52 @@ No authorization required
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
-- **Accept**: `application/json`
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | Organization metrics retrieved successfully |  -  |
-| **400** | Invalid request parameters |  -  |
-| **404** | Resource not found |  -  |
-| **0** | Unexpected server error |  -  |
+|**200** | Organization metrics retrieved successfully |  -  |
+|**400** | Invalid request parameters |  -  |
+|**404** | Resource not found |  -  |
+|**0** | Unexpected server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **getOrganizationSettings**
+> OrganizationSettingsResponse getOrganizationSettings()
 
-## getOrganizationSettings
-
-> OrganizationSettingsResponse getOrganizationSettings(organizationId)
-
-Get organization settings
 
 ### Example
 
-```ts
+```typescript
 import {
-  Configuration,
-  OrganizationsApi,
-} from '';
-import type { GetOrganizationSettingsRequest } from '';
+    OrganizationsApi,
+    Configuration
+} from './api';
 
-async function example() {
-  console.log("🚀 Testing  SDK...");
-  const api = new OrganizationsApi();
+const configuration = new Configuration();
+const apiInstance = new OrganizationsApi(configuration);
 
-  const body = {
-    // string | Organization ID
-    organizationId: 38400000-8cf0-11bd-b23e-10b96e4ef00d,
-  } satisfies GetOrganizationSettingsRequest;
+let organizationId: string; //Organization ID (default to undefined)
 
-  try {
-    const data = await api.getOrganizationSettings(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
+const { status, data } = await apiInstance.getOrganizationSettings(
+    organizationId
+);
 ```
 
 ### Parameters
 
-
-| Name | Type | Description  | Notes |
+|Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **organizationId** | `string` | Organization ID | [Defaults to `undefined`] |
+| **organizationId** | [**string**] | Organization ID | defaults to undefined|
+
 
 ### Return type
 
-[**OrganizationSettingsResponse**](OrganizationSettingsResponse.md)
+**OrganizationSettingsResponse**
 
 ### Authorization
 
@@ -199,17 +153,17 @@ No authorization required
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
-- **Accept**: `application/json`
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | Organization settings retrieved successfully |  -  |
-| **400** | Invalid request parameters |  -  |
-| **404** | Resource not found |  -  |
-| **0** | Unexpected server error |  -  |
+|**200** | Organization settings retrieved successfully |  -  |
+|**400** | Invalid request parameters |  -  |
+|**404** | Resource not found |  -  |
+|**0** | Unexpected server error |  -  |
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

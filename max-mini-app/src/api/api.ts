@@ -29,6 +29,21 @@ export interface Organization {
     'role'?: UserRole & string;
     'amountOfQueues'?: number;
 }
+export interface OrganizationGraphics {
+    'throughputByTime'?: Array<OrganizationGraphicsThroughputByTimeInner>;
+    'totalLoadByTime'?: Array<OrganizationGraphicsTotalLoadByTimeInner>;
+}
+export interface OrganizationGraphicsResponse {
+    'graphics'?: OrganizationGraphics;
+}
+export interface OrganizationGraphicsThroughputByTimeInner {
+    'time'?: string;
+    'throughput'?: number;
+}
+export interface OrganizationGraphicsTotalLoadByTimeInner {
+    'time'?: string;
+    'totalLoad'?: number;
+}
 export interface OrganizationMetrics {
     'numberOfActiveQueues'?: number;
     'numberOfQueues'?: number;
@@ -88,13 +103,28 @@ export const QueueEntryStatus = {
     Waiting: 'WAITING',
     Serving: 'SERVING',
     Served: 'SERVED',
-    Cancelled: 'CANCELLED',
+    Canceled: 'CANCELED',
     Missed: 'MISSED'
 } as const;
 
 export type QueueEntryStatus = typeof QueueEntryStatus[keyof typeof QueueEntryStatus];
 
 
+export interface QueueGraphics {
+    'membersInQueueByTime'?: Array<QueueGraphicsMembersInQueueByTimeInner>;
+    'averageWaitingTimeByTime'?: Array<QueueGraphicsAverageWaitingTimeByTimeInner>;
+}
+export interface QueueGraphicsAverageWaitingTimeByTimeInner {
+    'time'?: string;
+    'waitingTime'?: number;
+}
+export interface QueueGraphicsMembersInQueueByTimeInner {
+    'time'?: string;
+    'count'?: number;
+}
+export interface QueueGraphicsResponse {
+    'graphics'?: QueueGraphics;
+}
 export interface QueueMember {
     'maxId'?: number;
     'queueEntryId'?: string;
@@ -105,7 +135,6 @@ export interface QueueMembersResponse {
 }
 export interface QueueMetrics {
     'waitingTime'?: number;
-    'membersInFragment'?: number;
     'entriesInTheQueue'?: number;
     'numberOfServedMembers'?: number;
     'serviceTime'?: number;
@@ -127,6 +156,9 @@ export interface QueueSettings {
 }
 export interface QueueSettingsResponse {
     'settings'?: QueueSettings;
+}
+export interface SendUserMiniAppDataRequest {
+    'miniAppInitData': string;
 }
 export interface SimpleOrganization {
     'id'?: string;
@@ -180,15 +212,15 @@ export const OrganizationsApiAxiosParamCreator = function (configuration?: Confi
     return {
         /**
          * 
-         * @summary Get organization metrics
+         * @summary Get organization graphics
          * @param {string} organizationId Organization ID
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getOrganizationMetrics: async (organizationId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getOrganizationGraphics: async (organizationId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'organizationId' is not null or undefined
-            assertParamExists('getOrganizationMetrics', 'organizationId', organizationId)
-            const localVarPath = `/organizations/{organizationId}/metrics`
+            assertParamExists('getOrganizationGraphics', 'organizationId', organizationId)
+            const localVarPath = `/organizations/{organizationId}/graphics`
                 .replace(`{${"organizationId"}}`, encodeURIComponent(String(organizationId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -214,15 +246,15 @@ export const OrganizationsApiAxiosParamCreator = function (configuration?: Confi
         },
         /**
          * 
-         * @summary Get list of queues in an organization
+         * @summary Get organization metrics
          * @param {string} organizationId Organization ID
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getOrganizationQueues: async (organizationId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getOrganizationMetrics: async (organizationId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'organizationId' is not null or undefined
-            assertParamExists('getOrganizationQueues', 'organizationId', organizationId)
-            const localVarPath = `/organizations/{organizationId}/queues`
+            assertParamExists('getOrganizationMetrics', 'organizationId', organizationId)
+            const localVarPath = `/organizations/{organizationId}/metrics`
                 .replace(`{${"organizationId"}}`, encodeURIComponent(String(organizationId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -291,6 +323,19 @@ export const OrganizationsApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
+         * @summary Get organization graphics
+         * @param {string} organizationId Organization ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getOrganizationGraphics(organizationId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrganizationGraphicsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getOrganizationGraphics(organizationId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['OrganizationsApi.getOrganizationGraphics']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @summary Get organization metrics
          * @param {string} organizationId Organization ID
          * @param {*} [options] Override http request option.
@@ -300,19 +345,6 @@ export const OrganizationsApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getOrganizationMetrics(organizationId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['OrganizationsApi.getOrganizationMetrics']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @summary Get list of queues in an organization
-         * @param {string} organizationId Organization ID
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async getOrganizationQueues(organizationId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QueueResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getOrganizationQueues(organizationId, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['OrganizationsApi.getOrganizationQueues']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -339,6 +371,16 @@ export const OrganizationsApiFactory = function (configuration?: Configuration, 
     return {
         /**
          * 
+         * @summary Get organization graphics
+         * @param {string} organizationId Organization ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getOrganizationGraphics(organizationId: string, options?: RawAxiosRequestConfig): AxiosPromise<OrganizationGraphicsResponse> {
+            return localVarFp.getOrganizationGraphics(organizationId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Get organization metrics
          * @param {string} organizationId Organization ID
          * @param {*} [options] Override http request option.
@@ -346,16 +388,6 @@ export const OrganizationsApiFactory = function (configuration?: Configuration, 
          */
         getOrganizationMetrics(organizationId: string, options?: RawAxiosRequestConfig): AxiosPromise<OrganizationMetricsResponse> {
             return localVarFp.getOrganizationMetrics(organizationId, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @summary Get list of queues in an organization
-         * @param {string} organizationId Organization ID
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getOrganizationQueues(organizationId: string, options?: RawAxiosRequestConfig): AxiosPromise<QueueResponse> {
-            return localVarFp.getOrganizationQueues(organizationId, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -376,6 +408,17 @@ export const OrganizationsApiFactory = function (configuration?: Configuration, 
 export class OrganizationsApi extends BaseAPI {
     /**
      * 
+     * @summary Get organization graphics
+     * @param {string} organizationId Organization ID
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public getOrganizationGraphics(organizationId: string, options?: RawAxiosRequestConfig) {
+        return OrganizationsApiFp(this.configuration).getOrganizationGraphics(organizationId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary Get organization metrics
      * @param {string} organizationId Organization ID
      * @param {*} [options] Override http request option.
@@ -383,17 +426,6 @@ export class OrganizationsApi extends BaseAPI {
      */
     public getOrganizationMetrics(organizationId: string, options?: RawAxiosRequestConfig) {
         return OrganizationsApiFp(this.configuration).getOrganizationMetrics(organizationId, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @summary Get list of queues in an organization
-     * @param {string} organizationId Organization ID
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    public getOrganizationQueues(organizationId: string, options?: RawAxiosRequestConfig) {
-        return OrganizationsApiFp(this.configuration).getOrganizationQueues(organizationId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -654,6 +686,40 @@ export const QueuesApiAxiosParamCreator = function (configuration?: Configuratio
     return {
         /**
          * 
+         * @summary Get queue graphics
+         * @param {string} queueId Queue ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getQueueGraphics: async (queueId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'queueId' is not null or undefined
+            assertParamExists('getQueueGraphics', 'queueId', queueId)
+            const localVarPath = `/queues/{queueId}/graphics`
+                .replace(`{${"queueId"}}`, encodeURIComponent(String(queueId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary Get members of a queue
          * @param {string} queueId 
          * @param {*} [options] Override http request option.
@@ -765,6 +831,19 @@ export const QueuesApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
+         * @summary Get queue graphics
+         * @param {string} queueId Queue ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getQueueGraphics(queueId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QueueGraphicsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getQueueGraphics(queueId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['QueuesApi.getQueueGraphics']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @summary Get members of a queue
          * @param {string} queueId 
          * @param {*} [options] Override http request option.
@@ -813,6 +892,16 @@ export const QueuesApiFactory = function (configuration?: Configuration, basePat
     return {
         /**
          * 
+         * @summary Get queue graphics
+         * @param {string} queueId Queue ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getQueueGraphics(queueId: string, options?: RawAxiosRequestConfig): AxiosPromise<QueueGraphicsResponse> {
+            return localVarFp.getQueueGraphics(queueId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Get members of a queue
          * @param {string} queueId 
          * @param {*} [options] Override http request option.
@@ -848,6 +937,17 @@ export const QueuesApiFactory = function (configuration?: Configuration, basePat
  * QueuesApi - object-oriented interface
  */
 export class QueuesApi extends BaseAPI {
+    /**
+     * 
+     * @summary Get queue graphics
+     * @param {string} queueId Queue ID
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public getQueueGraphics(queueId: string, options?: RawAxiosRequestConfig) {
+        return QueuesApiFp(this.configuration).getQueueGraphics(queueId, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * 
      * @summary Get members of a queue
@@ -951,6 +1051,44 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Transfer data after opening the mini-app
+         * @param {number} maxId User MAX ID
+         * @param {SendUserMiniAppDataRequest} [sendUserMiniAppDataRequest] Transfer data after opening the mini-app
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        sendUserMiniAppData: async (maxId: number, sendUserMiniAppDataRequest?: SendUserMiniAppDataRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'maxId' is not null or undefined
+            assertParamExists('sendUserMiniAppData', 'maxId', maxId)
+            const localVarPath = `/users/{maxId}/mini-app`
+                .replace(`{${"maxId"}}`, encodeURIComponent(String(maxId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(sendUserMiniAppDataRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -1070,6 +1208,20 @@ export const UsersApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Transfer data after opening the mini-app
+         * @param {number} maxId User MAX ID
+         * @param {SendUserMiniAppDataRequest} [sendUserMiniAppDataRequest] Transfer data after opening the mini-app
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async sendUserMiniAppData(maxId: number, sendUserMiniAppDataRequest?: SendUserMiniAppDataRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.sendUserMiniAppData(maxId, sendUserMiniAppDataRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsersApi.sendUserMiniAppData']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @summary Update user role in organization
          * @param {number} maxId User MAX ID
          * @param {UserRoleRequest} [userRoleRequest] Update user role in organization
@@ -1127,6 +1279,17 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
         },
         /**
          * 
+         * @summary Transfer data after opening the mini-app
+         * @param {number} maxId User MAX ID
+         * @param {SendUserMiniAppDataRequest} [sendUserMiniAppDataRequest] Transfer data after opening the mini-app
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        sendUserMiniAppData(maxId: number, sendUserMiniAppDataRequest?: SendUserMiniAppDataRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.sendUserMiniAppData(maxId, sendUserMiniAppDataRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Update user role in organization
          * @param {number} maxId User MAX ID
          * @param {UserRoleRequest} [userRoleRequest] Update user role in organization
@@ -1174,6 +1337,18 @@ export class UsersApi extends BaseAPI {
      */
     public getUserByMaxId(maxId: number, options?: RawAxiosRequestConfig) {
         return UsersApiFp(this.configuration).getUserByMaxId(maxId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Transfer data after opening the mini-app
+     * @param {number} maxId User MAX ID
+     * @param {SendUserMiniAppDataRequest} [sendUserMiniAppDataRequest] Transfer data after opening the mini-app
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public sendUserMiniAppData(maxId: number, sendUserMiniAppDataRequest?: SendUserMiniAppDataRequest, options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).sendUserMiniAppData(maxId, sendUserMiniAppDataRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
