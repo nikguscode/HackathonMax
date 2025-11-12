@@ -14,6 +14,8 @@ type OrganizationMetricsRepository interface {
 	NumberOfEmployees(IDorg uuid.UUID) (int, error)
 	AverageWaitingTimeOrg(IDorg uuid.UUID) (float32, error)
 	NumberOfServedMembersOrg(IDorg uuid.UUID) (int, error)
+	MembersInDay(IDorg uuid.UUID) (int, error)
+	AverageLoadInQueues(IDorg uuid.UUID) (float32, error)
 }
 
 type orgMetricsRepo struct {
@@ -85,4 +87,43 @@ func (r *orgMetricsRepo) NumberOfServedMembersOrg(IDorg uuid.UUID) (int, error) 
 		Where("q.id_organization = ? AND qe.status = 'SERVED'", IDorg).
 		Count(&count).Error
 	return int(count), err
+}
+
+// Кол-во клиентов, вошедших в очередь за текущие сутки
+func (r *orgMetricsRepo) MembersInDay(IDorg uuid.UUID) (int, error) {
+	var count int64
+	err := r.db.Table(model.QueueEntry{}.TableName()+" AS qe").
+		Joins("JOIN "+model.Queue{}.TableName()+" q ON q.id = qe.id_queue").
+		Joins("JOIN "+model.EntryMeta{}.TableName()+" em ON em.id_queue_entry = qe.id").
+		Where(`
+			q.id_organization = ? 
+			AND em.joined_at >= DATE_TRUNC('day', NOW()) 
+			AND em.joined_at < DATE_TRUNC('day', NOW()) + INTERVAL '1 day'
+		`, IDorg).
+		Count(&count).Error
+	return int(count), err
+}
+
+// Средняя загрузка очередей (отношение текущего размера к максимальному)
+func (r *orgMetricsRepo) AverageLoadInQueues(IDorg uuid.UUID) (float32, error) {
+	var avg *float32
+	err := r.db.Raw(`
+		SELECT 
+			COALESCE(AVG(load_factor), 0) AS avg_load
+		FROM (
+			SELECT 
+				q.id,
+				CAST(COUNT(qe.id) AS float) / NULLIF(qp.max_queue_size, 0) AS load_factor
+			FROM queue q
+			LEFT JOIN queue_params qp ON qp.id_queue = q.id
+			LEFT JOIN queue_entry qe ON qe.id_queue = q.id
+			WHERE q.id_organization = ? AND qp.is_active = true
+			GROUP BY q.id, qp.max_queue_size
+		) sub;
+	`, IDorg).Scan(&avg).Error
+
+	if avg != nil {
+		return *avg, err
+	}
+	return 0, err
 }

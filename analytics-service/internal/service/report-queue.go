@@ -23,17 +23,19 @@ func GenerateQueueReport(repo repository.QueueMetricsRepository, queueID string)
 	totalLeft, _ := repo.CountLeftMembers(qID)
 	waitingTime, _ := repo.AverageWaitingTime(qID)
 	serviceTime, _ := repo.AverageServiceTime(qID)
+	max, _ := repo.MaxInQueue(qID)
+	min, _ := repo.MinInQueue(qID)
+	avg, _ := repo.AverageInQueue(qID)
 
 	metrics := QueueMetrics{
 		WaitingTime:           &waitingTime,
-		MembersInFragment:     nil,
 		EntriesInTheQueue:     &totalEntries,
 		NumberOfServedMembers: &numberServed,
 		ServiceTime:           &serviceTime,
 		TotalLeft:             &totalLeft,
-		MaxInQueue:            nil,
-		MinInQueue:            nil,
-		AverageInQueue:        nil,
+		MaxInQueue:            &max,
+		MinInQueue:            &min,
+		AverageInQueue:        &avg,
 	}
 
 	report := NewQueueMetricsResponse(&metrics)
