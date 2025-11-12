@@ -10,15 +10,25 @@ import (
 
 type Bot struct {
 	client *maxbot.Api
+	botID  int64
 }
 
-func NewBot(tocken string) (*Bot, error) {
-	api, err := maxbot.New(tocken)
+func NewBot(token string) (*Bot, error) {
+	api, err := maxbot.New(token)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Bot{client: api}, nil
+	ctx := context.Background()
+	info, err := api.Bots.GetBot(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Bot{
+		client: api,
+		botID:  info.UserId,
+	}, nil
 }
 
 func (b *Bot) Start(ctx context.Context) error {
@@ -48,12 +58,17 @@ func (b *Bot) Start(ctx context.Context) error {
 func (b *Bot) handleUpdate(ctx context.Context, upd schemes.UpdateInterface) error {
 	switch update := upd.(type) {
 	case *schemes.MessageCreatedUpdate:
-		return b.handleUpdate(ctx, update)
+		err := b.handleMessage(ctx, update)
+		if err.(*schemes.Error).Message.Stat == nil {
+			return nil
+		}
+		return err
+
 	case *schemes.MessageCallbackUpdate:
-		return b.handleUpdate(ctx, update)
+		return b.handleCallback(ctx, update)
+
 	default:
 		log.Printf("Unknown update type: %T", upd)
 	}
-
 	return nil
 }

@@ -66,13 +66,29 @@ func (b *Bot) handleComeOverCommand(ctx context.Context, update *schemes.Message
 }
 
 func (b *Bot) handleMemberComeOverYes(ctx context.Context, update *schemes.MessageCallbackUpdate) error {
-	log.Printf("Member %s say: yes", update.GetUserID())
+	log.Printf("Member %d say: yes", update.GetUserID())
 
 	return nil
 }
 
 func (b *Bot) handleMemberComeOverNo(ctx context.Context, update *schemes.MessageCallbackUpdate) error {
-	log.Printf("Member %s say: no", update.GetUserID())
+	log.Printf("Member %d say: no", update.GetUserID())
 
+	return nil
+}
+
+func (b *Bot) handleCallback(ctx context.Context, update *schemes.MessageCallbackUpdate) error {
+	log.Printf("Received callback: %s from user %d",
+		update.Callback.Payload,
+		update.Callback.User.UserId)
+
+	switch update.Callback.Payload {
+	case "member_yes":
+		return b.handleMemberComeOverYes(ctx, update)
+	case "member_no":
+		return b.handleMemberComeOverNo(ctx, update)
+	default:
+		log.Printf("Unknown callback payload: %s", update.Callback.Payload)
+	}
 	return nil
 }
