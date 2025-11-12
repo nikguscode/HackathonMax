@@ -1,20 +1,34 @@
+
 # QueueMetricsResponse
 
 
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**metrics** | [**QueueMetrics**](QueueMetrics.md) |  | [optional] [default to undefined]
+Name | Type
+------------ | -------------
+`metrics` | [QueueMetrics](QueueMetrics.md)
 
 ## Example
 
 ```typescript
-import { QueueMetricsResponse } from './api';
+import type { QueueMetricsResponse } from ''
 
-const instance: QueueMetricsResponse = {
-    metrics,
-};
+// TODO: Update the object below with actual values
+const example = {
+  "metrics": null,
+} satisfies QueueMetricsResponse
+
+console.log(example)
+
+// Convert the instance to a JSON string
+const exampleJSON: string = JSON.stringify(example)
+console.log(exampleJSON)
+
+// Parse the JSON string back to an object
+const exampleParsed = JSON.parse(exampleJSON) as QueueMetricsResponse
+console.log(exampleParsed)
 ```
 
-[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+

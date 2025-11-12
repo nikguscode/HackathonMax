@@ -55,13 +55,16 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     if (window.WebApp) {
+      const config = createApiConfiguration();
+      const usersApi = new UsersApi(config);
+      usersApi.sendUserMiniAppData(window.WebApp.initData);
       console.log("✅ MAX Bridge подключён:", window.WebApp);
       console.log("🌐 Платформа:", window.WebApp.platform);
       console.log("📱 Версия клиента:", window.WebApp.initData);
       console.log("👤 Данные пользователя:", window.WebApp.initDataUnsafe?.user);
       console.log("💬 Данные чата:", window.WebApp.initDataUnsafe?.chat);
     } else {
-      console.warn("⚠️ MAX Bridge не найден. Возможно, вы не в среде MAX.");
+      console.warn("MAX Bridge не найден. Возможно, вы не в среде MAX.");
     }
   }, []);
 
@@ -92,19 +95,19 @@ const HomePage: React.FC = () => {
 
         console.log("Запрос к API:", `/users/${maxIdNum}`);
 
-        const response = await usersApi.getUserByMaxId(maxIdNum);
-        const userResponse = response.data;
+        const response = await usersApi.getUserByMaxId({ maxId: maxIdNum } as any);
+        const userResponseOrg = response.organizations;
+        const userResponseQueue = response.queueEntries;
+        
 
-        console.log("API Response:", userResponse);
-
-        if (!userResponse) {
+        if (!userResponseOrg || !userResponseQueue) {
           setError("Ответ от сервера пустой. Проверьте подключение к API");
           setLoading(false);
           return;
         }
 
-        const organizationsList = userResponse.organizations || [];
-        const queueList = userResponse["queue-entries"] || [];
+        const organizationsList = userResponseOrg|| [];
+        const queueList = userResponseQueue || [];
 
         const adminOrgs: Organization[] = [];
         const queues: QueueEntryInUserResponse[] = [];
