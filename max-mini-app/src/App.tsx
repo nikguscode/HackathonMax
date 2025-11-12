@@ -13,18 +13,23 @@ import ModeratorQueueDetailsPage from "./pages/ModeratorQueueDetailsPage.tsx";
 import { UsersApi, Configuration } from "./api";
 import Logo from "./components/Logo.tsx";
 
+<script src="https://st.max.ru/js/max-web-app.js"></script>
+
 const getMaxId = (): string | null => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const maxIdFromUrl = urlParams.get("maxId");
-  if (maxIdFromUrl) {
-    return maxIdFromUrl;
+  if (window.WebApp?.initDataUnsafe?.user?.id) {
+    console.log("MaxBridge: найден пользователь через WebApp:", window.WebApp.initDataUnsafe.user);
+    return String(window.WebApp.initDataUnsafe.user.id);
   }
 
+  // Если нет — fallback: URL-параметр или переменная окружения
+  const urlParams = new URLSearchParams(window.location.search);
+  const maxIdFromUrl = urlParams.get("maxId");
+  if (maxIdFromUrl) return maxIdFromUrl;
+
   const maxIdFromEnv = import.meta.env.VITE_MAX_ID;
-  if (maxIdFromEnv) {
-    return maxIdFromEnv;
-  }
-  return "1";
+  if (maxIdFromEnv) return maxIdFromEnv;
+
+  return null;
 };
 
 const createApiConfiguration = (): Configuration => {
@@ -35,11 +40,30 @@ const createApiConfiguration = (): Configuration => {
   });
 };
 
+declare global {
+  interface Window {
+    WebApp?: any;
+  }
+}
+
+
 const HomePage: React.FC = () => {
   const [moderatorOrgs, setModeratorOrgs] = useState<Organization[]>([]);
   const [userQueues, setUserQueues] = useState<QueueEntryInUserResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (window.WebApp) {
+      console.log("✅ MAX Bridge подключён:", window.WebApp);
+      console.log("🌐 Платформа:", window.WebApp.platform);
+      console.log("📱 Версия клиента:", window.WebApp.initData);
+      console.log("👤 Данные пользователя:", window.WebApp.initDataUnsafe?.user);
+      console.log("💬 Данные чата:", window.WebApp.initDataUnsafe?.chat);
+    } else {
+      console.warn("⚠️ MAX Bridge не найден. Возможно, вы не в среде MAX.");
+    }
+  }, []);
 
   useEffect(() => {
     const loadUserData = async () => {

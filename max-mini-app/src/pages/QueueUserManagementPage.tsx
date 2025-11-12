@@ -4,6 +4,7 @@ import { Container, Flex, Button, Typography, Panel } from '@maxhub/max-ui';
 import AddUserModal from '../components/AddUserModal';
 import Logo from '../components/Logo';
 import { QueueMember, QueuesApi, Configuration, QueueEntriesApi } from '../api';
+import ConfirmationModal from '../components/ConfirmationModal';
 
 
 const createApiConfiguration = (): Configuration => {
@@ -18,8 +19,14 @@ const QueueUserManagementPage: React.FC = () => {
   const [users, setUsers] = useState<QueueMember[]>([]);
   const [isAddQueue, setisAddQueue] = useState(false);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUserEntryId, setSelectedUserEntryId] = useState<string | null>(null);
 
   
+  const handleDeleteUser = ( entryId: string ) => {
+    setSelectedUserEntryId(entryId);
+    setIsModalOpen(true);
+  };
   const handleAddUserMouseDown = () => {
     setisAddQueue(true);
   };
@@ -57,7 +64,7 @@ const QueueUserManagementPage: React.FC = () => {
   const defaultShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
 
-  const handleDeleteUser = async (entryId: string) => {
+  const handleDeleteQueue = async (entryId: string) => {
     if (!entryId) {
       console.warn('⚠️ entryId is undefined — пропускаем удаление');
       return;
@@ -95,6 +102,14 @@ const QueueUserManagementPage: React.FC = () => {
     }) 
     .catch(console.error);
   }, [queueId])
+
+  const handleConfirmExit = async () => {
+    if (selectedUserEntryId) {
+      await handleDeleteQueue(selectedUserEntryId);
+      setSelectedUserEntryId(null);
+      setIsModalOpen(false);
+    }
+  };
   const MAX_CONTENT_WIDTH = '300px';
   const HORIZONTAL_PADDING = '16px';
 
@@ -169,11 +184,7 @@ const QueueUserManagementPage: React.FC = () => {
                 
               <Button
                 mode="primary"
-                onClick={() => {
-                      if (user.queueEntryId) {
-                        handleDeleteUser(user.queueEntryId);
-                      }
-                    }}
+                onClick={() => handleDeleteUser(user.queueEntryId!)}
                 style={{
                   minWidth: '24px',
                   width: '24px',
@@ -258,6 +269,11 @@ const QueueUserManagementPage: React.FC = () => {
           onAddUser={handleAddUserSubmit}
         />
       </Flex>
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={() => { setIsModalOpen(false); setSelectedUserEntryId(null); }}
+        onConfirm={handleConfirmExit}
+      />
     </Container>
   );
 };
