@@ -235,51 +235,58 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
 
 
-  # /organizations/{organizationId}/queues:
-  #   post:
-  #     tags: [organizations]
-  #     summary: Create queue for organization
-  #     operationId: createOrganizationQueue
-  #     parameters:
-  #       - name: organizationId
-  #         in: path
-  #         required: true
-  #         descripiton: Organization ID
-  #         schema:
-  #           type: string
-  #     responses:
-  #       '200':
-  #         description: Queue created for organization
-  #       '400':
-  #         $ref: '#/components/responses/BadRequest'
-  #       '404':
-  #         $ref: '#/components/responses/NotFound'
-  #       default:
-  #         $ref: '#/components/responses/UnexpectedError'
-  #   get:
-  #     tags: [organizations]
-  #     summary: Get list of queues in an organization
-  #     operationId: getOrganizationQueues
-  #     parameters:
-  #       - name: organizationId
-  #         in: path
-  #         required: true
-  #         description: Organization ID
-  #         schema:
-  #           type: string
-  #     responses:
-  #       '200':
-  #         description: Organization with its queues
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/QueueResponse'
-  #       '400':
-  #         $ref: '#/components/responses/BadRequest'
-  #       '404':
-  #         $ref: '#/components/responses/NotFound'
-  #       default:
-  #         $ref: '#/components/responses/UnexpectedError'
+  /organizations/{organizationId}/queues:
+    post:
+      tags: [organizations]
+      summary: Create queue for organization
+      operationId: createOrganizationQueue
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          descripiton: Organization ID
+          schema:
+            type: string
+      requestBody:
+        description: Add user in queue
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueueCreatingRequest'
+      responses:
+        '200':
+          description: Queue created for organization
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+    get:
+      tags: [organizations]
+      summary: Get list of queues in an organization
+      operationId: getOrganizationQueues
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          description: Organization ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Organization with its queues
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
 
   /organizations/{organizationId}/settings:
     get:
@@ -568,7 +575,27 @@ components:
         - maxId
         - queueId
 
+    ### Queue Request ###
+
+    QueueCreatingRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        arrivalGracePeriod:
+          type: integer
+          format: int32
+        maxQueueSize:
+          type: integer
+          format: in32
+      required:
+        - name
+        - arrivalGracePreiod
+
+
     ##### Orchestrator responses #####
+
+    ### Base Responses ###
 
     ### User Responses ###
 
