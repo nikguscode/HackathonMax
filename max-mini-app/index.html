@@ -5,9 +5,44 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>max-mini-app</title>
+    <script src="https://st.max.ru/js/max-web-app.js"></script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <script>
+      WebApp.ready(() => {
+        console.log("Мини-приложение готово");
+        WebApp.BackButton.show();
+        WebApp.BackButton.onClick(() => WebApp.close());
+
+        const user = WebApp.initData?.user;
+        const initDataToken = WebApp.initData;
+        if (user) {
+          console.log("Данные пользователя:", user);
+          fetch('https://httpbin.org/post', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Max-Auth-Data': initDataToken
+            },
+            body: JSON.stringify({
+              userId: user.id,
+              maxId: user.maxId,
+              firstName: user.first_name,
+              lastName: user.last_name,
+              username: user.username,
+              timestamp: new Date().toISOString()
+            })
+          })
+          .then(res => res.json())
+          .then(data => console.log("Ответ от бэкенда:", data))
+          .catch(err => console.error("Ошибка отправки на бэкенд:", err));
+        } else {
+          console.warn("Данные пользователя не найдены");
+        }
+      });
+  </script>
   </body>
 </html>

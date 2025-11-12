@@ -13,6 +13,8 @@ import ModeratorQueueDetailsPage from "./pages/ModeratorQueueDetailsPage.tsx";
 import { UsersApi, Configuration } from "./api";
 import Logo from "./components/Logo.tsx";
 
+<script src="https://st.max.ru/js/max-web-app.js"></script>
+
 const getMaxId = (): string | null => {
   const urlParams = new URLSearchParams(window.location.search);
   const maxIdFromUrl = urlParams.get("maxId");
@@ -35,6 +37,12 @@ const createApiConfiguration = (): Configuration => {
   });
 };
 
+declare global {
+  interface Window {
+    WebApp?: any;
+  }
+}
+
 const HomePage: React.FC = () => {
   const [moderatorOrgs, setModeratorOrgs] = useState<Organization[]>([]);
   const [userQueues, setUserQueues] = useState<QueueEntryInUserResponse[]>([]);
@@ -45,7 +53,6 @@ const HomePage: React.FC = () => {
     const loadUserData = async () => {
       const config = createApiConfiguration();
       const apiBasePath = config.basePath;
-
       try {
         setLoading(true);
         setError(null);
