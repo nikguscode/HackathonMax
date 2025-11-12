@@ -387,7 +387,7 @@ components:
         - WAITING
         - SERVING
         - SERVED
-        - CANCELLED
+        - CANCELED
         - MISSED
 
     ##### Frontend requests #####

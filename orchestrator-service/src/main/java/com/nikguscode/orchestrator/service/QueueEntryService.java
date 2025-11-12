@@ -2,7 +2,7 @@ package com.nikguscode.orchestrator.service;
 
 import com.nikguscode.openapi.model.QueueEntryResponseDto;
 import com.nikguscode.orchestrator.dao.queueentry.QueueEntryDao;
-import com.nikguscode.orchestrator.dao.result.QueueEntryActiveRecord;
+import com.nikguscode.orchestrator.dao.result.QueueEntryRecord;
 import com.nikguscode.orchestrator.mapper.QueueEntryDtoMapper;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,13 +23,13 @@ public class QueueEntryService {
   }
 
   public QueueEntryResponseDto getQueueEntry(@PathVariable UUID entryId) {
-    Optional<QueueEntryActiveRecord> queueEntryOpt = queueEntryDao.findByEntryId(entryId);
+    Optional<QueueEntryRecord> queueEntryOpt = queueEntryDao.findByEntryId(entryId);
 
     if (queueEntryOpt.isEmpty()) {
       return new QueueEntryResponseDto();
     }
 
-    QueueEntryActiveRecord queueEntryActiveRecord = queueEntryOpt.get();
-    return queueEntryDtoMapper.queueEntryToDto(queueEntryActiveRecord);
+    QueueEntryRecord queueEntryRecord = queueEntryOpt.get();
+    return queueEntryDtoMapper.queueEntryToDto(queueEntryRecord);
   }
 }
