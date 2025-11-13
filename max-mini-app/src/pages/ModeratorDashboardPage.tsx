@@ -151,45 +151,47 @@ const ModeratorDashboardPage: React.FC = () => {
   const maxHash = localStorage.getItem("maxHash") ?? '';
   localStorage.setItem("orgId", orgId ?? '');
 
-  useEffect(() => {
-    if (!orgId) return;
+  const fetchQueues = async (organizationId: string) => {
+        try {
+            setLoading(true);
+            setError(null);
 
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+            const apiConfig = createApiConfiguration();
+            const organizationsApi = new OrganizationsApi(apiConfig, apiConfig.basePath, axios);
 
-        const apiConfig = createApiConfiguration();
-        const organizationsApi = new OrganizationsApi(apiConfig, apiConfig.basePath, axios);
+            const queuesResponse = await organizationsApi.getOrganizationQueues(
+                organizationId, 
+                authId, 
+                maxHash
+            );
+            
+            const queueList = queuesResponse.data.queues || [];
+            const organizationName = queuesResponse.data.organizationName ?? '';
 
-        const queuesResponse = await organizationsApi.getOrganizationQueues(orgId, authId, maxHash);
-        const queueList = queuesResponse.data.queues || [];
-        const organizationName = queuesResponse.data.organizationName ?? '';
-
-        setOrgName(organizationName);
-        const queues: Queue[] = [];
-
-          for (const queue of queueList) {
-              queues.push({
+            setOrgName(organizationName);
+            
+            const newQueues: Queue[] = queueList.map(queue => ({
                 id: queue.id,
                 name: queue.name,
                 amountOfEmployees: queue.amountOfEmployees,
                 amountOfServedPeople: queue.amountOfServedPeople,
-              });
-              
-          }
-
-        setQueues(queues);
-      } catch (err) {
-        console.error('Ошибка загрузки данных организации:', err);
-        setError('Ошибка при загрузке данных организации.');
-      } finally {
-        setLoading(false);
-      }
+            }));
+            
+            setQueues(newQueues);
+            return true; 
+        } catch (err) {
+            console.error('Ошибка загрузки данных организации:', err);
+            setError('Ошибка при загрузке данных организации.');
+            return false; 
+        } finally {
+            setLoading(false);
+        }
     };
 
-    fetchData();
-  }, [orgId]);
+    useEffect(() => {
+        if (!orgId) return;
+        fetchQueues(orgId);
+    }, [orgId]);
 
 
   const handleQueueClick = (queueId: string) => {
@@ -233,6 +235,8 @@ const ModeratorDashboardPage: React.FC = () => {
           console.log(`✅ Очередь "${queueName}" успешно добавлена для организации ${orgId}`);
 
           handleCloseModal();
+
+          await fetchQueues(orgId);
       } catch (err) {
           console.error('Ошибка при добавлении очереди:', err);
           alert('Не удалось добавить очередь');
