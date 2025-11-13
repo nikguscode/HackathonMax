@@ -2,14 +2,14 @@ package service
 
 import (
 	"context"
-	"max-notification-service/internal/transport/max"
+	"max-notification-service/internal/transport/maxbot"
 )
 
 type BotService struct {
-	bot *max.Bot
+	bot *maxbot.Bot
 }
 
-func NewBotService(bot *max.Bot) *BotService {
+func NewBotService(bot *maxbot.Bot) *BotService {
 	return &BotService{bot: bot}
 }
 

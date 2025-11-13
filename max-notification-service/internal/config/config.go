@@ -1,21 +1,15 @@
 package config
 
-import (
-	"fmt"
-	"os"
-)
+import "os"
 
 type Config struct {
 	BotToken string
+	HTTPAddr string
 }
 
-func Load() (*Config, error) {
-	token := os.Getenv("BOT_TOKEN")
-	if token == "" {
-		return nil, fmt.Errorf("BOT_TOKEN is null")
+func Load() Config {
+	return Config{
+		BotToken: os.Getenv("BOT_TOKEN"),
+		HTTPAddr: ":8080",
 	}
-
-	return &Config{
-		BotToken: token,
-	}, nil
 }

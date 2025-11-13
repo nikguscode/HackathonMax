@@ -1,4 +1,4 @@
-package max
+package maxbot
 
 import (
 	"context"
@@ -58,11 +58,7 @@ func (b *Bot) Start(ctx context.Context) error {
 func (b *Bot) handleUpdate(ctx context.Context, upd schemes.UpdateInterface) error {
 	switch update := upd.(type) {
 	case *schemes.MessageCreatedUpdate:
-		err := b.handleMessage(ctx, update)
-		if err.(*schemes.Error).Message.Stat == nil {
-			return nil
-		}
-		return err
+		return b.handleMessage(ctx, update)
 
 	case *schemes.MessageCallbackUpdate:
 		return b.handleCallback(ctx, update)

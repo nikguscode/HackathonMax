@@ -3,52 +3,42 @@ package main
 import (
 	"context"
 	"log"
-	"os"
-	"os/signal"
-	"syscall"
 
 	"max-notification-service/internal/config"
 	"max-notification-service/internal/service"
-	"max-notification-service/internal/transport/max"
+	httpTransport "max-notification-service/internal/transport/http"
+	maxTransport "max-notification-service/internal/transport/maxbot"
 )
 
 func main() {
-	// Загрузка конфигурации
-	cfg, err := config.Load()
+	// 1. Загружаем конфиг (если не нужен – пропусти)
+	cfg := config.Load()
+
+	// 2. Создаём MAX-бота
+	bot, err := maxTransport.NewBot(cfg.BotToken)
 	if err != nil {
-		log.Fatalf("Failed to load config: %v", err)
+		log.Fatal("cannot start bot:", err)
 	}
 
-	// Инициализация бота Max
-	bot, err := max.NewBot(cfg.BotToken)
-	if err != nil {
-		log.Fatalf("Failed to create bot: %v", err)
+	// 3. Сервис, который соединяет HTTP ↔ бот
+	notificationService := service.NewNotificationService(bot)
+
+	// 4. HTTP-сервер
+	httpSrv := httpTransport.NewServer(
+		cfg.HTTPAddr,                     // например ":8080"
+		notificationService.StartNotify,  // вызывается при /notify
+		notificationService.MemberAnswer, // вызывается при /callback
+	)
+
+	// 5. Запускаем HTTP сервер
+	go func() {
+		if err := httpSrv.Start(); err != nil {
+			log.Fatal("http server error:", err)
+		}
+	}()
+
+	// 6. Запускаем бота (блокирующий вызов)
+	if err := bot.Start(context.Background()); err != nil {
+		log.Fatal("bot stopped:", err)
 	}
-
-	// Создание сервисного слоя
-	botService := service.NewBotService(bot)
-
-	// Настройка graceful shutdown
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	// Обработка сигналов для graceful shutdown
-	go setupSignalHandler(cancel)
-
-	// Запуск сервиса бота
-	log.Println("Starting bot service...")
-	if err := botService.Run(ctx); err != nil {
-		log.Printf("Bot service stopped with error: %v", err)
-	} else {
-		log.Println("Bot service stopped gracefully")
-	}
-}
-
-func setupSignalHandler(cancel context.CancelFunc) {
-	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
-
-	sig := <-sigChan
-	log.Printf("Received signal: %v", sig)
-	cancel()
 }
