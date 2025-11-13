@@ -205,25 +205,40 @@ const ModeratorDashboardPage: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  const handleAddQueueSubmit = async (queueName: string) => {
-    if (!orgId) return;
 
-    const apiConfig = createApiConfiguration();
-    const queuesApi = new OrganizationsApi(apiConfig, apiConfig.basePath, axios);
+  const handleAddQueueSubmit = async (
+      queueName: string, 
+      arrivalGracePeriod?: number, 
+      maxQueueSize?: number
+  ) => {
+      if (!orgId) return;
 
-    try {
+      const apiConfig = createApiConfiguration();
+      const queuesApi = new OrganizationsApi(apiConfig, apiConfig.basePath, axios);
 
-      await queuesApi.createOrganizationQueue(orgId, authId, maxHash);
+      const queueData = {
+          name: queueName,
+          ...(arrivalGracePeriod !== undefined && { arrivalGracePeriod }),
+          ...(maxQueueSize !== undefined && { maxQueueSize }),
+      };
 
-      console.log(`✅ Очередь "${queueName}" успешно добавлена для организации ${orgId}`);
+      try {
+          await queuesApi.createOrganizationQueue(
+              orgId, 
+              authId, 
+              maxHash, 
+              queueData 
+          );
 
-      handleCloseModal();
+          console.log(`✅ Очередь "${queueName}" успешно добавлена для организации ${orgId}`);
 
-    } catch (err) {
-      console.error('Ошибка при добавлении очереди:', err);
-      alert('Не удалось добавить очередь');
-    }
+          handleCloseModal();
+      } catch (err) {
+          console.error('Ошибка при добавлении очереди:', err);
+          alert('Не удалось добавить очередь');
+      }
   };
+  
 
 
 
