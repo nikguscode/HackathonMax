@@ -20,6 +20,10 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
   public boolean preHandle(
       HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
     try {
+      if (request.getMethod().equalsIgnoreCase("OPTIONS")) {
+        return true;
+      }
+
       UUID authId = UUID.fromString(request.getHeader("Auth-Id"));
       String maxHash = request.getHeader("Max-Hash");
 

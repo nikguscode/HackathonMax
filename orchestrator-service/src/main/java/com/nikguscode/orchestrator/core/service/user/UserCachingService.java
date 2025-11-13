@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserCachingService {
-  private static final Duration CACHE_TTL = Duration.ofMinutes(4);
+  private static final Duration CACHE_TTL = Duration.ofMinutes(50);
 
   private final RedisTemplate<String, UserHashDto> userHashDtoRedisTemplate;
   private final String keyPrefix = "usersHash:";
