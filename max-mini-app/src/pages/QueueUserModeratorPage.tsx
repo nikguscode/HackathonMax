@@ -6,7 +6,7 @@ import Logo from '../components/Logo';
 import { QueueMember, QueuesApi, Configuration, QueueEntriesApi, StaffApi, QueueStaff, UsersApi } from '../api';
 import ConfirmationModal from '../components/ConfirmationModal'; 
 import AddEmployeeModal from '../components/AddEmployeeModal';
-
+import { useNavigate } from 'react-router-dom';
 
 const createApiConfiguration = (): Configuration => {
   const basePath =
@@ -188,10 +188,11 @@ const QueueUserModeratorPage: React.FC = () => {
   // Эта переменная все еще нужна
   const dataToDisplay = currentView === 'users' ? users : employees;
   // Переменная toggleButtonText УБРАНА.
-
+  const navigate = useNavigate();
+  
   const handleNavigationBack = () => {
           console.log('Пользователь вернулся на предыдущий экран!');
-          // Например: router.history.goBack();
+          navigate(-1);
   };
 
 

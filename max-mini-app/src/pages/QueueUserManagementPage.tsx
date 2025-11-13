@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Container, Flex, Button, Typography, Panel } from '@maxhub/max-ui';
 import AddUserModal from '../components/AddUserModal';
 import Logo from '../components/Logo';
 import { QueueMember, QueuesApi, Configuration, QueueEntriesApi } from '../api';
 import ConfirmationModal from '../components/ConfirmationModal';
-
 
 const createApiConfiguration = (): Configuration => {
   const basePath =
@@ -27,6 +26,7 @@ const createApiConfiguration = (): Configuration => {
 
 
 const QueueUserManagementPage: React.FC = () => {
+  const navigate = useNavigate();
   const { id: queueId } = useParams<{ id: string }>();
   const [users, setUsers] = useState<QueueMember[]>([]);
   const [isAddQueue, setisAddQueue] = useState(false);
@@ -126,7 +126,10 @@ const QueueUserManagementPage: React.FC = () => {
   };
   const MAX_CONTENT_WIDTH = '300px';
   const HORIZONTAL_PADDING = '16px';
-
+  const handleNavigationBack = () => {
+          console.log('Пользователь вернулся на предыдущий экран!');
+          navigate(-1);
+  };
   return (
     <Container
       style={{
@@ -137,7 +140,7 @@ const QueueUserManagementPage: React.FC = () => {
         flexDirection: 'column',
       }}
     >
-      <Logo />
+      <Logo onBack={handleNavigationBack}/>
       <Flex
         direction="column"
         align="center"
