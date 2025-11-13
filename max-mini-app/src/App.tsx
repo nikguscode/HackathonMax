@@ -40,6 +40,7 @@ const createApiConfiguration = (): Configuration => {
 
   const authId = localStorage.getItem("authId");
   const maxHash = localStorage.getItem("maxHash");
+  // const orgName = localStorage.getItem("orgName");
 
   return new Configuration({
     basePath,
@@ -123,6 +124,7 @@ const HomePage: React.FC = () => {
                 role: org.role,
                 amountOfQueues: org.amountOfQueues,
               });
+              
             }
           }
 
@@ -159,7 +161,6 @@ const HomePage: React.FC = () => {
 
     initAndLoadUserData();
   }, []);
-
 
   if (loading) {
 return (
@@ -238,9 +239,11 @@ return (
                     role={org.role}
                     id={org.id}
                   />
+                  
                 ))}
               </Flex>
             </div>
+            
           )}
 
           {userQueues.length > 0 && (
