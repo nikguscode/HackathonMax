@@ -34,7 +34,7 @@ const QueueUserModeratorPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUserEntryId, setSelectedUserEntryId] = useState<string | null>(null);
 
-  const [currentView, setCurrentView] = useState<'users' | 'employees'>('users');
+  const [currentView, setCurrentView] = useState('users');
   const [employees, setEmployees] = useState<QueueStaff[]>([]);
 
   const maxId = localStorage.getItem("maxId");
@@ -241,91 +241,186 @@ const QueueUserModeratorPage: React.FC = () => {
         <Flex direction="column" align="center" style={{ width: '100%', gap: '16px', marginBottom: '12px'  }}>
           
           {/* Рендерим dataToDisplay (как и раньше) */}
-          {dataToDisplay.length > 0 ? (
-            dataToDisplay.map((item) => ( 
-              <Panel
-                key={maxId}
-                mode="secondary"
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  borderRadius: '12px',
-                  backgroundColor: '#FFFFFF',
-                  border: '0.3px solid rgba(0, 0, 0, 0.15)',
-                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <Flex
-                      justify="space-between"
-                      align="center"
-                      style={{
-                        width: '100%',
-                        gap: '10px',
-                      }}
-                    >
-                    <Typography.Title
-                      style={{
-                        fontSize: '15px',
-                        fontWeight: 500,
-                        color: '#333333',
-                        margin: 0,
-                        flexGrow: 1,           
-                        flexShrink: 1,           
-                        minWidth: 0,             
-                        overflow: 'hidden',      
-                        whiteSpace: 'nowrap',    
-                        textOverflow: 'ellipsis',
-                        textAlign: 'left',
-                      }}
-                    >
-                      {item.username}
-                    </Typography.Title>
-                  
-                <Button
-                  mode="primary"
-                  onClick={() => handleDeleteUser(maxId!)}
-                  style={{
-                    minWidth: '24px',
-                    width: '24px',
-                    height: '24px',
-                    padding: '0',
-                    borderRadius: '4px',
-                    backgroundColor: '#DC3545',
-                    border: 'none',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                    marginLeft: '2%',
-                  }}
-                >
-                <svg /* ... svg иконка ... */ width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M3 4H13M5.5 4V3C5.5 2.44772 5.94772 2 6.5 2H9.5C10.0523 2 10.5 2.44772 10.5 3V4M12.5 4V13C12.5 13.5523 12.0523 14 11.5 14H4.5C3.94772 14 3.5 13.5523 3.5 13V4H12.5Z" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M6.5 7V11.5M9.5 7V11.5" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                </Button>
-              </Flex>
-              </Panel>
-            ))
-        ) : (
-          <Typography.Title
-            style={{
-              fontSize: '15px',
-              fontWeight: 500,
-              color: '#888888', // Серый
-              margin: '20px auto',
-              textAlign: 'center'
-            }}
-          >
-            {currentView === 'users' ? 'Пользователи не найдены' : 'Сотрудники не найдены'}
-          </Typography.Title>
-        )}
-        
-        </Flex>
+        {dataToDisplay.length > 0 ? (
+        dataToDisplay.map((item) => {
+            // Разделяем отображение для пользователей и сотрудников
+            if (currentView === 'users') {
+            const user = item as QueueMember;
+            return (
+                <Panel
+                key={user.queueEntryId || user.username}
+                mode="secondary"
+                style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    borderRadius: '12px',
+                    backgroundColor: '#FFFFFF',
+                    border: '0.3px solid rgba(0, 0, 0, 0.15)',
+                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                }}
+                >
+                <Flex
+                    justify="space-between"
+                    align="center"
+                    style={{ width: '100%', gap: '10px' }}
+                >
+                    <Typography.Title
+                    style={{
+                        fontSize: '15px',
+                        fontWeight: 500,
+                        color: '#333333',
+                        margin: 0,
+                        flexGrow: 1,
+                        flexShrink: 1,
+                        minWidth: 0,
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+                        textOverflow: 'ellipsis',
+                        textAlign: 'left',
+                    }}
+                    >
+                    {user.username}
+                    </Typography.Title>
 
+                    <Button
+                    mode="primary"
+                    onClick={() => handleDeleteUser(user.queueEntryId!)}
+                    style={{
+                        minWidth: '24px',
+                        width: '24px',
+                        height: '24px',
+                        padding: '0',
+                        borderRadius: '4px',
+                        backgroundColor: '#DC3545',
+                        border: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        marginLeft: '2%',
+                    }}
+                    >
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                        <path
+                        d="M3 4H13M5.5 4V3C5.5 2.44772 5.94772 2 6.5 2H9.5C10.0523 2 10.5 2.44772 10.5 3V4M12.5 4V13C12.5 13.5523 12.0523 14 11.5 14H4.5C3.94772 14 3.5 13.5523 3.5 13V4H12.5Z"
+                        stroke="white"
+                        strokeWidth="1.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        />
+                        <path
+                        d="M6.5 7V11.5M9.5 7V11.5"
+                        stroke="white"
+                        strokeWidth="1.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        />
+                    </svg>
+                    </Button>
+                </Flex>
+                </Panel>
+            );
+            } else {
+            const emp = item as QueueStaff;
+            return (
+                <Panel
+                key={emp.staffId || emp.username}
+                mode="secondary"
+                style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    borderRadius: '12px',
+                    backgroundColor: '#FFFFFF',
+                    border: '0.3px solid rgba(0, 0, 0, 0.15)',
+                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                }}
+                >
+                <Flex
+                    justify="space-between"
+                    align="center"
+                    style={{ width: '100%', gap: '10px' }}
+                >
+                    <Typography.Title
+                    style={{
+                        fontSize: '15px',
+                        fontWeight: 500,
+                        color: '#333333',
+                        margin: 0,
+                        flexGrow: 1,
+                        flexShrink: 1,
+                        minWidth: 0,
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+                        textOverflow: 'ellipsis',
+                        textAlign: 'left',
+                    }}
+                    >
+                    {emp.username}
+                    </Typography.Title>
+
+                    <Button
+                    mode="primary"
+                    onClick={() => handleDeleteUser(emp.staffId!)}
+                    style={{
+                        minWidth: '24px',
+                        width: '24px',
+                        height: '24px',
+                        padding: '0',
+                        borderRadius: '4px',
+                        backgroundColor: '#DC3545',
+                        border: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        marginLeft: '2%',
+                    }}
+                    >
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                        <path
+                        d="M3 4H13M5.5 4V3C5.5 2.44772 5.94772 2 6.5 2H9.5C10.0523 2 10.5 2.44772 10.5 3V4M12.5 4В13C12.5 13.5523 12.0523 14 11.5 14H4.5C3.94772 14 3.5 13.5523 3.5 13В4H12.5Z"
+                        stroke="white"
+                        strokeWidth="1.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        />
+                        <path
+                        d="M6.5 7В11.5M9.5 7В11.5"
+                        stroke="white"
+                        strokeWidth="1.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        />
+                    </svg>
+                    </Button>
+                </Flex>
+                </Panel>
+            );
+            }
+        })
+        ) : (
+        <Typography.Title
+            style={{
+            fontSize: '15px',
+            fontWeight: 500,
+            color: '#888888',
+            margin: '20px auto',
+            textAlign: 'center',
+            }}
+        >
+            {currentView === 'users'
+            ? 'Пользователи не найдены'
+            : 'Сотрудники не найдены'}
+        </Typography.Title>
+        )}
+
+        </Flex>
         {/* Кнопка "Добавить пользователя" (остается внизу) */}
         <Flex
           align="center"
