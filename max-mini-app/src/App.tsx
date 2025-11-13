@@ -93,11 +93,14 @@ const HomePage: React.FC = () => {
         if (authResponse.status === 200 && (authResponse.data as any)?.maxHash) {
           const maxHash = (authResponse.data as any).maxHash;
           localStorage.setItem("maxHash", maxHash);
-          localStorage.setItem("maxId", String(maxId));
+          localStorage.setItem("maxId", maxId);
           console.log("✅ Авторизация успешна, maxHash сохранён:", maxHash);
+          console.log("✅ Авторизация успешна, maxId сохранён:", maxId);
+          console.log("✅ Авторизация успешна, maxHash сохранён:", authResponse.request);
           const config = createApiConfiguration();
           const usersApi = new UsersApi(config);
           const userResponse = (await usersApi.getUserByMaxId(Number(maxId), Number(maxId), maxHash)).data;
+
 
           if (!userResponse) {
             setError("Ответ от сервера пустой. Проверьте подключение к API");
@@ -137,7 +140,7 @@ const HomePage: React.FC = () => {
           setLoading(false);
           return;
         }
-        
+
       } catch (err: any) {
         console.error("Ошибка при загрузке данных:", err);
 

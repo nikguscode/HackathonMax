@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Container, Flex, Button, Typography, Panel } from '@maxhub/max-ui';
 import AddUserModal from '../components/AddUserModal';
 import Logo from '../components/Logo'; 
-import { QueueMember, QueuesApi, Configuration, QueueEntriesApi } from '../api';
+import { QueueMember, QueuesApi, Configuration, QueueEntriesApi, StaffApi } from '../api';
 import ConfirmationModal from '../components/ConfirmationModal'; 
 
 
@@ -80,8 +80,11 @@ const QueueUserModeratorPage: React.FC = () => {
   const defaultShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
 
-  const handleDeleteQueue = async (entryId: string, maxId: number, maxHash: string) => {
-    if (!entryId) {
+  const maxId = localStorage.getItem("maxId");
+  const maxHash = localStorage.getItem("maxHash") ?? '';
+
+  const handleDeleteQueue = async (entryId: string) => {
+    if (!entryId) { 
       console.warn('⚠️ entryId is undefined — пропускаем удаление');
       return;
     }
@@ -91,9 +94,8 @@ const QueueUserModeratorPage: React.FC = () => {
       const config = createApiConfiguration();
       const queueEntriesApi = new QueueEntriesApi(config);
       
-      await queueEntriesApi.deleteQueueEntry(entryId, maxId, maxHash );
+      await queueEntriesApi.deleteQueueEntry(entryId, Number(maxId), maxHash);
 
-      // Эта логика остается - она правильная
       if (currentView === 'users') {
         setUsers(prevUsers => prevUsers.filter(user => user.queueEntryId !== entryId));
       } else {
@@ -106,8 +108,7 @@ const QueueUserModeratorPage: React.FC = () => {
     }
     
   };
-  const maxId = localStorage.getItem("maxId");
-  const maxHash = localStorage.getItem("maxHash") ?? '';
+
   useEffect(() => { 
     const config = createApiConfiguration();
     const queueApi = new QueuesApi(config);
@@ -126,24 +127,6 @@ const QueueUserModeratorPage: React.FC = () => {
     }) 
     .catch(console.error);
 
-    // 2. Загрузка сотрудников (заглушка)
-    const fetchEmployees = async () => {
-        try {
-            // TODO: Замените это своим реальным API-запросом для получения сотрудников
-            console.warn('ЗАГЛУШКА: Здесь нужно добавить API-запрос для получения сотрудников');
-            
-            // Мок-данные для примера
-            setEmployees([
-                { maxId: 999, username: 'Сотрудник 1', queueEntryId: 'emp_1' },
-                { maxId: 998, username: 'Сотрудник 2 (Админ)', queueEntryId: 'emp_2' },
-            ]);
-
-        } catch (err) {
-            console.error("Ошибка при загрузке сотрудников:", err);
-        }
-    };
-
-    fetchEmployees();
 
   }, [queueId])
 
