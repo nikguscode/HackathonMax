@@ -1,21 +1,19 @@
-# User
+# QueueGraphicsResponse
 
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**maxId** | **string** |  | [optional] [default to undefined]
-**username** | **string** |  | [optional] [default to undefined]
+**graphics** | [**QueueGraphics**](QueueGraphics.md) |  | [optional] [default to undefined]
 
 ## Example
 
 ```typescript
-import { User } from './api';
+import { QueueGraphicsResponse } from './api';
 
-const instance: User = {
-    maxId,
-    username,
+const instance: QueueGraphicsResponse = {
+    graphics,
 };
 ```
 

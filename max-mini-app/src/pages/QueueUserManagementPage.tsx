@@ -8,11 +8,23 @@ import ConfirmationModal from '../components/ConfirmationModal';
 
 
 const createApiConfiguration = (): Configuration => {
-  const basePath = import.meta.env.VITE_API_BASE_PATH || 'http://localhost:8080/v1/api';
+  const basePath =
+    import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
+
+  const maxId = localStorage.getItem("maxId");
+  const maxHash = localStorage.getItem("maxHash");
+
   return new Configuration({
     basePath,
+    baseOptions: {
+      headers: {
+        ...(maxId ? { maxId } : {}),
+        ...(maxHash ? { maxHash } : {}),
+      },
+    },
   });
 };
+
 
 const QueueUserManagementPage: React.FC = () => {
   const { id: queueId } = useParams<{ id: string }>();
@@ -22,7 +34,9 @@ const QueueUserManagementPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUserEntryId, setSelectedUserEntryId] = useState<string | null>(null);
 
-  
+  const maxId = localStorage.getItem("maxId");
+  const maxHash = localStorage.getItem("maxHash") ?? '';
+
   const handleDeleteUser = ( entryId: string ) => {
     setSelectedUserEntryId(entryId);
     setIsModalOpen(true);
@@ -75,7 +89,7 @@ const QueueUserManagementPage: React.FC = () => {
       const config = createApiConfiguration();
       const queueEntriesApi = new QueueEntriesApi(config);
 
-      await queueEntriesApi.deleteQueueEntry(entryId);
+      await queueEntriesApi.deleteQueueEntry(entryId, Number(maxId), maxHash);
 
       setUsers(prevUsers => prevUsers.filter(user => user.queueEntryId!== entryId));
 
@@ -90,7 +104,7 @@ const QueueUserManagementPage: React.FC = () => {
     const config = createApiConfiguration();
     const queueApi = new QueuesApi(config);
 
-    queueApi.getQueueMembers(queueId)
+    queueApi.getQueueMembers(queueId, Number(maxId), maxHash)
       .then(res => {
       const members: QueueMember[] = (res.data.members || []).map(
         q=> ({

@@ -6,11 +6,23 @@ import Logo from '../components/Logo';
 
 
 const createApiConfiguration = (): Configuration => {
-  const basePath = import.meta.env.VITE_API_BASE_PATH || 'http://localhost:8080';
+  const basePath =
+    import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
+
+  const maxId = localStorage.getItem("maxId");
+  const maxHash = localStorage.getItem("maxHash");
+
   return new Configuration({
     basePath,
+    baseOptions: {
+      headers: {
+        ...(maxId ? { maxId } : {}),
+        ...(maxHash ? { maxHash } : {}),
+      },
+    },
   });
 };
+
 
 const OrganizationDetailsPage: React.FC = () => {
   const { id: orgId } = useParams<{ id: string }>();
@@ -18,6 +30,8 @@ const OrganizationDetailsPage: React.FC = () => {
 
   const MAX_CONTENT_WIDTH = '300px';
   const HORIZONTAL_PADDING = '16px';
+  const maxId = localStorage.getItem("maxId");
+  const maxHash = localStorage.getItem("maxHash") ?? '';
 
   useEffect(() => {
     const loadOrganizationData = async () => {
@@ -29,7 +43,7 @@ const OrganizationDetailsPage: React.FC = () => {
         const config = createApiConfiguration();
         const organizationsApi = new OrganizationsApi(config);
         
-        const settingsResponse = await organizationsApi.getOrganizationSettings(orgId);
+        const settingsResponse = await organizationsApi.getOrganizationSettings(orgId, Number(maxId), maxHash);
         if (settingsResponse.data?.organization?.name) {
           setOrganizationName(settingsResponse.data.organization.name);
         }

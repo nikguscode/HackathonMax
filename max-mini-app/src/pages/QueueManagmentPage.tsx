@@ -7,15 +7,29 @@ import { OrganizationsApi, Configuration, SimpleQueue } from '../api';
 
 
 const createApiConfiguration = (): Configuration => {
-  const basePath = import.meta.env.VITE_API_BASE_PATH || 'http://localhost:8080/v1/api';
+  const basePath =
+    import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
+
+  const maxId = localStorage.getItem("maxId");
+  const maxHash = localStorage.getItem("maxHash");
+
   return new Configuration({
     basePath,
+    baseOptions: {
+      headers: {
+        ...(maxId ? { maxId } : {}),
+        ...(maxHash ? { maxHash } : {}),
+      },
+    },
   });
 };
+
 
 const QueueManagementPage: React.FC = () => {
     const { id: orgId } = useParams<{ id: string }>();
     const [userQueues, setUserQueues] = useState<SimpleQueue[]>([]);
+    const maxId = localStorage.getItem("maxId");
+    const maxHash = localStorage.getItem("maxHash") ?? '';
 
     useEffect(() => {
         if (!orgId) return;
@@ -24,7 +38,7 @@ const QueueManagementPage: React.FC = () => {
         const config = createApiConfiguration();
         const orgApi = new OrganizationsApi(config);
 
-        orgApi.getOrganizationQueues(orgId)
+        orgApi.getOrganizationQueues(orgId, Number(maxId), maxHash)
         .then(res => {
         const queues: SimpleQueue[] = res.data.queues?.map(q => ({
             id: q.id,

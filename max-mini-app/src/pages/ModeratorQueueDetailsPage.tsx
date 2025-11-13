@@ -53,7 +53,7 @@ const ModeratorQueueDetailsPage: React.FC = () => {
   }
 
   const handleQueueManagement = () => {
-    navigate(`/managment/queue/${queueId}`);
+    navigate(`/moderator-queue/queue/${queueId}`);
   };
 
   return (

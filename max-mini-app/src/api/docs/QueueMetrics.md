@@ -6,7 +6,6 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **waitingTime** | **number** |  | [optional] [default to undefined]
-**membersInFragment** | **number** |  | [optional] [default to undefined]
 **entriesInTheQueue** | **number** |  | [optional] [default to undefined]
 **numberOfServedMembers** | **number** |  | [optional] [default to undefined]
 **serviceTime** | **number** |  | [optional] [default to undefined]
@@ -22,7 +21,6 @@ import { QueueMetrics } from './api';
 
 const instance: QueueMetrics = {
     waitingTime,
-    membersInFragment,
     entriesInTheQueue,
     numberOfServedMembers,
     serviceTime,

@@ -1,19 +1,19 @@
-# UpdateOrganizationUserRoleRequest
+# SendUserMiniAppDataRequest
 
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**role** | [**UserRole**](UserRole.md) |  | [optional] [default to undefined]
+**miniAppInitData** | **string** |  | [default to undefined]
 
 ## Example
 
 ```typescript
-import { UpdateOrganizationUserRoleRequest } from './api';
+import { SendUserMiniAppDataRequest } from './api';
 
-const instance: UpdateOrganizationUserRoleRequest = {
-    role,
+const instance: SendUserMiniAppDataRequest = {
+    miniAppInitData,
 };
 ```
 

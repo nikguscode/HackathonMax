@@ -10,8 +10,18 @@ import InfoCard from '../components/InfoCard';
 const createApiConfiguration = (): Configuration => {
   const basePath =
     import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
+
+  const maxId = localStorage.getItem("maxId");
+  const maxHash = localStorage.getItem("maxHash");
+
   return new Configuration({
     basePath,
+    baseOptions: {
+      headers: {
+        ...(maxId ? { maxId } : {}),
+        ...(maxHash ? { maxHash } : {}),
+      },
+    },
   });
 };
 
@@ -65,6 +75,9 @@ const QueueDetailsPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isQRCodeOpen, setIsQRCodeOpen] = useState(false);
 
+  const maxId = localStorage.getItem("maxId");
+  const maxHash = localStorage.getItem("maxHash") ?? '';
+
   useEffect(() => { 
     if (!entryId) return;
     const fetchQueueEntry = async () => {
@@ -73,7 +86,7 @@ const QueueDetailsPage: React.FC = () => {
         const config = createApiConfiguration();
         const userInfoApi = new QueueEntriesApi(config);
 
-        const response = await userInfoApi.getQueueEntry(entryId);
+        const response = await userInfoApi.getQueueEntry(entryId, Number(maxId), maxHash);
         setQueueDetails(response.data);
         
         console.log('Ответ API:', response.data);
@@ -92,7 +105,7 @@ const QueueDetailsPage: React.FC = () => {
       const config = createApiConfiguration();
       const queueApi = new QueueEntriesApi(config);
 
-      await queueApi.deleteQueueEntry(entryId);
+      await queueApi.deleteQueueEntry(entryId, Number(maxId), maxHash);
       console.log('Очередь успешно удалена:', entryId);
 
       navigate('/');
@@ -141,6 +154,20 @@ const QueueDetailsPage: React.FC = () => {
     setIsModalOpen(false);
   };
 
+  const Status = queueDetails?.status;
+
+  if (Status === 'WAITING'){
+    status = 'Ожидание';
+  } else if (Status === 'SERVING'){
+    status = 'Обслуживается';
+  } else if (Status === 'SERVED'){
+    status = 'Обслужен';
+  } else if (Status === 'CANCELED'){
+    status = 'Отменен';
+  } else {
+    status = 'Пропущено';
+  }
+  
   return (
     <Container
       style={{
@@ -154,7 +181,7 @@ const QueueDetailsPage: React.FC = () => {
       <Flex direction="column" align="center" justify="center" style={{ width: '100%' }}>
           <Flex direction="column" align="center" justify="center">
             <InfoCard
-              label="Название очереди"
+              label="Название"
               value={queueDetails?.name ?? 'Неизвестно'}
             />
             <InfoCard
@@ -162,12 +189,12 @@ const QueueDetailsPage: React.FC = () => {
               value={queueDetails?.login ?? 'Неизвестно'}
             />
             <InfoCard
-              label="Позиция в очереди"
+              label="Позиция"
               value={queueDetails?.peopleInFront ?? 'Неизвестно'}
             />
             <InfoCard
-              label="Статус очереди"
-              value={queueDetails?.status ?? 'Неизвестно'}
+              label="Статус"
+              value={status ?? 'Неизвестно'}
             />
           </Flex>
 

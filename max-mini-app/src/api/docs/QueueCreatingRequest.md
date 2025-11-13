@@ -5,8 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**maxId** | **string** |  | [optional] [default to undefined]
-**queueId** | **string** |  | [optional] [default to undefined]
+**name** | **string** |  | [default to undefined]
+**arrivalGracePeriod** | **number** |  | [optional] [default to undefined]
+**maxQueueSize** | **number** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -14,8 +15,9 @@ Name | Type | Description | Notes
 import { QueueCreatingRequest } from './api';
 
 const instance: QueueCreatingRequest = {
-    maxId,
-    queueId,
+    name,
+    arrivalGracePeriod,
+    maxQueueSize,
 };
 ```
 

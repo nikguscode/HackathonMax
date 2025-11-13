@@ -12,6 +12,8 @@ import OrganizationDetailsPage from "./pages/OrganizationDetailsPage.tsx";
 import ModeratorQueueDetailsPage from "./pages/ModeratorQueueDetailsPage.tsx";
 import { UsersApi, Configuration } from "./api";
 import Logo from "./components/Logo.tsx";
+import SkeletonCard from "./components/Skeletons/Skeleton.tsx";
+import QueueUserModeratorPage from "./pages/QueueUserModeratorPage.tsx";
 
 <script src="https://st.max.ru/js/max-web-app.js"></script>
 
@@ -35,10 +37,21 @@ const getMaxId = (): string | null => {
 const createApiConfiguration = (): Configuration => {
   const basePath =
     import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
+
+  const maxId = localStorage.getItem("maxId");
+  const maxHash = localStorage.getItem("maxHash");
+
   return new Configuration({
     basePath,
+    baseOptions: {
+      headers: {
+        ...(maxId ? { maxId } : {}),
+        ...(maxHash ? { maxHash } : {}),
+      },
+    },
   });
 };
+
 
 declare global {
   interface Window {
@@ -54,127 +67,127 @@ const HomePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (window.WebApp) {
-      console.log("✅ MAX Bridge подключён:", window.WebApp);
-      console.log("🌐 Платформа:", window.WebApp.platform);
-      console.log("📱 Версия клиента:", window.WebApp.initData);
-      console.log("👤 Данные пользователя:", window.WebApp.initDataUnsafe?.user);
-      console.log("💬 Данные чата:", window.WebApp.initDataUnsafe?.chat);
-    } else {
-      console.warn("⚠️ MAX Bridge не найден. Возможно, вы не в среде MAX.");
-    }
-  }, []);
+    const initAndLoadUserData = async () => {
+      if (!window.WebApp) {
+        console.warn("MAX Bridge не найден. Возможно, вы не в среде MAX.");
+        return;
+      }
 
-  useEffect(() => {
-    const loadUserData = async () => {
-      const config = createApiConfiguration();
-      const apiBasePath = config.basePath;
+      setLoading(true);
+      setError(null);
 
       try {
-        setLoading(true);
-        setError(null);
-
         const maxId = getMaxId();
-
         if (!maxId) {
-          setError(
-            "Max ID не найден. Укажите maxId в параметрах URL (?maxId=xxx) или в переменной окружения VITE_MAX_ID"
-          );
+          setError("Max ID не найден");
           setLoading(false);
           return;
         }
 
-        const maxIdNum = Number(maxId);
+        // 1️⃣ Авторизация
+        const authConfig = createApiConfiguration();
+        const usersApiAuth = new UsersApi(authConfig);
+        const body = { miniAppInitData: window.WebApp.initData };
+        const authResponse = await usersApiAuth.sendUserMiniAppData(Number(maxId), body);
 
-        console.log("Используется maxId:", maxId);
-        console.log("API Base Path:", apiBasePath);
+        if (authResponse.status === 200 && (authResponse.data as any)?.maxHash) {
+          const maxHash = (authResponse.data as any).maxHash;
+          localStorage.setItem("maxHash", maxHash);
+          localStorage.setItem("maxId", maxId);
+          console.log("✅ Авторизация успешна, maxHash сохранён:", maxHash);
+          console.log("✅ Авторизация успешна, maxId сохранён:", maxId);
+          console.log("✅ Авторизация успешна, maxHash сохранён:", authResponse.request);
+          const config = createApiConfiguration();
+          const usersApi = new UsersApi(config);
+          const userResponse = (await usersApi.getUserByMaxId(Number(maxId), Number(maxId), maxHash)).data;
 
-        const usersApi = new UsersApi(config);
 
-        console.log("Запрос к API:", `/users/${maxIdNum}`);
+          if (!userResponse) {
+            setError("Ответ от сервера пустой. Проверьте подключение к API");
+            setLoading(false);
+            return;
+          }
 
-        const response = await usersApi.getUserByMaxId(maxIdNum);
-        const userResponse = response.data;
+          const organizationsList = userResponse.organizations || [];
+          const queueList = userResponse["queue-entries"] || [];
 
-        console.log("API Response:", userResponse);
+          const adminOrgs: Organization[] = [];
+          const queues: QueueEntryInUserResponse[] = [];
 
-        if (!userResponse) {
-          setError("Ответ от сервера пустой. Проверьте подключение к API");
-          setLoading(false);
-          return;
-        }
+          for (const org of organizationsList) {
+            if (org.role === "MODERATOR" || org.role === "EMPLOYEE") {
+              adminOrgs.push({
+                id: org.id,
+                name: org.name,
+                role: org.role,
+                amountOfQueues: org.amountOfQueues,
+              });
+            }
+          }
 
-        const organizationsList = userResponse.organizations || [];
-        const queueList = userResponse["queue-entries"] || [];
-
-        const adminOrgs: Organization[] = [];
-        const queues: QueueEntryInUserResponse[] = [];
-
-        for (const org of organizationsList) {
-          if (!org.id || !org.name || !org.role) continue;
-
-          if (org.role === "MODERATOR" || org.role === "EMPLOYEE") {
-            adminOrgs.push({
-              id: org.id,
-              name: org.name,
-              role: org.role,
-              amountOfQueues: org.amountOfQueues,
+          for (const queue of queueList) {
+            queues.push({
+              id: queue.id,
+              name: queue.name,
+              peopleInFront: queue.peopleInFront,
             });
           }
+
+          setModeratorOrgs(adminOrgs);
+          setUserQueues(queues);
+        } else {
+          setError("Ошибка авторизации. Попробуйте перезапустить Mini App.");
+          setLoading(false);
+          return;
         }
-        for (const queue of queueList) {
-          if (!queue.id || !queue.name) continue;
-          queues.push({
-            id: queue.id,
-            name: queue.name,
-            peopleInFront: queue.peopleInFront,
-          });
-        }
-        setModeratorOrgs(adminOrgs);
-        setUserQueues(queues);
-        setLoading(false);
+
       } catch (err: any) {
         console.error("Ошибка при загрузке данных:", err);
 
-        if (err.response) {
-          if (err.response.status === 404) {
-            setError("Пользователь не найден. Проверьте правильность maxId");
-          } else if (err.response.data?.message) {
-            setError(err.response.data.message);
-          } else {
-            setError(`Ошибка сервера (${err.response.status})`);
-          }
-        } else if (err.request) {
-          setError(
-            `Не удалось подключиться к API по адресу ${apiBasePath}. Убедитесь, что мок-сервер из bot.ts запущен на порту 8080`
-          );
-        } else if (err.message) {
-          setError(`Ошибка: ${err.message}`);
+        if (err.response?.status === 401) {
+          setError("⛔ Доступ запрещён. Перезапустите мини-приложение.");
+        } else if (err.response?.status === 404) {
+          setError("Пользователь не найден.");
         } else {
-          setError("Произошла ошибка при загрузке данных");
+          setError("Ошибка при загрузке данных с сервера.");
         }
       } finally {
         setLoading(false);
       }
     };
 
-    loadUserData();
+    initAndLoadUserData();
   }, []);
 
+
   if (loading) {
-    return (
-      <Container
-        style={{
-          backgroundColor: "#FFFFFF",
-          minHeight: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <div>Загрузка...</div>
-      </Container>
-    );
+return (
+      <Container
+        style={{
+          backgroundColor: "#FFFFFF",
+          minHeight: "100vh",
+        }}
+      >
+        <Logo />
+        {/* Контейнер, имитирующий расположение карточек */}
+        <Flex
+          direction="column"
+          align="center"
+          style={{
+            width: "100%",
+            maxWidth: "300px",
+            margin: "0 auto",
+            padding: "0px 16px",
+          }}
+        >
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+        </Flex>
+      </Container>
+    );
   }
 
   if (error) {
@@ -260,16 +273,17 @@ function App() {
           path="/managment/queue/:id"
           element={<QueueUserManagementPage />}
         />
-        <Route path="/moderator/:name" element={<ModeratorDashboardPage />} />
+        <Route path="/moderator/:id" element={<ModeratorDashboardPage />} />
         <Route path="/organization/:id" element={<OrganizationDetailsPage />} />
         <Route
           path="/moderator-queue/:id"
           element={<ModeratorQueueDetailsPage />}
         />
+        <Route path="/moderator-queue/queue/:id" element={<QueueUserModeratorPage />} />
         <Route path="*" element={<div>404 | Страница не найдена</div>} />
       </Routes>
     </BrowserRouter>
   );
 }
-
+// 
 export default App;

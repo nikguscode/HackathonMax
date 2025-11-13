@@ -10,7 +10,7 @@ Status of queue entry
 
 * `Served` (value: `'SERVED'`)
 
-* `Cancelled` (value: `'CANCELLED'`)
+* `Canceled` (value: `'CANCELED'`)
 
 * `Missed` (value: `'MISSED'`)
 

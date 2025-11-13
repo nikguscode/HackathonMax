@@ -1,21 +1,19 @@
-# SimpleMember
+# OrganizationGraphicsResponse
 
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**maxId** | **string** |  | [optional] [default to undefined]
-**username** | **string** |  | [optional] [default to undefined]
+**graphics** | [**OrganizationGraphics**](OrganizationGraphics.md) |  | [optional] [default to undefined]
 
 ## Example
 
 ```typescript
-import { SimpleMember } from './api';
+import { OrganizationGraphicsResponse } from './api';
 
-const instance: SimpleMember = {
-    maxId,
-    username,
+const instance: OrganizationGraphicsResponse = {
+    graphics,
 };
 ```
 
