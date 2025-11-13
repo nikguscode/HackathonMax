@@ -235,51 +235,59 @@ paths:
           $ref: '#/components/responses/UnexpectedError'
 
 
-  # /organizations/{organizationId}/queues:
-  #   post:
-  #     tags: [organizations]
-  #     summary: Create queue for organization
-  #     operationId: createOrganizationQueue
-  #     parameters:
-  #       - name: organizationId
-  #         in: path
-  #         required: true
-  #         descripiton: Organization ID
-  #         schema:
-  #           type: string
-  #     responses:
-  #       '200':
-  #         description: Queue created for organization
-  #       '400':
-  #         $ref: '#/components/responses/BadRequest'
-  #       '404':
-  #         $ref: '#/components/responses/NotFound'
-  #       default:
-  #         $ref: '#/components/responses/UnexpectedError'
-  #   get:
-  #     tags: [organizations]
-  #     summary: Get list of queues in an organization
-  #     operationId: getOrganizationQueues
-  #     parameters:
-  #       - name: organizationId
-  #         in: path
-  #         required: true
-  #         description: Organization ID
-  #         schema:
-  #           type: string
-  #     responses:
-  #       '200':
-  #         description: Organization with its queues
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/QueueResponse'
-  #       '400':
-  #         $ref: '#/components/responses/BadRequest'
-  #       '404':
-  #         $ref: '#/components/responses/NotFound'
-  #       default:
-  #         $ref: '#/components/responses/UnexpectedError'
+  /organizations/{organizationId}/queues:
+    post:
+      tags: [organizations]
+      summary: Create queue for organization
+      operationId: createOrganizationQueue
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          description: Organization ID
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Add user in queue
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueueCreatingRequest'
+      responses:
+        '200':
+          description: Queue created for organization
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+    get:
+      tags: [organizations]
+      summary: Get list of queues in an organization
+      operationId: getOrganizationQueues
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          description: Organization ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Organization with its queues
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
 
   /organizations/{organizationId}/settings:
     get:
@@ -334,7 +342,7 @@ paths:
           $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/UnexpectedError'
-  
+
   /organizations/{organizationId}/graphics:
     get:
       tags: [organizations]
@@ -361,7 +369,7 @@ paths:
           $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/UnexpectedError'
-  
+
   /queues/{queueId}/members:
     get:
       tags: [queues]
@@ -440,7 +448,7 @@ paths:
           $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/UnexpectedError'
-  
+
   #Analytics
   /queues/{queueId}/graphics:
     get:
@@ -462,6 +470,56 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/QueueGraphicsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+  
+  /queues/{queueId}/staff:
+    get:
+      tags: [queues]
+      summary: Get staff member of a queue
+      operationId: getQueueStaff
+      parameters:
+        - name: queueId
+          in: path
+          required: true
+          description: Queue ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Queue staff retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueStaffResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+          
+  /staff/{staffId}:
+    delete:
+      tags: [staff]
+      summary: Delete staff member
+      operationId: deleteStaffMember
+      parameters:
+        - name: staffId
+          in: path
+          required: true
+          description: Staff ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Staff member deleted successfully
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -568,7 +626,27 @@ components:
         - maxId
         - queueId
 
+    ### Queue Request ###
+
+    QueueCreatingRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        arrivalGracePeriod:
+          type: integer
+          format: int32
+        maxQueueSize:
+          type: integer
+          format: in32
+      required:
+        - name
+        - arrivalGracePreiod
+
+
     ##### Orchestrator responses #####
+
+    ### Base Responses ###
 
     ### User Responses ###
 
@@ -688,7 +766,7 @@ components:
           format: float
         numberOfServedMembers:
           type: integer
-    
+
     # --- Organization graphics ---
     OrganizationGraphicsResponse:
       type: object
@@ -766,6 +844,13 @@ components:
           items:
             $ref: '#/components/schemas/QueueMember'
 
+    QueueStaffResponse:
+      properties:
+        staff:
+          type: array
+          items:
+            $ref: '#/components/schemas/QueueStaff'
+
     QueueSettings:
       type: object
       properties:
@@ -804,7 +889,7 @@ components:
           type: integer
         averageInQueue:
           type: integer
-    
+
     # --- Queue graphics ---
     QueueGraphicsResponse:
       type: object
@@ -844,6 +929,15 @@ components:
           type: integer
           format: int64
         queueEntryId:
+          type: string
+          format: uuid
+        username:
+          type: string
+          
+    QueueStaff:
+      type: object
+      properties:
+        staffId:
           type: string
           format: uuid
         username:

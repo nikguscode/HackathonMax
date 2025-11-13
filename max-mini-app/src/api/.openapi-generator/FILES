@@ -1,6 +1,5 @@
 .gitignore
 .npmignore
-.openapi-generator-ignore
 api.ts
 base.ts
 common.ts
@@ -17,6 +16,7 @@ docs/OrganizationSettings.md
 docs/OrganizationSettingsResponse.md
 docs/OrganizationsApi.md
 docs/Queue.md
+docs/QueueCreatingRequest.md
 docs/QueueEntriesApi.md
 docs/QueueEntryCreatingRequest.md
 docs/QueueEntryInUserResponse.md
@@ -33,10 +33,13 @@ docs/QueueMetricsResponse.md
 docs/QueueResponse.md
 docs/QueueSettings.md
 docs/QueueSettingsResponse.md
+docs/QueueStaff.md
+docs/QueueStaffResponse.md
 docs/QueuesApi.md
 docs/SendUserMiniAppDataRequest.md
 docs/SimpleOrganization.md
 docs/SimpleQueue.md
+docs/StaffApi.md
 docs/UserCreatingRequest.md
 docs/UserResponse.md
 docs/UserRole.md

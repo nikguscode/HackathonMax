@@ -8,7 +8,7 @@ import (
 
 // таблица "user"
 type User struct {
-	IDmax            uuid.UUID    `gorm:"column: id_max; type: uuid; primaryKey"`
+	IDmax            int64        `gorm:"column: id_max; primaryKey"`
 	Username         string       `gorm:"size: 255; not null"`
 	FirstName        string       `gorm:"size: 255; not null"`
 	SecondName       string       `gorm:"size: 255; not null"`
@@ -42,7 +42,7 @@ func (Organization) TableName() string {
 // таблица "user_role"
 type UserRole struct {
 	ID             uuid.UUID    `gorm:"type: uuid; primaryKey"`
-	IDUser         uuid.UUID    `gorm:"type: uuid; not null"`
+	IDUser         int64        `gorm:"not null"`
 	IDOrganization uuid.UUID    `gorm:"type: uuid; not null"`
 	Role           string       `gorm:"type: user_role; not null"`
 	User           User         `gorm:"foreignKey: IDUser"`
@@ -56,7 +56,7 @@ func (UserRole) TableName() string {
 // таблица "user_queue"
 type UserQueue struct {
 	ID      uuid.UUID `gorm:"type: uuid; primaryKey"`
-	IDUser  uuid.UUID `gorm:"type: uuid; not null"`
+	IDUser  int64     `gorm:"not null"`
 	IDQueue uuid.UUID `gorm:"type: uuid; not null"`
 	User    User      `gorm:"foreignKey: IDUser"`
 	Queue   Queue     `gorm:"foreignKey: IDQueue"`
@@ -98,7 +98,7 @@ func (QueueParams) TableName() string {
 type QueueEntry struct {
 	ID      uuid.UUID   `gorm:"type: uuid; primaryKey"`
 	IDQueue uuid.UUID   `gorm:"column: id_queue; type: uuid; not null"`
-	IDUser  uuid.UUID   `gorm:"column: id_user; type: uuid; not null"`
+	IDUser  int64       `gorm:"column: id_user; not null"`
 	Status  string      `gorm:"type: queue_status; not null'"`
 	Queue   Queue       `gorm:"foreignKey: IDQueue"`
 	User    User        `gorm:"foreignKey: IDUser"`

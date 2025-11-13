@@ -37,10 +37,21 @@ const getMaxId = (): string | null => {
 const createApiConfiguration = (): Configuration => {
   const basePath =
     import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
+
+  const maxId = localStorage.getItem("maxId");
+  const maxHash = localStorage.getItem("maxHash");
+
   return new Configuration({
     basePath,
+    baseOptions: {
+      headers: {
+        ...(maxId ? { maxId } : {}),
+        ...(maxHash ? { maxHash } : {}),
+      },
+    },
   });
 };
+
 
 declare global {
   interface Window {
@@ -56,50 +67,44 @@ const HomePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (window.WebApp) {
-      const config = createApiConfiguration();
-      const usersApi = new UsersApi(config);
-      usersApi.sendUserMiniAppData(window.WebApp.initData);
-      console.log("✅ MAX Bridge подключён:", window.WebApp);
-      console.log("🌐 Платформа:", window.WebApp.platform);
-      console.log("📱 Версия клиента:", window.WebApp.initData);
-      console.log("👤 Данные пользователя:", window.WebApp.initDataUnsafe?.user);
-      console.log("💬 Данные чата:", window.WebApp.initDataUnsafe?.chat);
-    } else {
-      console.warn("MAX Bridge не найден. Возможно, вы не в среде MAX.");
-    }
-  }, []);
+    const initAndLoadUserData = async () => {
+      if (!window.WebApp) {
+        console.warn("MAX Bridge не найден. Возможно, вы не в среде MAX.");
+        return;
+      }
 
-  useEffect(() => {
-    const loadUserData = async () => {
-      const config = createApiConfiguration();
-      const apiBasePath = config.basePath;
+      setLoading(true);
+      setError(null);
+
       try {
-        setLoading(true);
-        setError(null);
-
         const maxId = getMaxId();
-
         if (!maxId) {
-          setError(
-            "Max ID не найден. Укажите maxId в параметрах URL (?maxId=xxx) или в переменной окружения VITE_MAX_ID"
-          );
+          setError("Max ID не найден");
           setLoading(false);
           return;
         }
 
-        const maxIdNum = Number(maxId);
+        // 1️⃣ Авторизация
+        const authConfig = createApiConfiguration();
+        const usersApiAuth = new UsersApi(authConfig);
+        const body = { miniAppInitData: window.WebApp.initData };
+        const authResponse = await usersApiAuth.sendUserMiniAppData(Number(maxId), body);
 
-        console.log("Используется maxId:", maxId);
-        console.log("API Base Path:", apiBasePath);
+        if (authResponse.status === 200 && (authResponse.data as any)?.maxHash) {
+          const maxHash = (authResponse.data as any).maxHash;
+          localStorage.setItem("maxHash", maxHash);
+          localStorage.setItem("maxId", String(maxId));
+          console.log("✅ Авторизация успешна, maxHash сохранён:", maxHash);
+        } else {
+          setError("Ошибка авторизации. Попробуйте перезапустить Mini App.");
+          setLoading(false);
+          return;
+        }
 
+        // 2️⃣ Теперь можно загружать данные пользователя (уже с maxHash в хедерах)
+        const config = createApiConfiguration();
         const usersApi = new UsersApi(config);
-
-        console.log("Запрос к API:", `/users/${maxIdNum}`);
-
-        const response = await usersApi.getUserByMaxId({ maxId: maxIdNum } as any);
-        const userResponse = response.data;
-        
+        const userResponse = (await usersApi.getUserByMaxId({ maxId: Number(maxId) } as any)).data;
 
         if (!userResponse) {
           setError("Ответ от сервера пустой. Проверьте подключение к API");
@@ -114,8 +119,6 @@ const HomePage: React.FC = () => {
         const queues: QueueEntryInUserResponse[] = [];
 
         for (const org of organizationsList) {
-          if (!org.id || !org.name || !org.role) continue;
-
           if (org.role === "MODERATOR" || org.role === "EMPLOYEE") {
             adminOrgs.push({
               id: org.id,
@@ -127,44 +130,33 @@ const HomePage: React.FC = () => {
         }
 
         for (const queue of queueList) {
-          if (!queue.id || !queue.name) continue;
           queues.push({
             id: queue.id,
             name: queue.name,
             peopleInFront: queue.peopleInFront,
           });
         }
-        setUserQueues(queues);
+
         setModeratorOrgs(adminOrgs);
-        
-        setLoading(false);
+        setUserQueues(queues);
       } catch (err: any) {
         console.error("Ошибка при загрузке данных:", err);
 
-        if (err.response) {
-          if (err.response.status === 404) {
-            setError("Пользователь не найден. Проверьте правильность maxId");
-          } else if (err.response.data?.message) {
-            setError(err.response.data.message);
-          } else {
-            setError(`Ошибка сервера (${err.response.status})`);
-          }
-        } else if (err.request) {
-          setError(
-            `Не удалось подключиться к API по адресу ${apiBasePath}. Убедитесь, что мок-сервер из bot.ts запущен на порту 8080`
-          );
-        } else if (err.message) {
-          setError(`Ошибка: ${err.message}`);
+        if (err.response?.status === 401) {
+          setError("⛔ Доступ запрещён. Перезапустите мини-приложение.");
+        } else if (err.response?.status === 404) {
+          setError("Пользователь не найден.");
         } else {
-          setError("Произошла ошибка при загрузке данных");
+          setError("Ошибка при загрузке данных с сервера.");
         }
       } finally {
         setLoading(false);
       }
     };
 
-    loadUserData();
+    initAndLoadUserData();
   }, []);
+
 
   if (loading) {
 return (
@@ -279,7 +271,7 @@ function App() {
           path="/managment/queue/:id"
           element={<QueueUserManagementPage />}
         />
-        <Route path="/moderator/:name" element={<ModeratorDashboardPage />} />
+        <Route path="/moderator/:id" element={<ModeratorDashboardPage />} />
         <Route path="/organization/:id" element={<OrganizationDetailsPage />} />
         <Route
           path="/moderator-queue/:id"
@@ -290,5 +282,5 @@ function App() {
     </BrowserRouter>
   );
 }
-{/* <ModeratorQueueDetailsPage /> */}
+
 export default App;

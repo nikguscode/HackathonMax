@@ -6,11 +6,23 @@ import Logo from '../components/Logo';
 
 
 const createApiConfiguration = (): Configuration => {
-  const basePath = import.meta.env.VITE_API_BASE_PATH || 'http://localhost:8080';
+  const basePath =
+    import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
+
+  const maxId = localStorage.getItem("maxId");
+  const maxHash = localStorage.getItem("maxHash");
+
   return new Configuration({
     basePath,
+    baseOptions: {
+      headers: {
+        ...(maxId ? { maxId } : {}),
+        ...(maxHash ? { maxHash } : {}),
+      },
+    },
   });
 };
+
 
 const OrganizationDetailsPage: React.FC = () => {
   const { id: orgId } = useParams<{ id: string }>();

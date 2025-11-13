@@ -1,17 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Container, Flex, Typography } from '@maxhub/max-ui';
-import { moderatorOrganizations } from '../mockData';
-import type { IModeratorQueue } from '../types';
 import Logo from '../components/Logo';
 import AddQueueModal from '../components/AddQueueModal';
+import { OrganizationsApi, Configuration, Queue, QueuesApi, QueueMetricsResponse } from '../api';
+import axios from 'axios';
 
 interface QueueCardProps {
-  queue: IModeratorQueue;
+  id: string,
+  name: string,
+  employeeCount: number,
+  currentQueue: number,
+  totalServed: number,
   onClick?: () => void;
 }
 
-const QueueCard: React.FC<QueueCardProps> = ({ queue, onClick }) => {
+const QueueCard: React.FC<QueueCardProps> = ({ name, employeeCount, currentQueue, totalServed, onClick }) => {
   const [isPressed, setIsPressed] = useState(false);
 
   const handleMouseDown = () => {
@@ -63,7 +67,7 @@ const QueueCard: React.FC<QueueCardProps> = ({ queue, onClick }) => {
           wordBreak: 'break-word',
         }}
       >
-        {queue.name}
+        {name}
       </Typography.Title>
       
       <div
@@ -85,7 +89,7 @@ const QueueCard: React.FC<QueueCardProps> = ({ queue, onClick }) => {
             wordBreak: 'break-word',
           }}
         >
-          Кол-во сотрудников: {queue.employeeCount}
+          Среднее кол-во человек в очереди: {employeeCount}
         </Typography.Body>
         <Typography.Body
           style={{
@@ -96,7 +100,7 @@ const QueueCard: React.FC<QueueCardProps> = ({ queue, onClick }) => {
             wordBreak: 'break-word',
           }}
         >
-          Очередь в данный момент: {queue.currentQueue}
+          Максимум человек в очереди: {currentQueue}
         </Typography.Body>
         <Typography.Body
           style={{
@@ -107,29 +111,89 @@ const QueueCard: React.FC<QueueCardProps> = ({ queue, onClick }) => {
             wordBreak: 'break-word',
           }}
         >
-          Всего людей обслужено: {queue.totalServed}
+          Всего людей обслужено: {totalServed}
         </Typography.Body>
       </Flex>
     </Flex>
   );
 };
 
+const createApiConfiguration = (): Configuration => {
+  const basePath =
+    import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
+
+  const maxId = localStorage.getItem("maxId");
+  const maxHash = localStorage.getItem("maxHash");
+
+  return new Configuration({
+    basePath,
+    baseOptions: {
+      headers: {
+        ...(maxId ? { maxId } : {}),
+        ...(maxHash ? { maxHash } : {}),
+      },
+    },
+  });
+};
+
+interface ExtendedQueue extends Queue {
+  metrics?: QueueMetricsResponse['metrics'];
+}
+
 const ModeratorDashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const [isModeratorButtonPressed, setIsModeratorButtonPressed] = useState(false);
   const [isAddQueue, setisAddQueue] = useState(false);
-  const { name: orgName } = useParams<{ name: string }>();
+  const [loading, setLoading] = useState(true);
+  const { id: orgId } = useParams<{ id: string }>();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
-  const moderatorOrg = moderatorOrganizations[0];
-  
-  if (!moderatorOrg) {
-    return (
-      <Container style={{ backgroundColor: '#FFFFFF', minHeight: '100vh', padding: '20px' }}>
-        <Typography.Title>Ошибка: Данные модератора не найдены</Typography.Title>
-      </Container>
-    );
-  }
+  const [organizationName, setOrganizationName] = useState<string>('');
+  const [queues, setQueues] = useState<ExtendedQueue[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!orgId) return;
+
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const apiConfig = createApiConfiguration();
+        const organizationsApi = new OrganizationsApi(apiConfig, apiConfig.basePath, axios);
+        const queuesApi = new QueuesApi(apiConfig, apiConfig.basePath, axios);
+
+        const settingsResponse = await organizationsApi.getOrganizationSettings(orgId);
+        setOrganizationName(settingsResponse.data.organization?.name ?? '');
+
+        const queuesResponse = await organizationsApi.getOrganizationQueues(orgId);
+        const queueList = queuesResponse.data.queues || [];
+
+        const queuesWithMetrics: ExtendedQueue[] = await Promise.all(
+          queueList.map(async (queue) => {
+            if (!queue.id) return queue;
+            try {
+              const metricsRes = await queuesApi.getQueueMetrics(queue.id);
+              return { ...queue, metrics: metricsRes.data.metrics };
+            } catch (err) {
+              console.warn(`Ошибка загрузки метрик для очереди ${queue.name}:`, err);
+              return queue;
+            }
+          })
+        );
+
+        setQueues(queuesWithMetrics);
+      } catch (err) {
+        console.error('Ошибка загрузки данных организации:', err);
+        setError('Ошибка при загрузке данных организации.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [orgId]);
+
 
   const handleQueueClick = (queueId: string) => {
     navigate(`/moderator-queue/${queueId}`);
@@ -145,7 +209,7 @@ const ModeratorDashboardPage: React.FC = () => {
   };
 
   const handleAddQueueSubmit = (queueName: string) => {
-    console.log(`Добавляем очередь: "${queueName}" для организации ID: ${moderatorOrg.id}`);
+    console.log(`Добавляем очередь: "${queueName}" для организации ID: ${orgId}`);
     handleCloseModal();
   };
 
@@ -162,7 +226,7 @@ const ModeratorDashboardPage: React.FC = () => {
   };
 
   const handleModeratorButtonClick = () => {
-    navigate(`/organization/${orgName}`);
+    navigate(`/organization/${orgId}`);
   };
 
   const handleModeratorMouseDown = () => {
@@ -182,6 +246,8 @@ const ModeratorDashboardPage: React.FC = () => {
   const defaultShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
 
+  if (loading) return <div style={{ textAlign: "center", marginTop: 40 }}>Загрузка...</div>;
+  if (error) return <div style={{ textAlign: "center", marginTop: 40, color: "red" }}>{error}</div>;
   return (
     <Container
       style={{
@@ -239,16 +305,21 @@ const ModeratorDashboardPage: React.FC = () => {
               textOverflow: 'ellipsis',
             }}
           >
-            {orgName}
+            {organizationName}
           </Typography.Title>
         </Flex>
 
         <Flex direction="column" align="center" style={{ width: '100%', gap: '12px' }}>
-          {moderatorOrg.queues.map((queue) => (
+          {queues.map((queue) => (
             <QueueCard
               key={queue.id}
-              queue={queue}
-              onClick={() => handleQueueClick(queue.id)}
+              name={queue.name ?? ''}
+              employeeCount= {queue.metrics?.averageInQueue ?? 0}
+              currentQueue= {queue.metrics?.maxInQueue ?? 0}
+              id= {queue.id ?? ''}
+              totalServed={queue.metrics?.numberOfServedMembers ?? 0}
+
+              onClick={() => handleQueueClick(queue.id ?? '')}
             />
           ))}
         </Flex>
@@ -295,7 +366,7 @@ const ModeratorDashboardPage: React.FC = () => {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onAddQueue={handleAddQueueSubmit}
-        orgId={moderatorOrg.id}
+        orgId={orgId ?? ''}
       />
     </Container>
   );

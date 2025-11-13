@@ -8,11 +8,23 @@ import ConfirmationModal from '../components/ConfirmationModal';
 
 
 const createApiConfiguration = (): Configuration => {
-  const basePath = import.meta.env.VITE_API_BASE_PATH || 'http://localhost:8080/v1/api';
+  const basePath =
+    import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
+
+  const maxId = localStorage.getItem("maxId");
+  const maxHash = localStorage.getItem("maxHash");
+
   return new Configuration({
     basePath,
+    baseOptions: {
+      headers: {
+        ...(maxId ? { maxId } : {}),
+        ...(maxHash ? { maxHash } : {}),
+      },
+    },
   });
 };
+
 
 const QueueUserManagementPage: React.FC = () => {
   const { id: queueId } = useParams<{ id: string }>();
