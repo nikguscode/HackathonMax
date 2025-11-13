@@ -1,9 +1,11 @@
 .gitignore
 .npmignore
+.openapi-generator-ignore
 api.ts
 base.ts
 common.ts
 configuration.ts
+docs/MiniAppInitResponse.md
 docs/Organization.md
 docs/OrganizationGraphics.md
 docs/OrganizationGraphicsResponse.md

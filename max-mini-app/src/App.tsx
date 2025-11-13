@@ -95,50 +95,49 @@ const HomePage: React.FC = () => {
           localStorage.setItem("maxHash", maxHash);
           localStorage.setItem("maxId", String(maxId));
           console.log("✅ Авторизация успешна, maxHash сохранён:", maxHash);
+          const config = createApiConfiguration();
+          const usersApi = new UsersApi(config);
+          const userResponse = (await usersApi.getUserByMaxId(Number(maxId), Number(maxId), maxHash)).data;
+
+          if (!userResponse) {
+            setError("Ответ от сервера пустой. Проверьте подключение к API");
+            setLoading(false);
+            return;
+          }
+
+          const organizationsList = userResponse.organizations || [];
+          const queueList = userResponse["queue-entries"] || [];
+
+          const adminOrgs: Organization[] = [];
+          const queues: QueueEntryInUserResponse[] = [];
+
+          for (const org of organizationsList) {
+            if (org.role === "MODERATOR" || org.role === "EMPLOYEE") {
+              adminOrgs.push({
+                id: org.id,
+                name: org.name,
+                role: org.role,
+                amountOfQueues: org.amountOfQueues,
+              });
+            }
+          }
+
+          for (const queue of queueList) {
+            queues.push({
+              id: queue.id,
+              name: queue.name,
+              peopleInFront: queue.peopleInFront,
+            });
+          }
+
+          setModeratorOrgs(adminOrgs);
+          setUserQueues(queues);
         } else {
           setError("Ошибка авторизации. Попробуйте перезапустить Mini App.");
           setLoading(false);
           return;
         }
-
-        // 2️⃣ Теперь можно загружать данные пользователя (уже с maxHash в хедерах)
-        const config = createApiConfiguration();
-        const usersApi = new UsersApi(config);
-        const userResponse = (await usersApi.getUserByMaxId({ maxId: Number(maxId) } as any)).data;
-
-        if (!userResponse) {
-          setError("Ответ от сервера пустой. Проверьте подключение к API");
-          setLoading(false);
-          return;
-        }
-
-        const organizationsList = userResponse.organizations || [];
-        const queueList = userResponse["queue-entries"] || [];
-
-        const adminOrgs: Organization[] = [];
-        const queues: QueueEntryInUserResponse[] = [];
-
-        for (const org of organizationsList) {
-          if (org.role === "MODERATOR" || org.role === "EMPLOYEE") {
-            adminOrgs.push({
-              id: org.id,
-              name: org.name,
-              role: org.role,
-              amountOfQueues: org.amountOfQueues,
-            });
-          }
-        }
-
-        for (const queue of queueList) {
-          queues.push({
-            id: queue.id,
-            name: queue.name,
-            peopleInFront: queue.peopleInFront,
-          });
-        }
-
-        setModeratorOrgs(adminOrgs);
-        setUserQueues(queues);
+        
       } catch (err: any) {
         console.error("Ошибка при загрузке данных:", err);
 

@@ -75,6 +75,9 @@ const QueueDetailsPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isQRCodeOpen, setIsQRCodeOpen] = useState(false);
 
+  const maxId = localStorage.getItem("maxId");
+  const maxHash = localStorage.getItem("maxHash") ?? '';
+
   useEffect(() => { 
     if (!entryId) return;
     const fetchQueueEntry = async () => {
@@ -83,7 +86,7 @@ const QueueDetailsPage: React.FC = () => {
         const config = createApiConfiguration();
         const userInfoApi = new QueueEntriesApi(config);
 
-        const response = await userInfoApi.getQueueEntry(entryId);
+        const response = await userInfoApi.getQueueEntry(entryId, Number(maxId), maxHash);
         setQueueDetails(response.data);
         
         console.log('Ответ API:', response.data);
@@ -102,7 +105,7 @@ const QueueDetailsPage: React.FC = () => {
       const config = createApiConfiguration();
       const queueApi = new QueueEntriesApi(config);
 
-      await queueApi.deleteQueueEntry(entryId);
+      await queueApi.deleteQueueEntry(entryId, Number(maxId), maxHash);
       console.log('Очередь успешно удалена:', entryId);
 
       navigate('/');

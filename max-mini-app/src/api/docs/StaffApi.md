@@ -21,10 +21,14 @@ import {
 const configuration = new Configuration();
 const apiInstance = new StaffApi(configuration);
 
-let staffId: string; //Staff ID (default to undefined)
+let staffId: string; //Staff id (default to undefined)
+let maxId: number; //Id provided by the Max massenger (default to undefined)
+let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 
 const { status, data } = await apiInstance.deleteStaffMember(
-    staffId
+    staffId,
+    maxId,
+    maxHash
 );
 ```
 
@@ -32,7 +36,9 @@ const { status, data } = await apiInstance.deleteStaffMember(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **staffId** | [**string**] | Staff ID | defaults to undefined|
+| **staffId** | [**string**] | Staff id | defaults to undefined|
+| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
 ### Return type

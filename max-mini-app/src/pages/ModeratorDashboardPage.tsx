@@ -151,6 +151,9 @@ const ModeratorDashboardPage: React.FC = () => {
   const [queues, setQueues] = useState<ExtendedQueue[]>([]);
   const [error, setError] = useState<string | null>(null);
 
+  const maxId = localStorage.getItem("maxId");
+  const maxHash = localStorage.getItem("maxHash") ?? '';
+
   useEffect(() => {
     if (!orgId) return;
 
@@ -163,17 +166,17 @@ const ModeratorDashboardPage: React.FC = () => {
         const organizationsApi = new OrganizationsApi(apiConfig, apiConfig.basePath, axios);
         const queuesApi = new QueuesApi(apiConfig, apiConfig.basePath, axios);
 
-        const settingsResponse = await organizationsApi.getOrganizationSettings(orgId);
+        const settingsResponse = await organizationsApi.getOrganizationSettings(orgId, Number(maxId), maxHash);
         setOrganizationName(settingsResponse.data.organization?.name ?? '');
 
-        const queuesResponse = await organizationsApi.getOrganizationQueues(orgId);
+        const queuesResponse = await organizationsApi.getOrganizationQueues(orgId, Number(maxId), maxHash);
         const queueList = queuesResponse.data.queues || [];
 
         const queuesWithMetrics: ExtendedQueue[] = await Promise.all(
           queueList.map(async (queue) => {
             if (!queue.id) return queue;
             try {
-              const metricsRes = await queuesApi.getQueueMetrics(queue.id);
+              const metricsRes = await queuesApi.getQueueMetrics(queue.id, Number(maxId), maxHash);
               return { ...queue, metrics: metricsRes.data.metrics };
             } catch (err) {
               console.warn(`Ошибка загрузки метрик для очереди ${queue.name}:`, err);
@@ -208,20 +211,15 @@ const ModeratorDashboardPage: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  const handleAddQueueSubmit = async (queueName: string, arrivalGracePeriod?: number, maxQueueSize?: number) => {
+  const handleAddQueueSubmit = async (queueName: string) => {
     if (!orgId) return;
 
     const apiConfig = createApiConfiguration();
     const queuesApi = new OrganizationsApi(apiConfig, apiConfig.basePath, axios);
 
     try {
-      const queueCreatingRequest = {
-        name: queueName,
-        arrivalGracePeriod,
-        maxQueueSize,
-      };
 
-      await queuesApi.createOrganizationQueue(orgId, queueCreatingRequest);
+      await queuesApi.createOrganizationQueue(orgId,  Number(maxId), maxHash);
 
       console.log(`✅ Очередь "${queueName}" успешно добавлена для организации ${orgId}`);
 

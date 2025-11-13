@@ -23,6 +23,10 @@ import type { RequestArgs } from './base';
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError, operationServerMap } from './base';
 
+export interface MiniAppInitResponse {
+    'maxId': number;
+    'maxHash': string;
+}
 export interface Organization {
     'id'?: string;
     'name'?: string;
@@ -167,7 +171,6 @@ export interface QueueStaff {
     'username'?: string;
 }
 export interface QueueStaffResponse {
-    orgId: any;
     'staff'?: Array<QueueStaff>;
 }
 export interface SendUserMiniAppDataRequest {
@@ -226,14 +229,20 @@ export const OrganizationsApiAxiosParamCreator = function (configuration?: Confi
         /**
          * 
          * @summary Create queue for organization
-         * @param {string} organizationId Organization ID
+         * @param {string} organizationId Organization id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {QueueCreatingRequest} [queueCreatingRequest] Add user in queue
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createOrganizationQueue: async (organizationId: string, queueCreatingRequest?: QueueCreatingRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        createOrganizationQueue: async (organizationId: string, maxId: number, maxHash: string, queueCreatingRequest?: QueueCreatingRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'organizationId' is not null or undefined
             assertParamExists('createOrganizationQueue', 'organizationId', organizationId)
+            // verify required parameter 'maxId' is not null or undefined
+            assertParamExists('createOrganizationQueue', 'maxId', maxId)
+            // verify required parameter 'maxHash' is not null or undefined
+            assertParamExists('createOrganizationQueue', 'maxHash', maxHash)
             const localVarPath = `/organizations/{organizationId}/queues`
                 .replace(`{${"organizationId"}}`, encodeURIComponent(String(organizationId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -251,6 +260,14 @@ export const OrganizationsApiAxiosParamCreator = function (configuration?: Confi
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
+            if (maxId != null) {
+                localVarHeaderParameter['Max-Id'] = typeof maxId === 'string'
+                    ? maxId
+                    : JSON.stringify(maxId);
+            }
+            if (maxHash != null) {
+                localVarHeaderParameter['Max-Hash'] = String(maxHash);
+            }
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -264,13 +281,19 @@ export const OrganizationsApiAxiosParamCreator = function (configuration?: Confi
         /**
          * 
          * @summary Get organization graphics
-         * @param {string} organizationId Organization ID
+         * @param {string} organizationId Organization id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getOrganizationGraphics: async (organizationId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getOrganizationGraphics: async (organizationId: string, maxId: number, maxHash: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'organizationId' is not null or undefined
             assertParamExists('getOrganizationGraphics', 'organizationId', organizationId)
+            // verify required parameter 'maxId' is not null or undefined
+            assertParamExists('getOrganizationGraphics', 'maxId', maxId)
+            // verify required parameter 'maxHash' is not null or undefined
+            assertParamExists('getOrganizationGraphics', 'maxHash', maxHash)
             const localVarPath = `/organizations/{organizationId}/graphics`
                 .replace(`{${"organizationId"}}`, encodeURIComponent(String(organizationId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -286,6 +309,14 @@ export const OrganizationsApiAxiosParamCreator = function (configuration?: Confi
 
 
     
+            if (maxId != null) {
+                localVarHeaderParameter['Max-Id'] = typeof maxId === 'string'
+                    ? maxId
+                    : JSON.stringify(maxId);
+            }
+            if (maxHash != null) {
+                localVarHeaderParameter['Max-Hash'] = String(maxHash);
+            }
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -298,13 +329,19 @@ export const OrganizationsApiAxiosParamCreator = function (configuration?: Confi
         /**
          * 
          * @summary Get organization metrics
-         * @param {string} organizationId Organization ID
+         * @param {string} organizationId Organization id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getOrganizationMetrics: async (organizationId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getOrganizationMetrics: async (organizationId: string, maxId: number, maxHash: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'organizationId' is not null or undefined
             assertParamExists('getOrganizationMetrics', 'organizationId', organizationId)
+            // verify required parameter 'maxId' is not null or undefined
+            assertParamExists('getOrganizationMetrics', 'maxId', maxId)
+            // verify required parameter 'maxHash' is not null or undefined
+            assertParamExists('getOrganizationMetrics', 'maxHash', maxHash)
             const localVarPath = `/organizations/{organizationId}/metrics`
                 .replace(`{${"organizationId"}}`, encodeURIComponent(String(organizationId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -320,6 +357,14 @@ export const OrganizationsApiAxiosParamCreator = function (configuration?: Confi
 
 
     
+            if (maxId != null) {
+                localVarHeaderParameter['Max-Id'] = typeof maxId === 'string'
+                    ? maxId
+                    : JSON.stringify(maxId);
+            }
+            if (maxHash != null) {
+                localVarHeaderParameter['Max-Hash'] = String(maxHash);
+            }
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -332,13 +377,19 @@ export const OrganizationsApiAxiosParamCreator = function (configuration?: Confi
         /**
          * 
          * @summary Get list of queues in an organization
-         * @param {string} organizationId Organization ID
+         * @param {string} organizationId Organization id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getOrganizationQueues: async (organizationId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getOrganizationQueues: async (organizationId: string, maxId: number, maxHash: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'organizationId' is not null or undefined
             assertParamExists('getOrganizationQueues', 'organizationId', organizationId)
+            // verify required parameter 'maxId' is not null or undefined
+            assertParamExists('getOrganizationQueues', 'maxId', maxId)
+            // verify required parameter 'maxHash' is not null or undefined
+            assertParamExists('getOrganizationQueues', 'maxHash', maxHash)
             const localVarPath = `/organizations/{organizationId}/queues`
                 .replace(`{${"organizationId"}}`, encodeURIComponent(String(organizationId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -354,6 +405,14 @@ export const OrganizationsApiAxiosParamCreator = function (configuration?: Confi
 
 
     
+            if (maxId != null) {
+                localVarHeaderParameter['Max-Id'] = typeof maxId === 'string'
+                    ? maxId
+                    : JSON.stringify(maxId);
+            }
+            if (maxHash != null) {
+                localVarHeaderParameter['Max-Hash'] = String(maxHash);
+            }
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -366,13 +425,19 @@ export const OrganizationsApiAxiosParamCreator = function (configuration?: Confi
         /**
          * 
          * @summary Get organization settings
-         * @param {string} organizationId Organization ID
+         * @param {string} organizationId Organization id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getOrganizationSettings: async (organizationId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getOrganizationSettings: async (organizationId: string, maxId: number, maxHash: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'organizationId' is not null or undefined
             assertParamExists('getOrganizationSettings', 'organizationId', organizationId)
+            // verify required parameter 'maxId' is not null or undefined
+            assertParamExists('getOrganizationSettings', 'maxId', maxId)
+            // verify required parameter 'maxHash' is not null or undefined
+            assertParamExists('getOrganizationSettings', 'maxHash', maxHash)
             const localVarPath = `/organizations/{organizationId}/settings`
                 .replace(`{${"organizationId"}}`, encodeURIComponent(String(organizationId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -388,6 +453,14 @@ export const OrganizationsApiAxiosParamCreator = function (configuration?: Confi
 
 
     
+            if (maxId != null) {
+                localVarHeaderParameter['Max-Id'] = typeof maxId === 'string'
+                    ? maxId
+                    : JSON.stringify(maxId);
+            }
+            if (maxHash != null) {
+                localVarHeaderParameter['Max-Hash'] = String(maxHash);
+            }
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -409,13 +482,15 @@ export const OrganizationsApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Create queue for organization
-         * @param {string} organizationId Organization ID
+         * @param {string} organizationId Organization id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {QueueCreatingRequest} [queueCreatingRequest] Add user in queue
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createOrganizationQueue(organizationId: string, queueCreatingRequest?: QueueCreatingRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.createOrganizationQueue(organizationId, queueCreatingRequest, options);
+        async createOrganizationQueue(organizationId: string, maxId: number, maxHash: string, queueCreatingRequest?: QueueCreatingRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createOrganizationQueue(organizationId, maxId, maxHash, queueCreatingRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['OrganizationsApi.createOrganizationQueue']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -423,12 +498,14 @@ export const OrganizationsApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Get organization graphics
-         * @param {string} organizationId Organization ID
+         * @param {string} organizationId Organization id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getOrganizationGraphics(organizationId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrganizationGraphicsResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getOrganizationGraphics(organizationId, options);
+        async getOrganizationGraphics(organizationId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrganizationGraphicsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getOrganizationGraphics(organizationId, maxId, maxHash, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['OrganizationsApi.getOrganizationGraphics']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -436,12 +513,14 @@ export const OrganizationsApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Get organization metrics
-         * @param {string} organizationId Organization ID
+         * @param {string} organizationId Organization id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getOrganizationMetrics(organizationId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrganizationMetricsResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getOrganizationMetrics(organizationId, options);
+        async getOrganizationMetrics(organizationId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrganizationMetricsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getOrganizationMetrics(organizationId, maxId, maxHash, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['OrganizationsApi.getOrganizationMetrics']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -449,12 +528,14 @@ export const OrganizationsApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Get list of queues in an organization
-         * @param {string} organizationId Organization ID
+         * @param {string} organizationId Organization id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getOrganizationQueues(organizationId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QueueResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getOrganizationQueues(organizationId, options);
+        async getOrganizationQueues(organizationId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QueueResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getOrganizationQueues(organizationId, maxId, maxHash, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['OrganizationsApi.getOrganizationQueues']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -462,12 +543,14 @@ export const OrganizationsApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Get organization settings
-         * @param {string} organizationId Organization ID
+         * @param {string} organizationId Organization id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getOrganizationSettings(organizationId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrganizationSettingsResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getOrganizationSettings(organizationId, options);
+        async getOrganizationSettings(organizationId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrganizationSettingsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getOrganizationSettings(organizationId, maxId, maxHash, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['OrganizationsApi.getOrganizationSettings']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -484,53 +567,63 @@ export const OrganizationsApiFactory = function (configuration?: Configuration, 
         /**
          * 
          * @summary Create queue for organization
-         * @param {string} organizationId Organization ID
+         * @param {string} organizationId Organization id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {QueueCreatingRequest} [queueCreatingRequest] Add user in queue
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createOrganizationQueue(organizationId: string, queueCreatingRequest?: QueueCreatingRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.createOrganizationQueue(organizationId, queueCreatingRequest, options).then((request) => request(axios, basePath));
+        createOrganizationQueue(organizationId: string, maxId: number, maxHash: string, queueCreatingRequest?: QueueCreatingRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.createOrganizationQueue(organizationId, maxId, maxHash, queueCreatingRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Get organization graphics
-         * @param {string} organizationId Organization ID
+         * @param {string} organizationId Organization id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getOrganizationGraphics(organizationId: string, options?: RawAxiosRequestConfig): AxiosPromise<OrganizationGraphicsResponse> {
-            return localVarFp.getOrganizationGraphics(organizationId, options).then((request) => request(axios, basePath));
+        getOrganizationGraphics(organizationId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): AxiosPromise<OrganizationGraphicsResponse> {
+            return localVarFp.getOrganizationGraphics(organizationId, maxId, maxHash, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Get organization metrics
-         * @param {string} organizationId Organization ID
+         * @param {string} organizationId Organization id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getOrganizationMetrics(organizationId: string, options?: RawAxiosRequestConfig): AxiosPromise<OrganizationMetricsResponse> {
-            return localVarFp.getOrganizationMetrics(organizationId, options).then((request) => request(axios, basePath));
+        getOrganizationMetrics(organizationId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): AxiosPromise<OrganizationMetricsResponse> {
+            return localVarFp.getOrganizationMetrics(organizationId, maxId, maxHash, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Get list of queues in an organization
-         * @param {string} organizationId Organization ID
+         * @param {string} organizationId Organization id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getOrganizationQueues(organizationId: string, options?: RawAxiosRequestConfig): AxiosPromise<QueueResponse> {
-            return localVarFp.getOrganizationQueues(organizationId, options).then((request) => request(axios, basePath));
+        getOrganizationQueues(organizationId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): AxiosPromise<QueueResponse> {
+            return localVarFp.getOrganizationQueues(organizationId, maxId, maxHash, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Get organization settings
-         * @param {string} organizationId Organization ID
+         * @param {string} organizationId Organization id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getOrganizationSettings(organizationId: string, options?: RawAxiosRequestConfig): AxiosPromise<OrganizationSettingsResponse> {
-            return localVarFp.getOrganizationSettings(organizationId, options).then((request) => request(axios, basePath));
+        getOrganizationSettings(organizationId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): AxiosPromise<OrganizationSettingsResponse> {
+            return localVarFp.getOrganizationSettings(organizationId, maxId, maxHash, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -539,63 +632,70 @@ export const OrganizationsApiFactory = function (configuration?: Configuration, 
  * OrganizationsApi - object-oriented interface
  */
 export class OrganizationsApi extends BaseAPI {
-    static getOrganizationQueues(orgApi: never) {
-      throw new Error('Method not implemented.');
-    }
     /**
      * 
      * @summary Create queue for organization
-     * @param {string} organizationId Organization ID
+     * @param {string} organizationId Organization id
+     * @param {number} maxId Id provided by the Max massenger
+     * @param {string} maxHash Authentication hash provided by the Max massenger
      * @param {QueueCreatingRequest} [queueCreatingRequest] Add user in queue
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public createOrganizationQueue(organizationId: string, queueCreatingRequest?: QueueCreatingRequest, options?: RawAxiosRequestConfig) {
-        return OrganizationsApiFp(this.configuration).createOrganizationQueue(organizationId, queueCreatingRequest, options).then((request) => request(this.axios, this.basePath));
+    public createOrganizationQueue(organizationId: string, maxId: number, maxHash: string, queueCreatingRequest?: QueueCreatingRequest, options?: RawAxiosRequestConfig) {
+        return OrganizationsApiFp(this.configuration).createOrganizationQueue(organizationId, maxId, maxHash, queueCreatingRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Get organization graphics
-     * @param {string} organizationId Organization ID
+     * @param {string} organizationId Organization id
+     * @param {number} maxId Id provided by the Max massenger
+     * @param {string} maxHash Authentication hash provided by the Max massenger
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public getOrganizationGraphics(organizationId: string, options?: RawAxiosRequestConfig) {
-        return OrganizationsApiFp(this.configuration).getOrganizationGraphics(organizationId, options).then((request) => request(this.axios, this.basePath));
+    public getOrganizationGraphics(organizationId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig) {
+        return OrganizationsApiFp(this.configuration).getOrganizationGraphics(organizationId, maxId, maxHash, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Get organization metrics
-     * @param {string} organizationId Organization ID
+     * @param {string} organizationId Organization id
+     * @param {number} maxId Id provided by the Max massenger
+     * @param {string} maxHash Authentication hash provided by the Max massenger
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public getOrganizationMetrics(organizationId: string, options?: RawAxiosRequestConfig) {
-        return OrganizationsApiFp(this.configuration).getOrganizationMetrics(organizationId, options).then((request) => request(this.axios, this.basePath));
+    public getOrganizationMetrics(organizationId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig) {
+        return OrganizationsApiFp(this.configuration).getOrganizationMetrics(organizationId, maxId, maxHash, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Get list of queues in an organization
-     * @param {string} organizationId Organization ID
+     * @param {string} organizationId Organization id
+     * @param {number} maxId Id provided by the Max massenger
+     * @param {string} maxHash Authentication hash provided by the Max massenger
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public getOrganizationQueues(organizationId: string, options?: RawAxiosRequestConfig) {
-        return OrganizationsApiFp(this.configuration).getOrganizationQueues(organizationId, options).then((request) => request(this.axios, this.basePath));
+    public getOrganizationQueues(organizationId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig) {
+        return OrganizationsApiFp(this.configuration).getOrganizationQueues(organizationId, maxId, maxHash, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Get organization settings
-     * @param {string} organizationId Organization ID
+     * @param {string} organizationId Organization id
+     * @param {number} maxId Id provided by the Max massenger
+     * @param {string} maxHash Authentication hash provided by the Max massenger
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public getOrganizationSettings(organizationId: string, options?: RawAxiosRequestConfig) {
-        return OrganizationsApiFp(this.configuration).getOrganizationSettings(organizationId, options).then((request) => request(this.axios, this.basePath));
+    public getOrganizationSettings(organizationId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig) {
+        return OrganizationsApiFp(this.configuration).getOrganizationSettings(organizationId, maxId, maxHash, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -609,11 +709,17 @@ export const QueueEntriesApiAxiosParamCreator = function (configuration?: Config
         /**
          * 
          * @summary Add user in queue
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {QueueEntryCreatingRequest} [queueEntryCreatingRequest] Add user in queue
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        addQueueEntry: async (queueEntryCreatingRequest?: QueueEntryCreatingRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        addQueueEntry: async (maxId: number, maxHash: string, queueEntryCreatingRequest?: QueueEntryCreatingRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'maxId' is not null or undefined
+            assertParamExists('addQueueEntry', 'maxId', maxId)
+            // verify required parameter 'maxHash' is not null or undefined
+            assertParamExists('addQueueEntry', 'maxHash', maxHash)
             const localVarPath = `/queue-entries`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -630,6 +736,14 @@ export const QueueEntriesApiAxiosParamCreator = function (configuration?: Config
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
+            if (maxId != null) {
+                localVarHeaderParameter['Max-Id'] = typeof maxId === 'string'
+                    ? maxId
+                    : JSON.stringify(maxId);
+            }
+            if (maxHash != null) {
+                localVarHeaderParameter['Max-Hash'] = String(maxHash);
+            }
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -644,12 +758,18 @@ export const QueueEntriesApiAxiosParamCreator = function (configuration?: Config
          * 
          * @summary Delete user from queue
          * @param {string} entryId Queue Entry id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteQueueEntry: async (entryId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        deleteQueueEntry: async (entryId: string, maxId: number, maxHash: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'entryId' is not null or undefined
             assertParamExists('deleteQueueEntry', 'entryId', entryId)
+            // verify required parameter 'maxId' is not null or undefined
+            assertParamExists('deleteQueueEntry', 'maxId', maxId)
+            // verify required parameter 'maxHash' is not null or undefined
+            assertParamExists('deleteQueueEntry', 'maxHash', maxHash)
             const localVarPath = `/queue-entries/{entryId}`
                 .replace(`{${"entryId"}}`, encodeURIComponent(String(entryId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -665,6 +785,14 @@ export const QueueEntriesApiAxiosParamCreator = function (configuration?: Config
 
 
     
+            if (maxId != null) {
+                localVarHeaderParameter['Max-Id'] = typeof maxId === 'string'
+                    ? maxId
+                    : JSON.stringify(maxId);
+            }
+            if (maxHash != null) {
+                localVarHeaderParameter['Max-Hash'] = String(maxHash);
+            }
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -678,12 +806,18 @@ export const QueueEntriesApiAxiosParamCreator = function (configuration?: Config
          * 
          * @summary Get queue entry
          * @param {string} entryId Queue Entry id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getQueueEntry: async (entryId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getQueueEntry: async (entryId: string, maxId: number, maxHash: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'entryId' is not null or undefined
             assertParamExists('getQueueEntry', 'entryId', entryId)
+            // verify required parameter 'maxId' is not null or undefined
+            assertParamExists('getQueueEntry', 'maxId', maxId)
+            // verify required parameter 'maxHash' is not null or undefined
+            assertParamExists('getQueueEntry', 'maxHash', maxHash)
             const localVarPath = `/queue-entries/{entryId}`
                 .replace(`{${"entryId"}}`, encodeURIComponent(String(entryId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -699,6 +833,14 @@ export const QueueEntriesApiAxiosParamCreator = function (configuration?: Config
 
 
     
+            if (maxId != null) {
+                localVarHeaderParameter['Max-Id'] = typeof maxId === 'string'
+                    ? maxId
+                    : JSON.stringify(maxId);
+            }
+            if (maxHash != null) {
+                localVarHeaderParameter['Max-Hash'] = String(maxHash);
+            }
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -720,12 +862,14 @@ export const QueueEntriesApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Add user in queue
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {QueueEntryCreatingRequest} [queueEntryCreatingRequest] Add user in queue
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async addQueueEntry(queueEntryCreatingRequest?: QueueEntryCreatingRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.addQueueEntry(queueEntryCreatingRequest, options);
+        async addQueueEntry(maxId: number, maxHash: string, queueEntryCreatingRequest?: QueueEntryCreatingRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.addQueueEntry(maxId, maxHash, queueEntryCreatingRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['QueueEntriesApi.addQueueEntry']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -734,11 +878,13 @@ export const QueueEntriesApiFp = function(configuration?: Configuration) {
          * 
          * @summary Delete user from queue
          * @param {string} entryId Queue Entry id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteQueueEntry(entryId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteQueueEntry(entryId, options);
+        async deleteQueueEntry(entryId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteQueueEntry(entryId, maxId, maxHash, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['QueueEntriesApi.deleteQueueEntry']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -747,11 +893,13 @@ export const QueueEntriesApiFp = function(configuration?: Configuration) {
          * 
          * @summary Get queue entry
          * @param {string} entryId Queue Entry id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getQueueEntry(entryId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QueueEntryResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getQueueEntry(entryId, options);
+        async getQueueEntry(entryId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QueueEntryResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getQueueEntry(entryId, maxId, maxHash, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['QueueEntriesApi.getQueueEntry']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -768,32 +916,38 @@ export const QueueEntriesApiFactory = function (configuration?: Configuration, b
         /**
          * 
          * @summary Add user in queue
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {QueueEntryCreatingRequest} [queueEntryCreatingRequest] Add user in queue
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        addQueueEntry(queueEntryCreatingRequest?: QueueEntryCreatingRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.addQueueEntry(queueEntryCreatingRequest, options).then((request) => request(axios, basePath));
+        addQueueEntry(maxId: number, maxHash: string, queueEntryCreatingRequest?: QueueEntryCreatingRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.addQueueEntry(maxId, maxHash, queueEntryCreatingRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Delete user from queue
          * @param {string} entryId Queue Entry id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteQueueEntry(entryId: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.deleteQueueEntry(entryId, options).then((request) => request(axios, basePath));
+        deleteQueueEntry(entryId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.deleteQueueEntry(entryId, maxId, maxHash, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Get queue entry
          * @param {string} entryId Queue Entry id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getQueueEntry(entryId: string, options?: RawAxiosRequestConfig): AxiosPromise<QueueEntryResponse> {
-            return localVarFp.getQueueEntry(entryId, options).then((request) => request(axios, basePath));
+        getQueueEntry(entryId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): AxiosPromise<QueueEntryResponse> {
+            return localVarFp.getQueueEntry(entryId, maxId, maxHash, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -805,34 +959,40 @@ export class QueueEntriesApi extends BaseAPI {
     /**
      * 
      * @summary Add user in queue
+     * @param {number} maxId Id provided by the Max massenger
+     * @param {string} maxHash Authentication hash provided by the Max massenger
      * @param {QueueEntryCreatingRequest} [queueEntryCreatingRequest] Add user in queue
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public addQueueEntry(queueEntryCreatingRequest?: QueueEntryCreatingRequest, options?: RawAxiosRequestConfig) {
-        return QueueEntriesApiFp(this.configuration).addQueueEntry(queueEntryCreatingRequest, options).then((request) => request(this.axios, this.basePath));
+    public addQueueEntry(maxId: number, maxHash: string, queueEntryCreatingRequest?: QueueEntryCreatingRequest, options?: RawAxiosRequestConfig) {
+        return QueueEntriesApiFp(this.configuration).addQueueEntry(maxId, maxHash, queueEntryCreatingRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Delete user from queue
      * @param {string} entryId Queue Entry id
+     * @param {number} maxId Id provided by the Max massenger
+     * @param {string} maxHash Authentication hash provided by the Max massenger
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public deleteQueueEntry(entryId: string, options?: RawAxiosRequestConfig) {
-        return QueueEntriesApiFp(this.configuration).deleteQueueEntry(entryId, options).then((request) => request(this.axios, this.basePath));
+    public deleteQueueEntry(entryId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig) {
+        return QueueEntriesApiFp(this.configuration).deleteQueueEntry(entryId, maxId, maxHash, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Get queue entry
      * @param {string} entryId Queue Entry id
+     * @param {number} maxId Id provided by the Max massenger
+     * @param {string} maxHash Authentication hash provided by the Max massenger
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public getQueueEntry(entryId: string, options?: RawAxiosRequestConfig) {
-        return QueueEntriesApiFp(this.configuration).getQueueEntry(entryId, options).then((request) => request(this.axios, this.basePath));
+    public getQueueEntry(entryId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig) {
+        return QueueEntriesApiFp(this.configuration).getQueueEntry(entryId, maxId, maxHash, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -846,13 +1006,19 @@ export const QueuesApiAxiosParamCreator = function (configuration?: Configuratio
         /**
          * 
          * @summary Get queue graphics
-         * @param {string} queueId Queue ID
+         * @param {string} queueId Queue id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getQueueGraphics: async (queueId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getQueueGraphics: async (queueId: string, maxId: number, maxHash: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'queueId' is not null or undefined
             assertParamExists('getQueueGraphics', 'queueId', queueId)
+            // verify required parameter 'maxId' is not null or undefined
+            assertParamExists('getQueueGraphics', 'maxId', maxId)
+            // verify required parameter 'maxHash' is not null or undefined
+            assertParamExists('getQueueGraphics', 'maxHash', maxHash)
             const localVarPath = `/queues/{queueId}/graphics`
                 .replace(`{${"queueId"}}`, encodeURIComponent(String(queueId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -868,6 +1034,14 @@ export const QueuesApiAxiosParamCreator = function (configuration?: Configuratio
 
 
     
+            if (maxId != null) {
+                localVarHeaderParameter['Max-Id'] = typeof maxId === 'string'
+                    ? maxId
+                    : JSON.stringify(maxId);
+            }
+            if (maxHash != null) {
+                localVarHeaderParameter['Max-Hash'] = String(maxHash);
+            }
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -880,13 +1054,19 @@ export const QueuesApiAxiosParamCreator = function (configuration?: Configuratio
         /**
          * 
          * @summary Get members of a queue
-         * @param {string} queueId 
+         * @param {string} queueId Queue id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getQueueMembers: async (queueId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getQueueMembers: async (queueId: string, maxId: number, maxHash: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'queueId' is not null or undefined
             assertParamExists('getQueueMembers', 'queueId', queueId)
+            // verify required parameter 'maxId' is not null or undefined
+            assertParamExists('getQueueMembers', 'maxId', maxId)
+            // verify required parameter 'maxHash' is not null or undefined
+            assertParamExists('getQueueMembers', 'maxHash', maxHash)
             const localVarPath = `/queues/{queueId}/members`
                 .replace(`{${"queueId"}}`, encodeURIComponent(String(queueId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -902,6 +1082,14 @@ export const QueuesApiAxiosParamCreator = function (configuration?: Configuratio
 
 
     
+            if (maxId != null) {
+                localVarHeaderParameter['Max-Id'] = typeof maxId === 'string'
+                    ? maxId
+                    : JSON.stringify(maxId);
+            }
+            if (maxHash != null) {
+                localVarHeaderParameter['Max-Hash'] = String(maxHash);
+            }
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -914,13 +1102,19 @@ export const QueuesApiAxiosParamCreator = function (configuration?: Configuratio
         /**
          * 
          * @summary Get queue metrics
-         * @param {string} queueId 
+         * @param {string} queueId Queue id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getQueueMetrics: async (queueId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getQueueMetrics: async (queueId: string, maxId: number, maxHash: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'queueId' is not null or undefined
             assertParamExists('getQueueMetrics', 'queueId', queueId)
+            // verify required parameter 'maxId' is not null or undefined
+            assertParamExists('getQueueMetrics', 'maxId', maxId)
+            // verify required parameter 'maxHash' is not null or undefined
+            assertParamExists('getQueueMetrics', 'maxHash', maxHash)
             const localVarPath = `/queues/{queueId}/metrics`
                 .replace(`{${"queueId"}}`, encodeURIComponent(String(queueId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -936,6 +1130,14 @@ export const QueuesApiAxiosParamCreator = function (configuration?: Configuratio
 
 
     
+            if (maxId != null) {
+                localVarHeaderParameter['Max-Id'] = typeof maxId === 'string'
+                    ? maxId
+                    : JSON.stringify(maxId);
+            }
+            if (maxHash != null) {
+                localVarHeaderParameter['Max-Hash'] = String(maxHash);
+            }
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -948,13 +1150,19 @@ export const QueuesApiAxiosParamCreator = function (configuration?: Configuratio
         /**
          * 
          * @summary Get queue settings
-         * @param {string} queueId 
+         * @param {string} queueId Queue id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getQueueSettings: async (queueId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getQueueSettings: async (queueId: string, maxId: number, maxHash: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'queueId' is not null or undefined
             assertParamExists('getQueueSettings', 'queueId', queueId)
+            // verify required parameter 'maxId' is not null or undefined
+            assertParamExists('getQueueSettings', 'maxId', maxId)
+            // verify required parameter 'maxHash' is not null or undefined
+            assertParamExists('getQueueSettings', 'maxHash', maxHash)
             const localVarPath = `/queues/{queueId}/settings`
                 .replace(`{${"queueId"}}`, encodeURIComponent(String(queueId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -970,6 +1178,14 @@ export const QueuesApiAxiosParamCreator = function (configuration?: Configuratio
 
 
     
+            if (maxId != null) {
+                localVarHeaderParameter['Max-Id'] = typeof maxId === 'string'
+                    ? maxId
+                    : JSON.stringify(maxId);
+            }
+            if (maxHash != null) {
+                localVarHeaderParameter['Max-Hash'] = String(maxHash);
+            }
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -982,13 +1198,19 @@ export const QueuesApiAxiosParamCreator = function (configuration?: Configuratio
         /**
          * 
          * @summary Get staff member of a queue
-         * @param {string} queueId Queue ID
+         * @param {string} queueId Queue id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getQueueStaff: async (queueId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getQueueStaff: async (queueId: string, maxId: number, maxHash: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'queueId' is not null or undefined
             assertParamExists('getQueueStaff', 'queueId', queueId)
+            // verify required parameter 'maxId' is not null or undefined
+            assertParamExists('getQueueStaff', 'maxId', maxId)
+            // verify required parameter 'maxHash' is not null or undefined
+            assertParamExists('getQueueStaff', 'maxHash', maxHash)
             const localVarPath = `/queues/{queueId}/staff`
                 .replace(`{${"queueId"}}`, encodeURIComponent(String(queueId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -1004,6 +1226,14 @@ export const QueuesApiAxiosParamCreator = function (configuration?: Configuratio
 
 
     
+            if (maxId != null) {
+                localVarHeaderParameter['Max-Id'] = typeof maxId === 'string'
+                    ? maxId
+                    : JSON.stringify(maxId);
+            }
+            if (maxHash != null) {
+                localVarHeaderParameter['Max-Hash'] = String(maxHash);
+            }
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -1025,12 +1255,14 @@ export const QueuesApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Get queue graphics
-         * @param {string} queueId Queue ID
+         * @param {string} queueId Queue id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getQueueGraphics(queueId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QueueGraphicsResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getQueueGraphics(queueId, options);
+        async getQueueGraphics(queueId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QueueGraphicsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getQueueGraphics(queueId, maxId, maxHash, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['QueuesApi.getQueueGraphics']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -1038,12 +1270,14 @@ export const QueuesApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Get members of a queue
-         * @param {string} queueId 
+         * @param {string} queueId Queue id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getQueueMembers(queueId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QueueMembersResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getQueueMembers(queueId, options);
+        async getQueueMembers(queueId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QueueMembersResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getQueueMembers(queueId, maxId, maxHash, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['QueuesApi.getQueueMembers']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -1051,12 +1285,14 @@ export const QueuesApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Get queue metrics
-         * @param {string} queueId 
+         * @param {string} queueId Queue id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getQueueMetrics(queueId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QueueMetricsResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getQueueMetrics(queueId, options);
+        async getQueueMetrics(queueId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QueueMetricsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getQueueMetrics(queueId, maxId, maxHash, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['QueuesApi.getQueueMetrics']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -1064,12 +1300,14 @@ export const QueuesApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Get queue settings
-         * @param {string} queueId 
+         * @param {string} queueId Queue id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getQueueSettings(queueId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QueueSettingsResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getQueueSettings(queueId, options);
+        async getQueueSettings(queueId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QueueSettingsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getQueueSettings(queueId, maxId, maxHash, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['QueuesApi.getQueueSettings']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -1077,12 +1315,14 @@ export const QueuesApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Get staff member of a queue
-         * @param {string} queueId Queue ID
+         * @param {string} queueId Queue id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getQueueStaff(queueId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QueueStaffResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getQueueStaff(queueId, options);
+        async getQueueStaff(queueId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QueueStaffResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getQueueStaff(queueId, maxId, maxHash, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['QueuesApi.getQueueStaff']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -1099,52 +1339,62 @@ export const QueuesApiFactory = function (configuration?: Configuration, basePat
         /**
          * 
          * @summary Get queue graphics
-         * @param {string} queueId Queue ID
+         * @param {string} queueId Queue id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getQueueGraphics(queueId: string, options?: RawAxiosRequestConfig): AxiosPromise<QueueGraphicsResponse> {
-            return localVarFp.getQueueGraphics(queueId, options).then((request) => request(axios, basePath));
+        getQueueGraphics(queueId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): AxiosPromise<QueueGraphicsResponse> {
+            return localVarFp.getQueueGraphics(queueId, maxId, maxHash, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Get members of a queue
-         * @param {string} queueId 
+         * @param {string} queueId Queue id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getQueueMembers(queueId: string, options?: RawAxiosRequestConfig): AxiosPromise<QueueMembersResponse> {
-            return localVarFp.getQueueMembers(queueId, options).then((request) => request(axios, basePath));
+        getQueueMembers(queueId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): AxiosPromise<QueueMembersResponse> {
+            return localVarFp.getQueueMembers(queueId, maxId, maxHash, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Get queue metrics
-         * @param {string} queueId 
+         * @param {string} queueId Queue id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getQueueMetrics(queueId: string, options?: RawAxiosRequestConfig): AxiosPromise<QueueMetricsResponse> {
-            return localVarFp.getQueueMetrics(queueId, options).then((request) => request(axios, basePath));
+        getQueueMetrics(queueId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): AxiosPromise<QueueMetricsResponse> {
+            return localVarFp.getQueueMetrics(queueId, maxId, maxHash, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Get queue settings
-         * @param {string} queueId 
+         * @param {string} queueId Queue id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getQueueSettings(queueId: string, options?: RawAxiosRequestConfig): AxiosPromise<QueueSettingsResponse> {
-            return localVarFp.getQueueSettings(queueId, options).then((request) => request(axios, basePath));
+        getQueueSettings(queueId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): AxiosPromise<QueueSettingsResponse> {
+            return localVarFp.getQueueSettings(queueId, maxId, maxHash, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Get staff member of a queue
-         * @param {string} queueId Queue ID
+         * @param {string} queueId Queue id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getQueueStaff(queueId: string, options?: RawAxiosRequestConfig): AxiosPromise<QueueStaffResponse> {
-            return localVarFp.getQueueStaff(queueId, options).then((request) => request(axios, basePath));
+        getQueueStaff(queueId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): AxiosPromise<QueueStaffResponse> {
+            return localVarFp.getQueueStaff(queueId, maxId, maxHash, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -1153,60 +1403,69 @@ export const QueuesApiFactory = function (configuration?: Configuration, basePat
  * QueuesApi - object-oriented interface
  */
 export class QueuesApi extends BaseAPI {
-    [x: string]: any /* eslint-disable */;
     /**
      * 
      * @summary Get queue graphics
-     * @param {string} queueId Queue ID
+     * @param {string} queueId Queue id
+     * @param {number} maxId Id provided by the Max massenger
+     * @param {string} maxHash Authentication hash provided by the Max massenger
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public getQueueGraphics(queueId: string, options?: RawAxiosRequestConfig) {
-        return QueuesApiFp(this.configuration).getQueueGraphics(queueId, options).then((request) => request(this.axios, this.basePath));
+    public getQueueGraphics(queueId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig) {
+        return QueuesApiFp(this.configuration).getQueueGraphics(queueId, maxId, maxHash, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Get members of a queue
-     * @param {string} queueId 
+     * @param {string} queueId Queue id
+     * @param {number} maxId Id provided by the Max massenger
+     * @param {string} maxHash Authentication hash provided by the Max massenger
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public getQueueMembers(queueId: string, options?: RawAxiosRequestConfig) {
-        return QueuesApiFp(this.configuration).getQueueMembers(queueId, options).then((request) => request(this.axios, this.basePath));
+    public getQueueMembers(queueId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig) {
+        return QueuesApiFp(this.configuration).getQueueMembers(queueId, maxId, maxHash, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Get queue metrics
-     * @param {string} queueId 
+     * @param {string} queueId Queue id
+     * @param {number} maxId Id provided by the Max massenger
+     * @param {string} maxHash Authentication hash provided by the Max massenger
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public getQueueMetrics(queueId: string, options?: RawAxiosRequestConfig) {
-        return QueuesApiFp(this.configuration).getQueueMetrics(queueId, options).then((request) => request(this.axios, this.basePath));
+    public getQueueMetrics(queueId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig) {
+        return QueuesApiFp(this.configuration).getQueueMetrics(queueId, maxId, maxHash, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Get queue settings
-     * @param {string} queueId 
+     * @param {string} queueId Queue id
+     * @param {number} maxId Id provided by the Max massenger
+     * @param {string} maxHash Authentication hash provided by the Max massenger
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public getQueueSettings(queueId: string, options?: RawAxiosRequestConfig) {
-        return QueuesApiFp(this.configuration).getQueueSettings(queueId, options).then((request) => request(this.axios, this.basePath));
+    public getQueueSettings(queueId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig) {
+        return QueuesApiFp(this.configuration).getQueueSettings(queueId, maxId, maxHash, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Get staff member of a queue
-     * @param {string} queueId Queue ID
+     * @param {string} queueId Queue id
+     * @param {number} maxId Id provided by the Max massenger
+     * @param {string} maxHash Authentication hash provided by the Max massenger
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public getQueueStaff(queueId: string, options?: RawAxiosRequestConfig) {
-        return QueuesApiFp(this.configuration).getQueueStaff(queueId, options).then((request) => request(this.axios, this.basePath));
+    public getQueueStaff(queueId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig) {
+        return QueuesApiFp(this.configuration).getQueueStaff(queueId, maxId, maxHash, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -1220,13 +1479,19 @@ export const StaffApiAxiosParamCreator = function (configuration?: Configuration
         /**
          * 
          * @summary Delete staff member
-         * @param {string} staffId Staff ID
+         * @param {string} staffId Staff id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteStaffMember: async (staffId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        deleteStaffMember: async (staffId: string, maxId: number, maxHash: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'staffId' is not null or undefined
             assertParamExists('deleteStaffMember', 'staffId', staffId)
+            // verify required parameter 'maxId' is not null or undefined
+            assertParamExists('deleteStaffMember', 'maxId', maxId)
+            // verify required parameter 'maxHash' is not null or undefined
+            assertParamExists('deleteStaffMember', 'maxHash', maxHash)
             const localVarPath = `/staff/{staffId}`
                 .replace(`{${"staffId"}}`, encodeURIComponent(String(staffId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -1242,6 +1507,14 @@ export const StaffApiAxiosParamCreator = function (configuration?: Configuration
 
 
     
+            if (maxId != null) {
+                localVarHeaderParameter['Max-Id'] = typeof maxId === 'string'
+                    ? maxId
+                    : JSON.stringify(maxId);
+            }
+            if (maxHash != null) {
+                localVarHeaderParameter['Max-Hash'] = String(maxHash);
+            }
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -1263,12 +1536,14 @@ export const StaffApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Delete staff member
-         * @param {string} staffId Staff ID
+         * @param {string} staffId Staff id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteStaffMember(staffId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteStaffMember(staffId, options);
+        async deleteStaffMember(staffId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteStaffMember(staffId, maxId, maxHash, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['StaffApi.deleteStaffMember']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -1285,12 +1560,14 @@ export const StaffApiFactory = function (configuration?: Configuration, basePath
         /**
          * 
          * @summary Delete staff member
-         * @param {string} staffId Staff ID
+         * @param {string} staffId Staff id
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteStaffMember(staffId: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.deleteStaffMember(staffId, options).then((request) => request(axios, basePath));
+        deleteStaffMember(staffId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.deleteStaffMember(staffId, maxId, maxHash, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -1302,12 +1579,14 @@ export class StaffApi extends BaseAPI {
     /**
      * 
      * @summary Delete staff member
-     * @param {string} staffId Staff ID
+     * @param {string} staffId Staff id
+     * @param {number} maxId Id provided by the Max massenger
+     * @param {string} maxHash Authentication hash provided by the Max massenger
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public deleteStaffMember(staffId: string, options?: RawAxiosRequestConfig) {
-        return StaffApiFp(this.configuration).deleteStaffMember(staffId, options).then((request) => request(this.axios, this.basePath));
+    public deleteStaffMember(staffId: string, maxId: number, maxHash: string, options?: RawAxiosRequestConfig) {
+        return StaffApiFp(this.configuration).deleteStaffMember(staffId, maxId, maxHash, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -1321,11 +1600,17 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
         /**
          * 
          * @summary Add user in maxqueue system
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {UserCreatingRequest} [userCreatingRequest] Add user in maxqueue system
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        addUserInMaxQueueSystem: async (userCreatingRequest?: UserCreatingRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        addUserInMaxQueueSystem: async (maxId: number, maxHash: string, userCreatingRequest?: UserCreatingRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'maxId' is not null or undefined
+            assertParamExists('addUserInMaxQueueSystem', 'maxId', maxId)
+            // verify required parameter 'maxHash' is not null or undefined
+            assertParamExists('addUserInMaxQueueSystem', 'maxHash', maxHash)
             const localVarPath = `/users`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1342,6 +1627,14 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
+            if (maxId != null) {
+                localVarHeaderParameter['Max-Id'] = typeof maxId === 'string'
+                    ? maxId
+                    : JSON.stringify(maxId);
+            }
+            if (maxHash != null) {
+                localVarHeaderParameter['Max-Hash'] = String(maxHash);
+            }
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -1355,13 +1648,19 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
         /**
          * 
          * @summary Get user by Max Messenger ID
-         * @param {number} maxId Max Messenger user ID
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {number} maxId2 Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getUserByMaxId: async (maxId: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getUserByMaxId: async (maxId: number, maxId2: number, maxHash: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'maxId' is not null or undefined
             assertParamExists('getUserByMaxId', 'maxId', maxId)
+            // verify required parameter 'maxId2' is not null or undefined
+            assertParamExists('getUserByMaxId', 'maxId2', maxId2)
+            // verify required parameter 'maxHash' is not null or undefined
+            assertParamExists('getUserByMaxId', 'maxHash', maxHash)
             const localVarPath = `/users/{maxId}`
                 .replace(`{${"maxId"}}`, encodeURIComponent(String(maxId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -1377,6 +1676,14 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
 
 
     
+            if (maxId2 != null) {
+                localVarHeaderParameter['Max-Id'] = typeof maxId2 === 'string'
+                    ? maxId2
+                    : JSON.stringify(maxId2);
+            }
+            if (maxHash != null) {
+                localVarHeaderParameter['Max-Hash'] = String(maxHash);
+            }
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -1389,7 +1696,7 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
         /**
          * 
          * @summary Transfer data after opening the mini-app
-         * @param {number} maxId User MAX ID
+         * @param {number} maxId Id provided by the Max massenger
          * @param {SendUserMiniAppDataRequest} [sendUserMiniAppDataRequest] Transfer data after opening the mini-app
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -1427,14 +1734,20 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
         /**
          * 
          * @summary Update user role in organization
-         * @param {number} maxId User MAX ID
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {number} maxId2 Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {UserRoleRequest} [userRoleRequest] Update user role in organization
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateOrganizationUserRole: async (maxId: number, userRoleRequest?: UserRoleRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        updateOrganizationUserRole: async (maxId: number, maxId2: number, maxHash: string, userRoleRequest?: UserRoleRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'maxId' is not null or undefined
             assertParamExists('updateOrganizationUserRole', 'maxId', maxId)
+            // verify required parameter 'maxId2' is not null or undefined
+            assertParamExists('updateOrganizationUserRole', 'maxId2', maxId2)
+            // verify required parameter 'maxHash' is not null or undefined
+            assertParamExists('updateOrganizationUserRole', 'maxHash', maxHash)
             const localVarPath = `/users/{maxId}/role`
                 .replace(`{${"maxId"}}`, encodeURIComponent(String(maxId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -1452,6 +1765,14 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
+            if (maxId2 != null) {
+                localVarHeaderParameter['Max-Id'] = typeof maxId2 === 'string'
+                    ? maxId2
+                    : JSON.stringify(maxId2);
+            }
+            if (maxHash != null) {
+                localVarHeaderParameter['Max-Hash'] = String(maxHash);
+            }
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -1465,14 +1786,20 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
         /**
          * 
          * @summary Update user in maxqueue system
-         * @param {number} maxId Max Messenger user ID
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {number} maxId2 Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {UserUpdateRequest} [userUpdateRequest] Update user in maxqueue system
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateUserInMaxQueueSystem: async (maxId: number, userUpdateRequest?: UserUpdateRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        updateUserInMaxQueueSystem: async (maxId: number, maxId2: number, maxHash: string, userUpdateRequest?: UserUpdateRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'maxId' is not null or undefined
             assertParamExists('updateUserInMaxQueueSystem', 'maxId', maxId)
+            // verify required parameter 'maxId2' is not null or undefined
+            assertParamExists('updateUserInMaxQueueSystem', 'maxId2', maxId2)
+            // verify required parameter 'maxHash' is not null or undefined
+            assertParamExists('updateUserInMaxQueueSystem', 'maxHash', maxHash)
             const localVarPath = `/users/{maxId}`
                 .replace(`{${"maxId"}}`, encodeURIComponent(String(maxId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -1490,6 +1817,14 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
+            if (maxId2 != null) {
+                localVarHeaderParameter['Max-Id'] = typeof maxId2 === 'string'
+                    ? maxId2
+                    : JSON.stringify(maxId2);
+            }
+            if (maxHash != null) {
+                localVarHeaderParameter['Max-Hash'] = String(maxHash);
+            }
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -1512,12 +1847,14 @@ export const UsersApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Add user in maxqueue system
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {UserCreatingRequest} [userCreatingRequest] Add user in maxqueue system
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async addUserInMaxQueueSystem(userCreatingRequest?: UserCreatingRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.addUserInMaxQueueSystem(userCreatingRequest, options);
+        async addUserInMaxQueueSystem(maxId: number, maxHash: string, userCreatingRequest?: UserCreatingRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.addUserInMaxQueueSystem(maxId, maxHash, userCreatingRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsersApi.addUserInMaxQueueSystem']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -1525,12 +1862,14 @@ export const UsersApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Get user by Max Messenger ID
-         * @param {number} maxId Max Messenger user ID
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {number} maxId2 Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getUserByMaxId(maxId: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getUserByMaxId(maxId, options);
+        async getUserByMaxId(maxId: number, maxId2: number, maxHash: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getUserByMaxId(maxId, maxId2, maxHash, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsersApi.getUserByMaxId']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -1538,12 +1877,12 @@ export const UsersApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Transfer data after opening the mini-app
-         * @param {number} maxId User MAX ID
+         * @param {number} maxId Id provided by the Max massenger
          * @param {SendUserMiniAppDataRequest} [sendUserMiniAppDataRequest] Transfer data after opening the mini-app
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async sendUserMiniAppData(maxId: number, sendUserMiniAppDataRequest?: SendUserMiniAppDataRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async sendUserMiniAppData(maxId: number, sendUserMiniAppDataRequest?: SendUserMiniAppDataRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MiniAppInitResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.sendUserMiniAppData(maxId, sendUserMiniAppDataRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsersApi.sendUserMiniAppData']?.[localVarOperationServerIndex]?.url;
@@ -1552,13 +1891,15 @@ export const UsersApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Update user role in organization
-         * @param {number} maxId User MAX ID
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {number} maxId2 Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {UserRoleRequest} [userRoleRequest] Update user role in organization
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateOrganizationUserRole(maxId: number, userRoleRequest?: UserRoleRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrganizationQueuesResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.updateOrganizationUserRole(maxId, userRoleRequest, options);
+        async updateOrganizationUserRole(maxId: number, maxId2: number, maxHash: string, userRoleRequest?: UserRoleRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrganizationQueuesResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateOrganizationUserRole(maxId, maxId2, maxHash, userRoleRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsersApi.updateOrganizationUserRole']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -1566,13 +1907,15 @@ export const UsersApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Update user in maxqueue system
-         * @param {number} maxId Max Messenger user ID
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {number} maxId2 Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {UserUpdateRequest} [userUpdateRequest] Update user in maxqueue system
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateUserInMaxQueueSystem(maxId: number, userUpdateRequest?: UserUpdateRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.updateUserInMaxQueueSystem(maxId, userUpdateRequest, options);
+        async updateUserInMaxQueueSystem(maxId: number, maxId2: number, maxHash: string, userUpdateRequest?: UserUpdateRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateUserInMaxQueueSystem(maxId, maxId2, maxHash, userUpdateRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsersApi.updateUserInMaxQueueSystem']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -1589,55 +1932,63 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
         /**
          * 
          * @summary Add user in maxqueue system
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {UserCreatingRequest} [userCreatingRequest] Add user in maxqueue system
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        addUserInMaxQueueSystem(userCreatingRequest?: UserCreatingRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.addUserInMaxQueueSystem(userCreatingRequest, options).then((request) => request(axios, basePath));
+        addUserInMaxQueueSystem(maxId: number, maxHash: string, userCreatingRequest?: UserCreatingRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.addUserInMaxQueueSystem(maxId, maxHash, userCreatingRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Get user by Max Messenger ID
-         * @param {number} maxId Max Messenger user ID
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {number} maxId2 Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getUserByMaxId(maxId: number, options?: RawAxiosRequestConfig): AxiosPromise<UserResponse> {
-            return localVarFp.getUserByMaxId(maxId, options).then((request) => request(axios, basePath));
+        getUserByMaxId(maxId: number, maxId2: number, maxHash: string, options?: RawAxiosRequestConfig): AxiosPromise<UserResponse> {
+            return localVarFp.getUserByMaxId(maxId, maxId2, maxHash, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Transfer data after opening the mini-app
-         * @param {number} maxId User MAX ID
+         * @param {number} maxId Id provided by the Max massenger
          * @param {SendUserMiniAppDataRequest} [sendUserMiniAppDataRequest] Transfer data after opening the mini-app
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        sendUserMiniAppData(maxId: number, sendUserMiniAppDataRequest?: SendUserMiniAppDataRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        sendUserMiniAppData(maxId: number, sendUserMiniAppDataRequest?: SendUserMiniAppDataRequest, options?: RawAxiosRequestConfig): AxiosPromise<MiniAppInitResponse> {
             return localVarFp.sendUserMiniAppData(maxId, sendUserMiniAppDataRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Update user role in organization
-         * @param {number} maxId User MAX ID
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {number} maxId2 Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {UserRoleRequest} [userRoleRequest] Update user role in organization
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateOrganizationUserRole(maxId: number, userRoleRequest?: UserRoleRequest, options?: RawAxiosRequestConfig): AxiosPromise<OrganizationQueuesResponse> {
-            return localVarFp.updateOrganizationUserRole(maxId, userRoleRequest, options).then((request) => request(axios, basePath));
+        updateOrganizationUserRole(maxId: number, maxId2: number, maxHash: string, userRoleRequest?: UserRoleRequest, options?: RawAxiosRequestConfig): AxiosPromise<OrganizationQueuesResponse> {
+            return localVarFp.updateOrganizationUserRole(maxId, maxId2, maxHash, userRoleRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Update user in maxqueue system
-         * @param {number} maxId Max Messenger user ID
+         * @param {number} maxId Id provided by the Max massenger
+         * @param {number} maxId2 Id provided by the Max massenger
+         * @param {string} maxHash Authentication hash provided by the Max massenger
          * @param {UserUpdateRequest} [userUpdateRequest] Update user in maxqueue system
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateUserInMaxQueueSystem(maxId: number, userUpdateRequest?: UserUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.updateUserInMaxQueueSystem(maxId, userUpdateRequest, options).then((request) => request(axios, basePath));
+        updateUserInMaxQueueSystem(maxId: number, maxId2: number, maxHash: string, userUpdateRequest?: UserUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.updateUserInMaxQueueSystem(maxId, maxId2, maxHash, userUpdateRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -1649,29 +2000,33 @@ export class UsersApi extends BaseAPI {
     /**
      * 
      * @summary Add user in maxqueue system
+     * @param {number} maxId Id provided by the Max massenger
+     * @param {string} maxHash Authentication hash provided by the Max massenger
      * @param {UserCreatingRequest} [userCreatingRequest] Add user in maxqueue system
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public addUserInMaxQueueSystem(userCreatingRequest?: UserCreatingRequest, options?: RawAxiosRequestConfig) {
-        return UsersApiFp(this.configuration).addUserInMaxQueueSystem(userCreatingRequest, options).then((request) => request(this.axios, this.basePath));
+    public addUserInMaxQueueSystem(maxId: number, maxHash: string, userCreatingRequest?: UserCreatingRequest, options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).addUserInMaxQueueSystem(maxId, maxHash, userCreatingRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Get user by Max Messenger ID
-     * @param {number} maxId Max Messenger user ID
+     * @param {number} maxId Id provided by the Max massenger
+     * @param {number} maxId2 Id provided by the Max massenger
+     * @param {string} maxHash Authentication hash provided by the Max massenger
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public getUserByMaxId(maxId: number, options?: RawAxiosRequestConfig) {
-        return UsersApiFp(this.configuration).getUserByMaxId(maxId, options).then((request) => request(this.axios, this.basePath));
+    public getUserByMaxId(maxId: number, maxId2: number, maxHash: string, options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).getUserByMaxId(maxId, maxId2, maxHash, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Transfer data after opening the mini-app
-     * @param {number} maxId User MAX ID
+     * @param {number} maxId Id provided by the Max massenger
      * @param {SendUserMiniAppDataRequest} [sendUserMiniAppDataRequest] Transfer data after opening the mini-app
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -1683,25 +2038,29 @@ export class UsersApi extends BaseAPI {
     /**
      * 
      * @summary Update user role in organization
-     * @param {number} maxId User MAX ID
+     * @param {number} maxId Id provided by the Max massenger
+     * @param {number} maxId2 Id provided by the Max massenger
+     * @param {string} maxHash Authentication hash provided by the Max massenger
      * @param {UserRoleRequest} [userRoleRequest] Update user role in organization
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public updateOrganizationUserRole(maxId: number, userRoleRequest?: UserRoleRequest, options?: RawAxiosRequestConfig) {
-        return UsersApiFp(this.configuration).updateOrganizationUserRole(maxId, userRoleRequest, options).then((request) => request(this.axios, this.basePath));
+    public updateOrganizationUserRole(maxId: number, maxId2: number, maxHash: string, userRoleRequest?: UserRoleRequest, options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).updateOrganizationUserRole(maxId, maxId2, maxHash, userRoleRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Update user in maxqueue system
-     * @param {number} maxId Max Messenger user ID
+     * @param {number} maxId Id provided by the Max massenger
+     * @param {number} maxId2 Id provided by the Max massenger
+     * @param {string} maxHash Authentication hash provided by the Max massenger
      * @param {UserUpdateRequest} [userUpdateRequest] Update user in maxqueue system
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public updateUserInMaxQueueSystem(maxId: number, userUpdateRequest?: UserUpdateRequest, options?: RawAxiosRequestConfig) {
-        return UsersApiFp(this.configuration).updateUserInMaxQueueSystem(maxId, userUpdateRequest, options).then((request) => request(this.axios, this.basePath));
+    public updateUserInMaxQueueSystem(maxId: number, maxId2: number, maxHash: string, userUpdateRequest?: UserUpdateRequest, options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).updateUserInMaxQueueSystem(maxId, maxId2, maxHash, userUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

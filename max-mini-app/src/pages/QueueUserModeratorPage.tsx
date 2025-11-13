@@ -80,7 +80,7 @@ const QueueUserModeratorPage: React.FC = () => {
   const defaultShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
 
-  const handleDeleteQueue = async (entryId: string) => {
+  const handleDeleteQueue = async (entryId: string, maxId: number, maxHash: string) => {
     if (!entryId) {
       console.warn('⚠️ entryId is undefined — пропускаем удаление');
       return;
@@ -90,8 +90,8 @@ const QueueUserModeratorPage: React.FC = () => {
 
       const config = createApiConfiguration();
       const queueEntriesApi = new QueueEntriesApi(config);
-
-      await queueEntriesApi.deleteQueueEntry(entryId);
+      
+      await queueEntriesApi.deleteQueueEntry(entryId, maxId, maxHash );
 
       // Эта логика остается - она правильная
       if (currentView === 'users') {
@@ -106,13 +106,15 @@ const QueueUserModeratorPage: React.FC = () => {
     }
     
   };
-
+  const maxId = localStorage.getItem("maxId");
+  const maxHash = localStorage.getItem("maxHash") ?? '';
   useEffect(() => { 
     const config = createApiConfiguration();
     const queueApi = new QueuesApi(config);
 
+
     // 1. Загрузка пользователей
-    queueApi.getQueueMembers(queueId)
+    queueApi.getQueueMembers(queueId, Number(maxId), maxHash)
       .then(res => {
       const members: QueueMember[] = (res.data.members || []).map(
         q=> ({
@@ -147,7 +149,7 @@ const QueueUserModeratorPage: React.FC = () => {
 
   const handleConfirmExit = async () => {
     if (selectedUserEntryId) {
-      await handleDeleteQueue(selectedUserEntryId);
+      await handleDeleteQueue(selectedUserEntryId, Number(maxId), maxHash);
       setSelectedUserEntryId(null);
       setIsModalOpen(false);
     }

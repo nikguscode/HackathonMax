@@ -25,10 +25,14 @@ import {
 const configuration = new Configuration();
 const apiInstance = new QueuesApi(configuration);
 
-let queueId: string; //Queue ID (default to undefined)
+let queueId: string; //Queue id (default to undefined)
+let maxId: number; //Id provided by the Max massenger (default to undefined)
+let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 
 const { status, data } = await apiInstance.getQueueGraphics(
-    queueId
+    queueId,
+    maxId,
+    maxHash
 );
 ```
 
@@ -36,7 +40,9 @@ const { status, data } = await apiInstance.getQueueGraphics(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **queueId** | [**string**] | Queue ID | defaults to undefined|
+| **queueId** | [**string**] | Queue id | defaults to undefined|
+| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
 ### Return type
@@ -78,10 +84,14 @@ import {
 const configuration = new Configuration();
 const apiInstance = new QueuesApi(configuration);
 
-let queueId: string; // (default to undefined)
+let queueId: string; //Queue id (default to undefined)
+let maxId: number; //Id provided by the Max massenger (default to undefined)
+let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 
 const { status, data } = await apiInstance.getQueueMembers(
-    queueId
+    queueId,
+    maxId,
+    maxHash
 );
 ```
 
@@ -89,7 +99,9 @@ const { status, data } = await apiInstance.getQueueMembers(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **queueId** | [**string**] |  | defaults to undefined|
+| **queueId** | [**string**] | Queue id | defaults to undefined|
+| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
 ### Return type
@@ -131,10 +143,14 @@ import {
 const configuration = new Configuration();
 const apiInstance = new QueuesApi(configuration);
 
-let queueId: string; // (default to undefined)
+let queueId: string; //Queue id (default to undefined)
+let maxId: number; //Id provided by the Max massenger (default to undefined)
+let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 
 const { status, data } = await apiInstance.getQueueMetrics(
-    queueId
+    queueId,
+    maxId,
+    maxHash
 );
 ```
 
@@ -142,7 +158,9 @@ const { status, data } = await apiInstance.getQueueMetrics(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **queueId** | [**string**] |  | defaults to undefined|
+| **queueId** | [**string**] | Queue id | defaults to undefined|
+| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
 ### Return type
@@ -184,10 +202,14 @@ import {
 const configuration = new Configuration();
 const apiInstance = new QueuesApi(configuration);
 
-let queueId: string; // (default to undefined)
+let queueId: string; //Queue id (default to undefined)
+let maxId: number; //Id provided by the Max massenger (default to undefined)
+let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 
 const { status, data } = await apiInstance.getQueueSettings(
-    queueId
+    queueId,
+    maxId,
+    maxHash
 );
 ```
 
@@ -195,7 +217,9 @@ const { status, data } = await apiInstance.getQueueSettings(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **queueId** | [**string**] |  | defaults to undefined|
+| **queueId** | [**string**] | Queue id | defaults to undefined|
+| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
 ### Return type
@@ -237,10 +261,14 @@ import {
 const configuration = new Configuration();
 const apiInstance = new QueuesApi(configuration);
 
-let queueId: string; //Queue ID (default to undefined)
+let queueId: string; //Queue id (default to undefined)
+let maxId: number; //Id provided by the Max massenger (default to undefined)
+let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 
 const { status, data } = await apiInstance.getQueueStaff(
-    queueId
+    queueId,
+    maxId,
+    maxHash
 );
 ```
 
@@ -248,7 +276,9 @@ const { status, data } = await apiInstance.getQueueStaff(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **queueId** | [**string**] | Queue ID | defaults to undefined|
+| **queueId** | [**string**] | Queue id | defaults to undefined|
+| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
 ### Return type

@@ -26,9 +26,13 @@ import {
 const configuration = new Configuration();
 const apiInstance = new UsersApi(configuration);
 
+let maxId: number; //Id provided by the Max massenger (default to undefined)
+let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 let userCreatingRequest: UserCreatingRequest; //Add user in maxqueue system (optional)
 
 const { status, data } = await apiInstance.addUserInMaxQueueSystem(
+    maxId,
+    maxHash,
     userCreatingRequest
 );
 ```
@@ -38,6 +42,8 @@ const { status, data } = await apiInstance.addUserInMaxQueueSystem(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **userCreatingRequest** | **UserCreatingRequest**| Add user in maxqueue system | |
+| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
 ### Return type
@@ -79,10 +85,14 @@ import {
 const configuration = new Configuration();
 const apiInstance = new UsersApi(configuration);
 
-let maxId: number; //Max Messenger user ID (default to undefined)
+let maxId: number; //Id provided by the Max massenger (default to undefined)
+let maxId2: number; //Id provided by the Max massenger (default to undefined)
+let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 
 const { status, data } = await apiInstance.getUserByMaxId(
-    maxId
+    maxId,
+    maxId2,
+    maxHash
 );
 ```
 
@@ -90,7 +100,9 @@ const { status, data } = await apiInstance.getUserByMaxId(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **maxId** | [**number**] | Max Messenger user ID | defaults to undefined|
+| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **maxId2** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
 ### Return type
@@ -118,7 +130,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **sendUserMiniAppData**
-> sendUserMiniAppData()
+> MiniAppInitResponse sendUserMiniAppData()
 
 
 ### Example
@@ -133,7 +145,7 @@ import {
 const configuration = new Configuration();
 const apiInstance = new UsersApi(configuration);
 
-let maxId: number; //User MAX ID (default to undefined)
+let maxId: number; //Id provided by the Max massenger (default to undefined)
 let sendUserMiniAppDataRequest: SendUserMiniAppDataRequest; //Transfer data after opening the mini-app (optional)
 
 const { status, data } = await apiInstance.sendUserMiniAppData(
@@ -147,12 +159,12 @@ const { status, data } = await apiInstance.sendUserMiniAppData(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **sendUserMiniAppDataRequest** | **SendUserMiniAppDataRequest**| Transfer data after opening the mini-app | |
-| **maxId** | [**number**] | User MAX ID | defaults to undefined|
+| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
 
 
 ### Return type
 
-void (empty response body)
+**MiniAppInitResponse**
 
 ### Authorization
 
@@ -161,13 +173,13 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: application/json
- - **Accept**: Not defined
+ - **Accept**: application/json
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-|**200** | Successful operation |  -  |
+|**200** | User was successfully authenticated |  -  |
 |**400** | Invalid request parameters |  -  |
 |**404** | Resource not found |  -  |
 |**0** | Unexpected server error |  -  |
@@ -190,11 +202,15 @@ import {
 const configuration = new Configuration();
 const apiInstance = new UsersApi(configuration);
 
-let maxId: number; //User MAX ID (default to undefined)
+let maxId: number; //Id provided by the Max massenger (default to undefined)
+let maxId2: number; //Id provided by the Max massenger (default to undefined)
+let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 let userRoleRequest: UserRoleRequest; //Update user role in organization (optional)
 
 const { status, data } = await apiInstance.updateOrganizationUserRole(
     maxId,
+    maxId2,
+    maxHash,
     userRoleRequest
 );
 ```
@@ -204,7 +220,9 @@ const { status, data } = await apiInstance.updateOrganizationUserRole(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **userRoleRequest** | **UserRoleRequest**| Update user role in organization | |
-| **maxId** | [**number**] | User MAX ID | defaults to undefined|
+| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **maxId2** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
 ### Return type
@@ -247,11 +265,15 @@ import {
 const configuration = new Configuration();
 const apiInstance = new UsersApi(configuration);
 
-let maxId: number; //Max Messenger user ID (default to undefined)
+let maxId: number; //Id provided by the Max massenger (default to undefined)
+let maxId2: number; //Id provided by the Max massenger (default to undefined)
+let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 let userUpdateRequest: UserUpdateRequest; //Update user in maxqueue system (optional)
 
 const { status, data } = await apiInstance.updateUserInMaxQueueSystem(
     maxId,
+    maxId2,
+    maxHash,
     userUpdateRequest
 );
 ```
@@ -261,7 +283,9 @@ const { status, data } = await apiInstance.updateUserInMaxQueueSystem(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **userUpdateRequest** | **UserUpdateRequest**| Update user in maxqueue system | |
-| **maxId** | [**number**] | Max Messenger user ID | defaults to undefined|
+| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **maxId2** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
 ### Return type

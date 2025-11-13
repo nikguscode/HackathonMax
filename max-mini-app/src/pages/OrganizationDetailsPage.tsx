@@ -30,6 +30,8 @@ const OrganizationDetailsPage: React.FC = () => {
 
   const MAX_CONTENT_WIDTH = '300px';
   const HORIZONTAL_PADDING = '16px';
+  const maxId = localStorage.getItem("maxId");
+  const maxHash = localStorage.getItem("maxHash") ?? '';
 
   useEffect(() => {
     const loadOrganizationData = async () => {
@@ -41,7 +43,7 @@ const OrganizationDetailsPage: React.FC = () => {
         const config = createApiConfiguration();
         const organizationsApi = new OrganizationsApi(config);
         
-        const settingsResponse = await organizationsApi.getOrganizationSettings(orgId);
+        const settingsResponse = await organizationsApi.getOrganizationSettings(orgId, Number(maxId), maxHash);
         if (settingsResponse.data?.organization?.name) {
           setOrganizationName(settingsResponse.data.organization.name);
         }
