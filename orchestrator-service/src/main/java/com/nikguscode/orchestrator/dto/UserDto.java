@@ -9,14 +9,13 @@ import lombok.ToString;
 @ToString
 public class UserDto {
   private final Long id;
+  private final String username;
 
   @JsonProperty("first_name")
   private final String firstName;
 
   @JsonProperty("last_name")
   private final String lastName;
-
-  private final String username;
 
   @JsonProperty("language_code")
   private final String languageCode;
@@ -27,15 +26,15 @@ public class UserDto {
   @JsonCreator
   public UserDto(
       @JsonProperty("id") Long id,
+      @JsonProperty("username") String username,
       @JsonProperty("first_name") String firstName,
       @JsonProperty("last_name") String lastName,
-      @JsonProperty("username") String username,
       @JsonProperty("language_code") String languageCode,
       @JsonProperty("photo_url") String photoUrl) {
     this.id = id;
+    this.username = username;
     this.firstName = firstName;
     this.lastName = lastName;
-    this.username = username;
     this.languageCode = languageCode;
     this.photoUrl = photoUrl;
   }

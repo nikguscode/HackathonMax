@@ -68,7 +68,11 @@ paths:
                 - miniAppInitData
       responses:
         '200':
-          description: Successful operation
+          description: User was successfully authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MiniAppInitResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -316,33 +320,6 @@ paths:
         default:
           $ref: '#/components/responses/UnexpectedError'
 
-  /organizations/{organizationId}/staff:
-    get:
-      tags: [organizations]
-      summary: Get staff members of an organization
-      operationId: getOrganizationStaff
-      parameters:
-        - name: organizationId
-          in: path
-          required: true
-          description: Organization ID
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          description: Organization staff members retrieved successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OrganizationStaffResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        default:
-          $ref: '#/components/responses/UnexpectedError'
-
   /organizations/{organizationId}/metrics:
     get:
       tags: [organizations]
@@ -504,6 +481,56 @@ paths:
         default:
           $ref: '#/components/responses/UnexpectedError'
 
+  /queues/{queueId}/staff:
+    get:
+      tags: [queues]
+      summary: Get staff member of a queue
+      operationId: getQueueStaff
+      parameters:
+        - name: queueId
+          in: path
+          required: true
+          description: Queue ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Queue staff retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueStaffResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /staff/{staffId}:
+    delete:
+      tags: [staff]
+      summary: Delete staff member
+      operationId: deleteStaffMember
+      parameters:
+        - name: staffId
+          in: path
+          required: true
+          description: Staff ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Staff member deleted successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
 components:
   responses:
     BadRequest:
@@ -651,6 +678,18 @@ components:
           type: integer
         status:
           $ref: '#/components/schemas/QueueEntryStatus'
+
+    MiniAppInitResponse:
+      type: object
+      properties:
+        maxId:
+          type: integer
+          format: int64
+        maxHash:
+          type: string
+      required:
+        - maxId
+        - maxHash
 
     ### Queue Entry Responses ###
 
@@ -821,12 +860,12 @@ components:
           items:
             $ref: '#/components/schemas/QueueMember'
 
-    OrganizationStaffResponse:
+    QueueStaffResponse:
       properties:
         staff:
           type: array
           items:
-            $ref: '#/components/schemas/OrganizationStaff'
+            $ref: '#/components/schemas/QueueStaff'
 
     QueueSettings:
       type: object
@@ -911,13 +950,10 @@ components:
         username:
           type: string
 
-    OrganizationStaff:
+    QueueStaff:
       type: object
       properties:
-        maxId:
-          type: integer
-          format: int64
-        queueId:
+        staffId:
           type: string
           format: uuid
         username:

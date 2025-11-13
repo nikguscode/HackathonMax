@@ -21,10 +21,11 @@ public class JooqUserDao implements UserDao {
   }
 
   @Override
-  public void add(User user) {
+  public User add(User user) {
     try {
       UserRecord userRecord = dsl.newRecord(USER, user);
       userRecord.store();
+      return user;
     } catch (DuplicateKeyException e) {
       throw new RuntimeException("заглушка");
     }

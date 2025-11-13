@@ -6,7 +6,7 @@ import java.util.Optional;
 public interface UserDao {
   Optional<User> findByMaxId(Long maxId);
 
-  void add(User user);
+  User add(User user);
 
   void update(User user);
 }

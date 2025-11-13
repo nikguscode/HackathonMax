@@ -16,6 +16,8 @@ spring:
     change-log: classpath:/db/changelog.xml
 
 server:
+  path:
+    prefix: /v1/api
   port: 8080
 
 max:

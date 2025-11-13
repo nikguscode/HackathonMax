@@ -27,6 +27,7 @@ public class MaxGatewayController {
   public ResponseEntity<Void> handleUserMiniAppAction(
       @PathVariable Long maxId, @RequestBody @Valid MaxMiniAppInitDataDto maxMiniAppInitDataDto) {
     authenticationService.authenticate(test, 2L);
+
     return ResponseEntity.status(HttpStatus.OK).build();
   }
 }
