@@ -167,6 +167,7 @@ export interface QueueStaff {
     'username'?: string;
 }
 export interface QueueStaffResponse {
+    orgId: any;
     'staff'?: Array<QueueStaff>;
 }
 export interface SendUserMiniAppDataRequest {
@@ -1152,6 +1153,7 @@ export const QueuesApiFactory = function (configuration?: Configuration, basePat
  * QueuesApi - object-oriented interface
  */
 export class QueuesApi extends BaseAPI {
+    [x: string]: any /* eslint-disable */;
     /**
      * 
      * @summary Get queue graphics

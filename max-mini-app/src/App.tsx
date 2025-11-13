@@ -275,12 +275,13 @@ function App() {
         <Route path="/organization/:id" element={<OrganizationDetailsPage />} />
         <Route
           path="/moderator-queue/:id"
-          element={<QueueUserModeratorPage />}
+          element={<ModeratorQueueDetailsPage />}
         />
+        <Route path="/moderator-queue/queue/:id" element={<QueueUserModeratorPage />} />
         <Route path="*" element={<div>404 | Страница не найдена</div>} />
       </Routes>
     </BrowserRouter>
   );
 }
-
+// 
 export default App;
