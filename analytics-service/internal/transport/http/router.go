@@ -14,11 +14,13 @@ func NewRouter(metricsService *service.MetricsService) *gin.Engine {
 		c.String(http.StatusOK, "OK")
 	})
 
-	api := r.Group("/api/v1")
-	{
-		metricsHandler := NewMetricsHandler(metricsService)
-		api.POST("/metrics", metricsHandler.GenerateReport)
-	}
+	handler := NewMetricsHandler(metricsService)
+
+	r.GET("/organizations/:organizationId/metrics", handler.GetOrganizationMetrics)
+	r.GET("/organizations/:organizationId/graphics", handler.GetOrganizationGraphics)
+
+	r.GET("/queues/:queueId/metrics", handler.GetQueueMetrics)
+	r.GET("/queues/:queueId/graphics", handler.GetQueueGraphics)
 
 	return r
 }
