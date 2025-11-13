@@ -12,7 +12,7 @@ import OrganizationDetailsPage from "./pages/OrganizationDetailsPage.tsx";
 import ModeratorQueueDetailsPage from "./pages/ModeratorQueueDetailsPage.tsx";
 import { UsersApi, Configuration } from "./api";
 import Logo from "./components/Logo.tsx";
-import SkeletonCard from "./components/Skeletons/Skeleton.tsx";
+import SkeletonCard from "./components/Skeletons/SkeletonApp.tsx";
 import QueueUserModeratorPage from "./pages/QueueUserModeratorPage.tsx";
 
 <script src="https://st.max.ru/js/max-web-app.js"></script>
