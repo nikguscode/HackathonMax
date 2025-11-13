@@ -4,7 +4,7 @@ import { Flex, Typography } from '@maxhub/max-ui';
 interface AddQueueModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddQueue: (queueName: string) => void;
+  onAddQueue: (queueName: string, arrivalGracePeriod?: number, maxQueueSize?: number) => void;
   orgId: string;
 }
 
@@ -20,11 +20,17 @@ const AddQueueModal: React.FC<AddQueueModalProps> = ({ isOpen, onClose, onAddQue
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
 
   const handleAddQueue = () => {
-    if (queueName.trim()) {
-      onAddQueue(queueName.trim());
-      setQueueName('');
-    }
+    if (!queueName.trim()) return;
+
+    const arrival = queueMaxTime ? parseInt(queueMaxTime) : undefined;
+    const maxMembers = queueMaxMembers ? parseInt(queueMaxMembers) : undefined;
+
+    onAddQueue(queueName.trim(), arrival, maxMembers);
+    setQueueName('');
+    setQueueMaxTime('');
+    setQueueMaxMembers('');
   };
+
 
   return (
     <Flex

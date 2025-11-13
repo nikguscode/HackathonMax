@@ -208,10 +208,32 @@ const ModeratorDashboardPage: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  const handleAddQueueSubmit = (queueName: string) => {
-    console.log(`Добавляем очередь: "${queueName}" для организации ID: ${orgId}`);
-    handleCloseModal();
+  const handleAddQueueSubmit = async (queueName: string, arrivalGracePeriod?: number, maxQueueSize?: number) => {
+    if (!orgId) return;
+
+    const apiConfig = createApiConfiguration();
+    const queuesApi = new OrganizationsApi(apiConfig, apiConfig.basePath, axios);
+
+    try {
+      const queueCreatingRequest = {
+        name: queueName,
+        arrivalGracePeriod,
+        maxQueueSize,
+      };
+
+      await queuesApi.createOrganizationQueue(orgId, queueCreatingRequest);
+
+      console.log(`✅ Очередь "${queueName}" успешно добавлена для организации ${orgId}`);
+
+      handleCloseModal();
+
+    } catch (err) {
+      console.error('Ошибка при добавлении очереди:', err);
+      alert('Не удалось добавить очередь');
+    }
   };
+
+
 
   const handleAddQueueMouseDown = () => {
     setisAddQueue(true);
