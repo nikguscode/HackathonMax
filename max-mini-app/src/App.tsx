@@ -162,6 +162,7 @@ const HomePage: React.FC = () => {
     initAndLoadUserData();
   }, []);
 
+
   if (loading) {
 return (
       <Container

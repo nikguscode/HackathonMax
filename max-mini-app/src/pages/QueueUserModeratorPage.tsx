@@ -46,7 +46,7 @@ const QueueUserModeratorPage: React.FC = () => {
   const maxHash = localStorage.getItem("maxHash") ?? '';
 
 
-  
+
   const handleDeleteUser = ( entryId: string ) => {
     setSelectedUserEntryId(entryId);
     setIsModalOpen(true);
@@ -189,6 +189,11 @@ const QueueUserModeratorPage: React.FC = () => {
   const dataToDisplay = currentView === 'users' ? users : employees;
   // Переменная toggleButtonText УБРАНА.
 
+  const handleNavigationBack = () => {
+          console.log('Пользователь вернулся на предыдущий экран!');
+          // Например: router.history.goBack();
+  };
+
 
   return (
     <Container
@@ -200,7 +205,7 @@ const QueueUserModeratorPage: React.FC = () => {
         flexDirection: 'column',
       }}
     >
-      <Logo />
+      <Logo onBack={handleNavigationBack}/>
       
       {/* Этот Flex-контейнер содержит и ПЕРЕКЛЮЧАТЕЛЬ, и СПИСОК, 
         и кнопку "Добавить".
