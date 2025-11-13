@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -15,7 +16,13 @@ public class MaxHashVerifyService {
   private static final String HMAC_SHA256 = "HmacSHA256";
   private static final String SECRET_INFO_KEY = "WebAppData";
 
-  public boolean check(String miniAppInitData, String botToken) {
+  private final String maxBotToken;
+
+  public MaxHashVerifyService(@Value("${max.bot.token}") String maxBotToken) {
+    this.maxBotToken = maxBotToken;
+  }
+
+  public boolean check(String miniAppInitData) {
     String decodedData = URLDecoder.decode(miniAppInitData, StandardCharsets.UTF_8);
 
     Map<String, String> data = UriComponentsBuilder.fromUriString("?" + decodedData)
@@ -30,7 +37,7 @@ public class MaxHashVerifyService {
 
     String dataCheckString = getParsedString(data);
 
-    String calculatedHash = calculateDataHash(botToken, dataCheckString);
+    String calculatedHash = calculateDataHash(maxBotToken, dataCheckString);
     return calculatedHash.equalsIgnoreCase(receivedHash);
   }
 

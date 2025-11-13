@@ -26,6 +26,9 @@ paths:
       tags: [users]
       summary: Add user in maxqueue system
       operationId: addUserInMaxQueueSystem
+      parameters:
+        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/MaxHashHeader'
       requestBody:
         description: Add user in maxqueue system
         content:
@@ -48,13 +51,7 @@ paths:
       summary: Transfer data after opening the mini-app
       operationId: sendUserMiniAppData
       parameters:
-        - name: maxId
-          in: path
-          required: true
-          description: User MAX ID
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/MaxIdPathParameter'
       requestBody:
         description: Transfer data after opening the mini-app
         content:
@@ -68,7 +65,11 @@ paths:
                 - miniAppInitData
       responses:
         '200':
-          description: Successful operation
+          description: User was successfully authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MiniAppInitResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -82,13 +83,9 @@ paths:
       summary: Update user role in organization
       operationId: updateOrganizationUserRole
       parameters:
-        - name: maxId
-          in: path
-          required: true
-          description: User MAX ID
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/MaxIdPathParameter'
+        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/MaxHashHeader'
       requestBody:
         description: Update user role in organization
         content:
@@ -115,13 +112,9 @@ paths:
       summary: Update user in maxqueue system
       operationId: updateUserInMaxQueueSystem
       parameters:
-        - name: maxId
-          in: path
-          required: true
-          description: Max Messenger user ID
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/MaxIdPathParameter'
+        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/MaxHashHeader'
       requestBody:
         description: Update user in maxqueue system
         content:
@@ -143,13 +136,9 @@ paths:
       summary: Get user by Max Messenger ID
       operationId: getUserByMaxId
       parameters:
-        - name: maxId
-          in: path
-          required: true
-          description: Max Messenger user ID
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/MaxIdPathParameter'
+        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
           description: Successful operation
@@ -169,6 +158,9 @@ paths:
       tags: [queue-entries]
       summary: Add user in queue
       operationId: addQueueEntry
+      parameters:
+        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/MaxHashHeader'
       requestBody:
         description: Add user in queue
         content:
@@ -191,13 +183,9 @@ paths:
       summary: Delete user from queue
       operationId: deleteQueueEntry
       parameters:
-        - name: entryId
-          in: path
-          required: true
-          description: Queue Entry id
-          schema:
-            type: string
-            format: uuid
+        - $ref: '#/components/parameters/QueueEntryIdPathParameter'
+        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
           description: Successful operation
@@ -213,13 +201,9 @@ paths:
       summary: Get queue entry
       operationId: getQueueEntry
       parameters:
-        - name: entryId
-          in: path
-          required: true
-          description: Queue Entry id
-          schema:
-            type: string
-            format: uuid
+        - $ref: '#/components/parameters/QueueEntryIdPathParameter'
+        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
           description: Successful operation
@@ -241,6 +225,7 @@ paths:
       summary: Create queue for organization
       operationId: createOrganizationQueue
       parameters:
+<<<<<<< HEAD
         - name: organizationId
           in: path
           required: true
@@ -248,6 +233,11 @@ paths:
           schema:
             type: string
             format: uuid
+=======
+        - $ref: '#/components/parameters/OrganizationIdPathParameter'
+        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/MaxHashHeader'
+>>>>>>> origin/orchestrator-service
       requestBody:
         description: Add user in queue
         content:
@@ -269,12 +259,9 @@ paths:
       summary: Get list of queues in an organization
       operationId: getOrganizationQueues
       parameters:
-        - name: organizationId
-          in: path
-          required: true
-          description: Organization ID
-          schema:
-            type: string
+        - $ref: '#/components/parameters/OrganizationIdPathParameter'
+        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
           description: Organization with its queues
@@ -295,13 +282,9 @@ paths:
       summary: Get organization settings
       operationId: getOrganizationSettings
       parameters:
-        - name: organizationId
-          in: path
-          required: true
-          description: Organization ID
-          schema:
-            type: string
-            format: uuid
+        - $ref: '#/components/parameters/OrganizationIdPathParameter'
+        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
           description: Organization settings retrieved successfully
@@ -322,13 +305,9 @@ paths:
       summary: Get organization metrics
       operationId: getOrganizationMetrics
       parameters:
-        - name: organizationId
-          in: path
-          required: true
-          description: Organization ID
-          schema:
-            type: string
-            format: uuid
+        - $ref: '#/components/parameters/OrganizationIdPathParameter'
+        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
           description: Organization metrics retrieved successfully
@@ -349,13 +328,9 @@ paths:
       summary: Get organization graphics
       operationId: getOrganizationGraphics
       parameters:
-        - name: organizationId
-          in: path
-          required: true
-          description: Organization ID
-          schema:
-            type: string
-            format: uuid
+        - $ref: '#/components/parameters/OrganizationIdPathParameter'
+        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
           description: Organization graphics retrieved successfully
@@ -376,12 +351,9 @@ paths:
       summary: Get members of a queue
       operationId: getQueueMembers
       parameters:
-        - name: queueId
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+        - $ref: '#/components/parameters/QueueIdPathParameter'
+        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
           description: Queue members retrieved successfully
@@ -402,12 +374,9 @@ paths:
       summary: Get queue settings
       operationId: getQueueSettings
       parameters:
-        - name: queueId
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+        - $ref: '#/components/parameters/QueueIdPathParameter'
+        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
           description: Queue settings retrieved successfully
@@ -429,12 +398,9 @@ paths:
       summary: Get queue metrics
       operationId: getQueueMetrics
       parameters:
-        - name: queueId
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+        - $ref: '#/components/parameters/QueueIdPathParameter'
+        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
           description: Queue metrics retrieved successfully
@@ -456,13 +422,9 @@ paths:
       summary: Get queue graphics
       operationId: getQueueGraphics
       parameters:
-        - name: queueId
-          in: path
-          required: true
-          description: Queue ID
-          schema:
-            type: string
-            format: uuid
+        - $ref: '#/components/parameters/QueueIdPathParameter'
+        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
           description: Queue graphics retrieved successfully
@@ -527,7 +489,118 @@ paths:
         default:
           $ref: '#/components/responses/UnexpectedError'
 
+  /queues/{queueId}/staff:
+    get:
+      tags: [queues]
+      summary: Get staff member of a queue
+      operationId: getQueueStaff
+      parameters:
+        - $ref: '#/components/parameters/QueueIdPathParameter'
+        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/MaxHashHeader'
+      responses:
+        '200':
+          description: Queue staff retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueStaffResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /staff/{staffId}:
+    delete:
+      tags: [staff]
+      summary: Delete staff member
+      operationId: deleteStaffMember
+      parameters:
+        - $ref: '#/components/parameters/StaffIdPathParameter'
+        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/MaxHashHeader'
+      responses:
+        '200':
+          description: Staff member deleted successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
 components:
+  parameters:
+    ### Path Parameters ###
+
+    MaxIdPathParameter:
+      name: maxId
+      in: path
+      required: true
+      description: Id provided by the Max massenger
+      schema:
+        type: integer
+        format: int64
+        example: 9932441
+
+    QueueEntryIdPathParameter:
+      name: entryId
+      in: path
+      required: true
+      description: Queue Entry id
+      schema:
+        type: string
+        format: uuid
+
+    OrganizationIdPathParameter:
+      name: organizationId
+      in: path
+      required: true
+      description: Organization id
+      schema:
+        type: string
+        format: uuid
+
+    QueueIdPathParameter:
+      name: queueId
+      in: path
+      required: true
+      description: Queue id
+      schema:
+        type: string
+        format: uuid
+
+    StaffIdPathParameter:
+      name: staffId
+      in: path
+      required: true
+      description: Staff id
+      schema:
+        type: string
+        format: uuid
+
+    ### Headers ###
+
+    MaxIdHeader:
+      name: Max-Id
+      in: header
+      required: true
+      description: Id provided by the Max massenger
+      schema:
+        type: integer
+        format: int64
+        example: 9932441
+
+    MaxHashHeader:
+      name: Max-Hash
+      in: header
+      required: true
+      description: Authentication hash provided by the Max massenger
+      schema:
+        type: string
+
   responses:
     BadRequest:
       description: Invalid request parameters
@@ -674,6 +747,18 @@ components:
           type: integer
         status:
           $ref: '#/components/schemas/QueueEntryStatus'
+
+    MiniAppInitResponse:
+      type: object
+      properties:
+        maxId:
+          type: integer
+          format: int64
+        maxHash:
+          type: string
+      required:
+        - maxId
+        - maxHash
 
     ### Queue Entry Responses ###
 
@@ -933,7 +1018,11 @@ components:
           format: uuid
         username:
           type: string
+<<<<<<< HEAD
           
+=======
+
+>>>>>>> origin/orchestrator-service
     QueueStaff:
       type: object
       properties:
