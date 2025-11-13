@@ -89,7 +89,7 @@ const QueueCard: React.FC<QueueCardProps> = ({ name, employeeCount, currentQueue
             wordBreak: 'break-word',
           }}
         >
-          Среднее кол-во человек в очереди: {employeeCount}
+          Количество сотрудников: {employeeCount}
         </Typography.Body>
         <Typography.Body
           style={{
@@ -100,7 +100,7 @@ const QueueCard: React.FC<QueueCardProps> = ({ name, employeeCount, currentQueue
             wordBreak: 'break-word',
           }}
         >
-          Максимум человек в очереди: {currentQueue}
+          Максимум человек: {currentQueue}
         </Typography.Body>
         <Typography.Body
           style={{
@@ -152,6 +152,7 @@ const ModeratorDashboardPage: React.FC = () => {
 
   const authId = localStorage.getItem("authId") ?? '';
   const maxHash = localStorage.getItem("maxHash") ?? '';
+  localStorage.setItem("orgId", orgId ?? '');
 
   useEffect(() => {
     if (!orgId) return;
@@ -321,7 +322,7 @@ const ModeratorDashboardPage: React.FC = () => {
               textOverflow: 'ellipsis',
             }}
           >
-            
+
           </Typography.Title>
         </Flex>
 

@@ -93,7 +93,7 @@ const AddQueueModal: React.FC<AddQueueModalProps> = ({ isOpen, onClose, onAddQue
         />
 
         <input
-          type="text"
+          type="number"
           placeholder="Максимальное время ожидание"
           value={queueMaxTime}
           onChange={(e) => setQueueMaxTime(e.target.value)}
@@ -110,7 +110,7 @@ const AddQueueModal: React.FC<AddQueueModalProps> = ({ isOpen, onClose, onAddQue
           }}
         />
         <input
-          type="text"
+          type="number"
           placeholder="Максимальное количество участников"
           value={queueMaxMembers}
           onChange={(e) => setQueueMaxMembers(e.target.value)}

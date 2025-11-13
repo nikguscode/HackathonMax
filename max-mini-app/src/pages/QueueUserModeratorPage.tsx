@@ -3,8 +3,9 @@ import { useParams } from 'react-router-dom';
 import { Container, Flex, Button, Typography, Panel } from '@maxhub/max-ui';
 import AddUserModal from '../components/AddUserModal';
 import Logo from '../components/Logo'; 
-import { QueueMember, QueuesApi, Configuration, QueueEntriesApi, StaffApi, QueueStaff } from '../api';
+import { QueueMember, QueuesApi, Configuration, QueueEntriesApi, StaffApi, QueueStaff, UsersApi } from '../api';
 import ConfirmationModal from '../components/ConfirmationModal'; 
+import AddEmployeeModal from '../components/AddEmployeeModal';
 
 
 const createApiConfiguration = (): Configuration => {
@@ -35,7 +36,7 @@ const QueueUserModeratorPage: React.FC = () => {
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUserEntryId, setSelectedUserEntryId] = useState<string | null>(null);
-  // const [isAddEmployeeModalOpen, setIsAddEmployeeModalOpen] = useState(false);
+  const [isAddEmployeeModalOpen, setIsAddEmployeeModalOpen] = useState(false);
 
 
   const [currentView, setCurrentView] = useState('users');
@@ -75,22 +76,26 @@ const QueueUserModeratorPage: React.FC = () => {
   const handleOpenAddUserModal = () => {
     setIsAddUserModalOpen(true);
   };
+  const orgId = localStorage.getItem("orgId");
 
-//   const handleAddEmployee = async (userId: number) => {
-//   try {
-//     const config = createApiConfiguration();
-//     const usersApi = new UsersApi(config);
+  const handleAddEmployee = async (userId: number) => {
+  try {
+    const config = createApiConfiguration();
+    const usersApi = new UsersApi(config);
 
-//     await usersApi.updateOrganizationUserRole(userId, authId, maxHash);
+    await usersApi.updateOrganizationUserRole(userId, authId, maxHash, {
+      role: "EMPLOYEE",
+      organizationId: orgId ?? ''
+    });
 
-//     console.log(`✅ Пользователь ${userId} назначен сотрудником`);
+    console.log(`✅ Пользователь ${userId} назначен сотрудником`);
 
-//     setEmployees(prev => [...prev, { staffId: String(userId), username: `ID ${userId}` }]);
-//     setIsAddEmployeeModalOpen(false);
-//   } catch (err) {
-//     console.error('Ошибка при добавлении сотрудника:', err);
-//   }
-// };
+    setEmployees(prev => [...prev, { staffId: String(userId), username: `ID ${userId}` }]);
+    setIsAddEmployeeModalOpen(false);
+  } catch (err) {
+    console.error('Ошибка при добавлении сотрудника:', err);
+  }
+};
 
 
   if (!queueId) {
@@ -480,9 +485,15 @@ const QueueUserModeratorPage: React.FC = () => {
         </Flex>
         <AddUserModal 
           isOpen={isAddUserModalOpen}
-          onClose={() => setIsAddUserModalOpen(false)}
+          onClose={() => {  if (currentView === 'users') setIsAddUserModalOpen(true);
+                            else setIsAddEmployeeModalOpen(true);}}
           onAddUser={handleAddUserSubmit}
         />
+      <AddEmployeeModal
+        isOpen={isAddEmployeeModalOpen}
+        onClose={() => setIsAddEmployeeModalOpen(false)}
+        onAddEmployee={handleAddEmployee}
+      />
       </Flex>
       <ConfirmationModal
         isOpen={isModalOpen}
