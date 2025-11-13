@@ -2,11 +2,11 @@ package com.nikguscode.orchestrator.core.mapper;
 
 import com.nikguscode.openapi.model.UserCreatingRequestDto;
 import com.nikguscode.openapi.model.UserResponseDto;
+import com.nikguscode.orchestrator.core.model.User;
 import com.nikguscode.orchestrator.dao.result.OrganizationRecord;
 import com.nikguscode.orchestrator.dao.result.QueueEntryActiveRecord;
 import com.nikguscode.orchestrator.dto.UserDto;
 import com.nikguscode.orchestrator.dto.UserHashDto;
-import com.nikguscode.orchestrator.core.model.User;
 import java.time.OffsetDateTime;
 import java.util.List;
 import org.mapstruct.Mapper;

@@ -1,10 +1,9 @@
 package com.nikguscode.orchestrator.controller;
 
-import com.nikguscode.orchestrator.core.service.authentication.MaxHashVerifyService;
 import com.nikguscode.orchestrator.core.service.user.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.UUID;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -12,9 +11,6 @@ import org.springframework.web.servlet.ModelAndView;
 @Component
 public class AuthenticationInterceptor implements HandlerInterceptor {
   private final UserService userService;
-
-  @Autowired
-  private MaxHashVerifyService maxHashVerifyService;
 
   public AuthenticationInterceptor(UserService userService) {
     this.userService = userService;
@@ -24,14 +20,14 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
   public boolean preHandle(
       HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
     try {
-      Long maxIdHeader = Long.parseLong(request.getHeader("Max-Id"));
-      String maxHashHeader = request.getHeader("Max-Hash");
+      UUID authId = UUID.fromString(request.getHeader("Auth-Id"));
+      String maxHash = request.getHeader("Max-Hash");
 
-      if (maxHashHeader == null) {
+      if (maxHash == null) {
         throw new RuntimeException("Max hash header can't be null");
       }
 
-      boolean isAuthenticated = userService.verifyUserAccess(maxIdHeader, maxHashHeader);
+      boolean isAuthenticated = userService.verifyUserAccess(authId, maxHash);
 
       if (!isAuthenticated) {
         response.sendError(
@@ -39,9 +35,6 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
       }
 
       return isAuthenticated;
-    } catch (NumberFormatException e) {
-      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid Max-Id format.");
-      return false;
     } catch (Exception e) {
       response.sendError(
           HttpServletResponse.SC_INTERNAL_SERVER_ERROR,

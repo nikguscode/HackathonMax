@@ -19,15 +19,13 @@ public class MaxAuthenticationService implements AuthenticationService {
     this.maxUserDataExtractor = maxUserDataExtractor;
   }
 
-  // 1. Проверка, есть ли юзер в кэше
-  // 2. Если юзера нет в кеше, проверка, есть ли в БД
-  // 3. Если есть в БД, извлекаем => добавляем в кэш
-  // 4. Если нет в БД, добавляем в БД, затем в кэщ
   @Override
-  public void authenticate(String miniAppInitDataDto, Long maxId) {
+  public MaxUserDataDto authenticate(String miniAppInitDataDto, Long maxId) {
     MaxUserDataDto maxUserDataDto = maxUserDataExtractor.extract(miniAppInitDataDto);
 
     log.info("UserDataDto:{}", maxUserDataDto);
     userService.getOrUpdateUserHashInformation(miniAppInitDataDto, maxId, maxUserDataDto.getHash());
+
+    return maxUserDataDto;
   }
 }

@@ -2,6 +2,7 @@ package com.nikguscode.orchestrator.core.service.user;
 
 import com.nikguscode.orchestrator.dto.UserHashDto;
 import java.time.Duration;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -14,22 +15,22 @@ public class UserCachingService {
   private final RedisTemplate<String, UserHashDto> userHashDtoRedisTemplate;
   private final String keyPrefix = "usersHash:";
 
-  public UserHashDto getUserByMaxId(Long maxId) {
-    if (maxId == null) {
+  public UserHashDto getUserByMaxId(UUID authId) {
+    if (authId == null) {
       throw new RuntimeException("zaglushka");
     }
 
-    return userHashDtoRedisTemplate.opsForValue().get(createKey(maxId));
+    return userHashDtoRedisTemplate.opsForValue().get(createKey(authId));
   }
 
-  public void saveOrUpdateUser(Long maxId, UserHashDto userHashDto) {
+  public void saveOrUpdateUser(UUID authId, UserHashDto userHashDto) {
     userHashDtoRedisTemplate.opsForValue().set(
-        createKey(maxId),
+        createKey(authId),
         userHashDto,
         CACHE_TTL);
   }
 
-  private String createKey(Long maxId) {
-    return keyPrefix + maxId;
+  private String createKey(UUID authId) {
+    return keyPrefix + authId;
   }
 }

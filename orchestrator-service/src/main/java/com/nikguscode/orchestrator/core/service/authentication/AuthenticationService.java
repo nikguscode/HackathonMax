@@ -1,5 +1,7 @@
 package com.nikguscode.orchestrator.core.service.authentication;
 
+import com.nikguscode.orchestrator.dto.MaxUserDataDto;
+
 public interface AuthenticationService {
-  void authenticate(String miniAppInitDataDto, Long maxId);
+  MaxUserDataDto authenticate(String miniAppInitDataDto, Long maxId);
 }
