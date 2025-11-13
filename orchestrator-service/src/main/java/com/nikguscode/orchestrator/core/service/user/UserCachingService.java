@@ -1,6 +1,6 @@
 package com.nikguscode.orchestrator.core.service.user;
 
-import com.nikguscode.orchestrator.dto.UserHashDto;
+import com.nikguscode.orchestrator.dto.user.UserHashDto;
 import java.time.Duration;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;

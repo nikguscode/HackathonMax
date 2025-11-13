@@ -1,5 +1,7 @@
-package com.nikguscode.orchestrator.dto;
+package com.nikguscode.orchestrator.dto.max;
 
+import com.nikguscode.orchestrator.dto.ChatDto;
+import com.nikguscode.orchestrator.dto.user.UserDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;

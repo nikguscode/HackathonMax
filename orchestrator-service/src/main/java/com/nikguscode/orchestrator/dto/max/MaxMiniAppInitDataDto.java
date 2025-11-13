@@ -1,4 +1,4 @@
-package com.nikguscode.orchestrator.dto;
+package com.nikguscode.orchestrator.dto.max;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

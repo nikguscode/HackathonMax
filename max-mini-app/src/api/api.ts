@@ -78,7 +78,7 @@ export interface OrganizationSettingsResponse {
 export interface Queue {
     'id'?: string;
     'name'?: string;
-    'amoutOfEmployees'?: number;
+    'amountOfEmployees'?: number;
     'maxSizeOfTodayQueue'?: number;
     'amountOfServedPeople'?: number;
 }

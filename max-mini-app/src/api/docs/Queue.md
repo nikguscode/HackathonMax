@@ -7,7 +7,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **id** | **string** |  | [optional] [default to undefined]
 **name** | **string** |  | [optional] [default to undefined]
-**amoutOfEmployees** | **number** |  | [optional] [default to undefined]
+**amountOfEmployees** | **number** |  | [optional] [default to undefined]
 **maxSizeOfTodayQueue** | **number** |  | [optional] [default to undefined]
 **amountOfServedPeople** | **number** |  | [optional] [default to undefined]
 
@@ -19,7 +19,7 @@ import { Queue } from './api';
 const instance: Queue = {
     id,
     name,
-    amoutOfEmployees,
+    amountOfEmployees,
     maxSizeOfTodayQueue,
     amountOfServedPeople,
 };
