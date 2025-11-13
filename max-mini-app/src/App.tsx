@@ -76,7 +76,7 @@ const HomePage: React.FC = () => {
 
       setLoading(true);
       setError(null);
-
+      
       try {
         const maxId = getMaxId();
         if (!maxId) {
@@ -90,6 +90,7 @@ const HomePage: React.FC = () => {
         const usersApiAuth = new UsersApi(authConfig);
         const body = { miniAppInitData: window.WebApp.initData };
         const authResponse = await usersApiAuth.sendUserMiniAppData(Number(maxId), body);
+        console.log("auth_date", body);
 
         if (authResponse.status === 200 && (authResponse.data as any)?.authId) {
           const maxHash = (authResponse.data as any).maxHash;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Container, Flex, Panel, Typography } from '@maxhub/max-ui';
 import { OrganizationsApi, Configuration } from '../api';
 import Logo from '../components/Logo';
@@ -27,12 +27,16 @@ const createApiConfiguration = (): Configuration => {
 const OrganizationDetailsPage: React.FC = () => {
   const { id: orgId } = useParams<{ id: string }>();
   const [organizationName, setOrganizationName] = useState<string>(orgId ?? '');
-
+  const navigate = useNavigate();
   const MAX_CONTENT_WIDTH = '300px';
   const HORIZONTAL_PADDING = '16px';
   const authId = localStorage.getItem("authId") ?? '';
   const maxHash = localStorage.getItem("maxHash") ?? '';
 
+  const handleNavigationBack = () => {
+          console.log('Пользователь вернулся на предыдущий экран!');
+          navigate(-1);
+  };
   useEffect(() => {
     const loadOrganizationData = async () => {
       if (!orgId) {
@@ -71,7 +75,7 @@ const OrganizationDetailsPage: React.FC = () => {
         padding: '0',
       }}
     >
-      <Logo />
+      <Logo onBack={handleNavigationBack}/>
 
       <Flex
         direction="column"

@@ -13,6 +13,11 @@ const ModeratorQueueDetailsPage: React.FC = () => {
   const defaultShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
 
+  const handleNavigationBack = () => {
+          console.log('Пользователь вернулся на предыдущий экран!');
+          navigate(-1);
+  };
+
   const handleModeratorMouseDown = () => {
     setIsModeratorButtonPressed(true);
   };
@@ -64,7 +69,7 @@ const ModeratorQueueDetailsPage: React.FC = () => {
         padding: '0',
       }}
     >
-      <Logo />
+      <Logo onBack={handleNavigationBack}/>
 
       <Flex
         direction="column"
