@@ -3,15 +3,15 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Container, Flex, Typography } from '@maxhub/max-ui';
 import Logo from '../components/Logo';
 import AddQueueModal from '../components/AddQueueModal';
-import { OrganizationsApi, Configuration, Queue, QueuesApi, QueueMetricsResponse } from '../api';
+import { OrganizationsApi, Configuration, Queue } from '../api';
 import axios from 'axios';
 
 interface QueueCardProps {
   id: string,
   name: string,
-  employeeCount: number,
-  currentQueue: number,
-  totalServed: number,
+  employeeCount?: number,
+  currentQueue?: number,
+  totalServed?: number,
   onClick?: () => void;
 }
 
@@ -136,10 +136,6 @@ const createApiConfiguration = (): Configuration => {
   });
 };
 
-interface ExtendedQueue extends Queue {
-  metrics?: QueueMetricsResponse['metrics'];
-}
-
 const ModeratorDashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const [isModeratorButtonPressed, setIsModeratorButtonPressed] = useState(false);
@@ -147,7 +143,7 @@ const ModeratorDashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const { id: orgId } = useParams<{ id: string }>();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [queues, setQueues] = useState<ExtendedQueue[]>([]);
+  const [queues, setQueues] = useState<Queue[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [orgName, setOrgName] = useState<string | null>(null);
 
@@ -165,28 +161,25 @@ const ModeratorDashboardPage: React.FC = () => {
 
         const apiConfig = createApiConfiguration();
         const organizationsApi = new OrganizationsApi(apiConfig, apiConfig.basePath, axios);
-        const queuesApi = new QueuesApi(apiConfig, apiConfig.basePath, axios);
 
         const queuesResponse = await organizationsApi.getOrganizationQueues(orgId, authId, maxHash);
         const queueList = queuesResponse.data.queues || [];
         const organizationName = queuesResponse.data.organizationName ?? '';
 
         setOrgName(organizationName);
+        const queues: Queue[] = [];
 
-        const queuesWithMetrics: ExtendedQueue[] = await Promise.all(
-          queueList.map(async (queue) => {
-            if (!queue.id) return queue;
-            try {
-              const metricsRes = await queuesApi.getQueueMetrics(queue.id, authId, maxHash);
-              return { ...queue, metrics: metricsRes.data.metrics };
-            } catch (err) {
-              console.warn(`Ошибка загрузки метрик для очереди ${queue.name}:`, err);
-              return queue;
-            }
-          })
-        );
+          for (const queue of queueList) {
+              queues.push({
+                id: queue.id,
+                name: queue.name,
+                amountOfEmployees: queue.amountOfEmployees,
+                amountOfServedPeople: queue.amountOfServedPeople,
+              });
+              
+          }
 
-        setQueues(queuesWithMetrics);
+        setQueues(queues);
       } catch (err) {
         console.error('Ошибка загрузки данных организации:', err);
         setError('Ошибка при загрузке данных организации.');
@@ -331,14 +324,14 @@ const ModeratorDashboardPage: React.FC = () => {
         </Flex>
 
         <Flex direction="column" align="center" style={{ width: '100%', gap: '12px' }}>
-          {queues.map((queue) => (
+          {queues.map((queue: Queue) => (
             <QueueCard
               key={queue.id}
               name={queue.name ?? ''}
-              employeeCount= {queue.metrics?.averageInQueue ?? 0}
-              currentQueue= {queue.metrics?.maxInQueue ?? 0}
+              employeeCount= {queue.amountOfEmployees}
+              currentQueue= {queue.maxSizeOfTodayQueue}
               id= {queue.id ?? ''}
-              totalServed={queue.metrics?.numberOfServedMembers ?? 0}
+              totalServed={queue.amountOfServedPeople}
 
               onClick={() => handleQueueClick(queue.id ?? '')}
             />
