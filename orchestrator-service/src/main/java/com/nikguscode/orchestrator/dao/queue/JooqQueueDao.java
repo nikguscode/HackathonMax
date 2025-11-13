@@ -2,17 +2,18 @@ package com.nikguscode.orchestrator.dao.queue;
 
 import static com.nikguscode.jooq.tables.Queue.QUEUE;
 import static com.nikguscode.jooq.tables.QueueEntry.QUEUE_ENTRY;
-import static com.nikguscode.jooq.tables.User.USER;
-import static com.nikguscode.jooq.tables.QueueStaff.QUEUE_STAFF;
 import static com.nikguscode.jooq.tables.QueueEntryMeta.QUEUE_ENTRY_META;
+import static com.nikguscode.jooq.tables.QueueParams.QUEUE_PARAMS;
+import static com.nikguscode.jooq.tables.QueueStaff.QUEUE_STAFF;
+import static com.nikguscode.jooq.tables.User.USER;
 
 import com.nikguscode.jooq.enums.QueueStatus;
-import com.nikguscode.orchestrator.dao.result.QueueMemberRecord;
+import com.nikguscode.jooq.tables.records.QueueParamsRecord;
+import com.nikguscode.jooq.tables.records.QueueRecord;
 import com.nikguscode.orchestrator.core.model.Queue;
+import com.nikguscode.orchestrator.core.model.QueueParams;
+import com.nikguscode.orchestrator.dao.result.QueueMemberRecord;
 import com.nikguscode.orchestrator.dao.result.QueueMetricsRecord;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -26,13 +27,12 @@ public class JooqQueueDao implements QueueDao {
   private final DSLContext dsl;
 
   @Override
-  public List<Queue> findByOrganizationId(UUID organizationId) {
-    return dsl
-        .select(QUEUE.fields())
-        .from(QUEUE)
+  public void createQueue(Queue queue, QueueParams queueParams) {
+    QueueRecord queueRecord = dsl.newRecord(QUEUE, queue);
+    QueueParamsRecord queueParamsRecord = dsl.newRecord(QUEUE_PARAMS, queueParams);
 
-        .where(QUEUE.ID_ORGANIZATION.eq(organizationId))
-        .fetchInto(Queue.class);
+    queueRecord.store();
+    queueParamsRecord.store();
   }
 
   @Override

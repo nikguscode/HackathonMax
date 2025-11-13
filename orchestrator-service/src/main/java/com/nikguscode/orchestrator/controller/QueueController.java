@@ -4,8 +4,10 @@ import com.nikguscode.openapi.model.QueueMembersResponseDto;
 import com.nikguscode.openapi.model.QueueResponseDto;
 import com.nikguscode.orchestrator.core.service.QueueService;
 import java.util.UUID;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,6 +18,15 @@ public class QueueController {
 
   public QueueController(QueueService queueService) {
     this.queueService = queueService;
+  }
+
+  @PostMapping("organizations/{organizationId}/queues")
+  public ResponseEntity<Void> createQueue(@PathVariable UUID organizationId) {
+    if (organizationId == null) {
+      throw new RuntimeException("Organization id can't be null");
+    }
+
+
   }
 
   @GetMapping("organizations/{organizationId}/queues")
