@@ -11,14 +11,14 @@ const createApiConfiguration = (): Configuration => {
   const basePath =
     import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
 
-  const maxId = localStorage.getItem("maxId");
+  const authId = localStorage.getItem("authId");
   const maxHash = localStorage.getItem("maxHash");
 
   return new Configuration({
     basePath,
     baseOptions: {
       headers: {
-        ...(maxId ? { maxId } : {}),
+        ...(authId ? { authId } : {}),
         ...(maxHash ? { maxHash } : {}),
       },
     },
@@ -37,7 +37,7 @@ const QueueUserModeratorPage: React.FC = () => {
   const [currentView, setCurrentView] = useState('users');
   const [employees, setEmployees] = useState<QueueStaff[]>([]);
 
-  const maxId = localStorage.getItem("maxId");
+  const authId = localStorage.getItem("authId") ?? '';
   const maxHash = localStorage.getItem("maxHash") ?? '';
 
 
@@ -97,11 +97,11 @@ const QueueUserModeratorPage: React.FC = () => {
 
       if (currentView === 'users') {
         const queueEntriesApi = new QueueEntriesApi(config);
-        await queueEntriesApi.deleteQueueEntry(entryId, Number(maxId), maxHash);
+        await queueEntriesApi.deleteQueueEntry(entryId, authId, maxHash);
         setUsers(prevUsers => prevUsers.filter(user => user.queueEntryId !== entryId));
       } else {
         const staffApi = new StaffApi(config);
-        await staffApi.deleteStaffMember(entryId, Number(maxId), maxHash);
+        await staffApi.deleteStaffMember(entryId, authId, maxHash);
         setEmployees(prevEmps => prevEmps.filter(emp => emp.staffId !== entryId));
       }
 
@@ -117,7 +117,7 @@ const QueueUserModeratorPage: React.FC = () => {
     const queueApi = new QueuesApi(config);
     const staffApi = new QueuesApi(config);
 
-    queueApi.getQueueMembers(queueId, Number(maxId), maxHash)
+    queueApi.getQueueMembers(queueId, authId, maxHash)
       .then(res => {
       const members: QueueMember[] = (res.data.members || []).map(
         q=> ({
@@ -131,7 +131,7 @@ const QueueUserModeratorPage: React.FC = () => {
 
     const fetchEmployees = async () => {
         try {
-            const res = await staffApi.getQueueStaff(queueId, Number(maxId), maxHash);
+            const res = await staffApi.getQueueStaff(queueId, authId, maxHash);
             
             const staffMembers: QueueStaff[] = (res.data.staff || []).map(
                 q=> ({
@@ -148,7 +148,7 @@ const QueueUserModeratorPage: React.FC = () => {
 
     fetchEmployees();
 
-  }, [queueId, maxId, maxHash])
+  }, [queueId, authId, maxHash])
 
   const handleConfirmExit = async () => {
     if (selectedUserEntryId) {

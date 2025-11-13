@@ -38,14 +38,14 @@ const createApiConfiguration = (): Configuration => {
   const basePath =
     import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
 
-  const maxId = localStorage.getItem("maxId");
+  const authId = localStorage.getItem("authId");
   const maxHash = localStorage.getItem("maxHash");
 
   return new Configuration({
     basePath,
     baseOptions: {
       headers: {
-        ...(maxId ? { maxId } : {}),
+        ...(authId ? { authId } : {}),
         ...(maxHash ? { maxHash } : {}),
       },
     },
@@ -90,16 +90,17 @@ const HomePage: React.FC = () => {
         const body = { miniAppInitData: window.WebApp.initData };
         const authResponse = await usersApiAuth.sendUserMiniAppData(Number(maxId), body);
 
-        if (authResponse.status === 200 && (authResponse.data as any)?.maxHash) {
+        if (authResponse.status === 200 && (authResponse.data as any)?.authId) {
           const maxHash = (authResponse.data as any).maxHash;
+          const authId = (authResponse.data as any).authId;
           localStorage.setItem("maxHash", maxHash);
-          localStorage.setItem("maxId", maxId);
+          localStorage.setItem("authId", authId);
           console.log("✅ Авторизация успешна, maxHash сохранён:", maxHash);
-          console.log("✅ Авторизация успешна, maxId сохранён:", maxId);
+          console.log("✅ Авторизация успешна, maxId сохранён:", authId);
           console.log("✅ Авторизация успешна, maxHash сохранён:", authResponse.request);
           const config = createApiConfiguration();
           const usersApi = new UsersApi(config);
-          const userResponse = (await usersApi.getUserByMaxId(Number(maxId), Number(maxId), maxHash)).data;
+          const userResponse = (await usersApi.getUserByMaxId(Number(maxId), authId, maxHash)).data;
 
 
           if (!userResponse) {

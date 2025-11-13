@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**maxId** | **number** |  | [default to undefined]
+**authId** | **string** |  | [default to undefined]
 **maxHash** | **string** |  | [default to undefined]
 
 ## Example
@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 import { MiniAppInitResponse } from './api';
 
 const instance: MiniAppInitResponse = {
-    maxId,
+    authId,
     maxHash,
 };
 ```

@@ -11,14 +11,14 @@ const createApiConfiguration = (): Configuration => {
   const basePath =
     import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
 
-  const maxId = localStorage.getItem("maxId");
+  const authId = localStorage.getItem("authId");
   const maxHash = localStorage.getItem("maxHash");
 
   return new Configuration({
     basePath,
     baseOptions: {
       headers: {
-        ...(maxId ? { maxId } : {}),
+        ...(authId ? { authId } : {}),
         ...(maxHash ? { maxHash } : {}),
       },
     },
@@ -75,7 +75,7 @@ const QueueDetailsPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isQRCodeOpen, setIsQRCodeOpen] = useState(false);
 
-  const maxId = localStorage.getItem("maxId");
+  const authId = localStorage.getItem("authId") ?? '';
   const maxHash = localStorage.getItem("maxHash") ?? '';
 
   useEffect(() => { 
@@ -86,7 +86,7 @@ const QueueDetailsPage: React.FC = () => {
         const config = createApiConfiguration();
         const userInfoApi = new QueueEntriesApi(config);
 
-        const response = await userInfoApi.getQueueEntry(entryId, Number(maxId), maxHash);
+        const response = await userInfoApi.getQueueEntry(entryId, authId, maxHash);
         setQueueDetails(response.data);
         
         console.log('Ответ API:', response.data);
@@ -105,7 +105,7 @@ const QueueDetailsPage: React.FC = () => {
       const config = createApiConfiguration();
       const queueApi = new QueueEntriesApi(config);
 
-      await queueApi.deleteQueueEntry(entryId, Number(maxId), maxHash);
+      await queueApi.deleteQueueEntry(entryId, authId, maxHash);
       console.log('Очередь успешно удалена:', entryId);
 
       navigate('/');

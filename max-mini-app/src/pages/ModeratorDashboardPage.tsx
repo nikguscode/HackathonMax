@@ -122,14 +122,14 @@ const createApiConfiguration = (): Configuration => {
   const basePath =
     import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
 
-  const maxId = localStorage.getItem("maxId");
+  const authId = localStorage.getItem("authId");
   const maxHash = localStorage.getItem("maxHash");
 
   return new Configuration({
     basePath,
     baseOptions: {
       headers: {
-        ...(maxId ? { maxId } : {}),
+        ...(authId ? { authId } : {}),
         ...(maxHash ? { maxHash } : {}),
       },
     },
@@ -151,7 +151,7 @@ const ModeratorDashboardPage: React.FC = () => {
   const [queues, setQueues] = useState<ExtendedQueue[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const maxId = localStorage.getItem("maxId");
+  const authId = localStorage.getItem("authId") ?? '';
   const maxHash = localStorage.getItem("maxHash") ?? '';
 
   useEffect(() => {
@@ -166,17 +166,17 @@ const ModeratorDashboardPage: React.FC = () => {
         const organizationsApi = new OrganizationsApi(apiConfig, apiConfig.basePath, axios);
         const queuesApi = new QueuesApi(apiConfig, apiConfig.basePath, axios);
 
-        const settingsResponse = await organizationsApi.getOrganizationSettings(orgId, Number(maxId), maxHash);
+        const settingsResponse = await organizationsApi.getOrganizationSettings(orgId, authId, maxHash);
         setOrganizationName(settingsResponse.data.organization?.name ?? '');
 
-        const queuesResponse = await organizationsApi.getOrganizationQueues(orgId, Number(maxId), maxHash);
+        const queuesResponse = await organizationsApi.getOrganizationQueues(orgId, authId, maxHash);
         const queueList = queuesResponse.data.queues || [];
 
         const queuesWithMetrics: ExtendedQueue[] = await Promise.all(
           queueList.map(async (queue) => {
             if (!queue.id) return queue;
             try {
-              const metricsRes = await queuesApi.getQueueMetrics(queue.id, Number(maxId), maxHash);
+              const metricsRes = await queuesApi.getQueueMetrics(queue.id, authId, maxHash);
               return { ...queue, metrics: metricsRes.data.metrics };
             } catch (err) {
               console.warn(`Ошибка загрузки метрик для очереди ${queue.name}:`, err);
@@ -219,7 +219,7 @@ const ModeratorDashboardPage: React.FC = () => {
 
     try {
 
-      await queuesApi.createOrganizationQueue(orgId,  Number(maxId), maxHash);
+      await queuesApi.createOrganizationQueue(orgId, authId, maxHash);
 
       console.log(`✅ Очередь "${queueName}" успешно добавлена для организации ${orgId}`);
 

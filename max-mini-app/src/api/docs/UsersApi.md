@@ -26,12 +26,12 @@ import {
 const configuration = new Configuration();
 const apiInstance = new UsersApi(configuration);
 
-let maxId: number; //Id provided by the Max massenger (default to undefined)
+let authId: string; //Auth Id provided by orchestrator service (default to undefined)
 let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 let userCreatingRequest: UserCreatingRequest; //Add user in maxqueue system (optional)
 
 const { status, data } = await apiInstance.addUserInMaxQueueSystem(
-    maxId,
+    authId,
     maxHash,
     userCreatingRequest
 );
@@ -42,7 +42,7 @@ const { status, data } = await apiInstance.addUserInMaxQueueSystem(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **userCreatingRequest** | **UserCreatingRequest**| Add user in maxqueue system | |
-| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **authId** | [**string**] | Auth Id provided by orchestrator service | defaults to undefined|
 | **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
@@ -86,12 +86,12 @@ const configuration = new Configuration();
 const apiInstance = new UsersApi(configuration);
 
 let maxId: number; //Id provided by the Max massenger (default to undefined)
-let maxId2: number; //Id provided by the Max massenger (default to undefined)
+let authId: string; //Auth Id provided by orchestrator service (default to undefined)
 let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 
 const { status, data } = await apiInstance.getUserByMaxId(
     maxId,
-    maxId2,
+    authId,
     maxHash
 );
 ```
@@ -101,7 +101,7 @@ const { status, data } = await apiInstance.getUserByMaxId(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
-| **maxId2** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **authId** | [**string**] | Auth Id provided by orchestrator service | defaults to undefined|
 | **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
@@ -203,13 +203,13 @@ const configuration = new Configuration();
 const apiInstance = new UsersApi(configuration);
 
 let maxId: number; //Id provided by the Max massenger (default to undefined)
-let maxId2: number; //Id provided by the Max massenger (default to undefined)
+let authId: string; //Auth Id provided by orchestrator service (default to undefined)
 let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 let userRoleRequest: UserRoleRequest; //Update user role in organization (optional)
 
 const { status, data } = await apiInstance.updateOrganizationUserRole(
     maxId,
-    maxId2,
+    authId,
     maxHash,
     userRoleRequest
 );
@@ -221,7 +221,7 @@ const { status, data } = await apiInstance.updateOrganizationUserRole(
 |------------- | ------------- | ------------- | -------------|
 | **userRoleRequest** | **UserRoleRequest**| Update user role in organization | |
 | **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
-| **maxId2** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **authId** | [**string**] | Auth Id provided by orchestrator service | defaults to undefined|
 | **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
@@ -266,13 +266,13 @@ const configuration = new Configuration();
 const apiInstance = new UsersApi(configuration);
 
 let maxId: number; //Id provided by the Max massenger (default to undefined)
-let maxId2: number; //Id provided by the Max massenger (default to undefined)
+let authId: string; //Auth Id provided by orchestrator service (default to undefined)
 let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 let userUpdateRequest: UserUpdateRequest; //Update user in maxqueue system (optional)
 
 const { status, data } = await apiInstance.updateUserInMaxQueueSystem(
     maxId,
-    maxId2,
+    authId,
     maxHash,
     userUpdateRequest
 );
@@ -284,7 +284,7 @@ const { status, data } = await apiInstance.updateUserInMaxQueueSystem(
 |------------- | ------------- | ------------- | -------------|
 | **userUpdateRequest** | **UserUpdateRequest**| Update user in maxqueue system | |
 | **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
-| **maxId2** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **authId** | [**string**] | Auth Id provided by orchestrator service | defaults to undefined|
 | **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 

@@ -24,12 +24,12 @@ import {
 const configuration = new Configuration();
 const apiInstance = new QueueEntriesApi(configuration);
 
-let maxId: number; //Id provided by the Max massenger (default to undefined)
+let authId: string; //Auth Id provided by orchestrator service (default to undefined)
 let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 let queueEntryCreatingRequest: QueueEntryCreatingRequest; //Add user in queue (optional)
 
 const { status, data } = await apiInstance.addQueueEntry(
-    maxId,
+    authId,
     maxHash,
     queueEntryCreatingRequest
 );
@@ -40,7 +40,7 @@ const { status, data } = await apiInstance.addQueueEntry(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **queueEntryCreatingRequest** | **QueueEntryCreatingRequest**| Add user in queue | |
-| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **authId** | [**string**] | Auth Id provided by orchestrator service | defaults to undefined|
 | **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
@@ -84,12 +84,12 @@ const configuration = new Configuration();
 const apiInstance = new QueueEntriesApi(configuration);
 
 let entryId: string; //Queue Entry id (default to undefined)
-let maxId: number; //Id provided by the Max massenger (default to undefined)
+let authId: string; //Auth Id provided by orchestrator service (default to undefined)
 let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 
 const { status, data } = await apiInstance.deleteQueueEntry(
     entryId,
-    maxId,
+    authId,
     maxHash
 );
 ```
@@ -99,7 +99,7 @@ const { status, data } = await apiInstance.deleteQueueEntry(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **entryId** | [**string**] | Queue Entry id | defaults to undefined|
-| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **authId** | [**string**] | Auth Id provided by orchestrator service | defaults to undefined|
 | **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
@@ -143,12 +143,12 @@ const configuration = new Configuration();
 const apiInstance = new QueueEntriesApi(configuration);
 
 let entryId: string; //Queue Entry id (default to undefined)
-let maxId: number; //Id provided by the Max massenger (default to undefined)
+let authId: string; //Auth Id provided by orchestrator service (default to undefined)
 let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 
 const { status, data } = await apiInstance.getQueueEntry(
     entryId,
-    maxId,
+    authId,
     maxHash
 );
 ```
@@ -158,7 +158,7 @@ const { status, data } = await apiInstance.getQueueEntry(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **entryId** | [**string**] | Queue Entry id | defaults to undefined|
-| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **authId** | [**string**] | Auth Id provided by orchestrator service | defaults to undefined|
 | **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
