@@ -29,11 +29,6 @@ func (s *Server) Start() error {
 
 func (s *Server) handleNotify(w http.ResponseWriter, r *http.Request) {
 	raw := r.URL.Query().Get("id_max")
-	if raw == "" {
-		http.Error(w, "id_max required", 400)
-		return
-	}
-
 	idMax, err := strconv.ParseInt(raw, 10, 64)
 	if err != nil {
 		http.Error(w, "id_max invalid", 400)
@@ -51,7 +46,6 @@ func (s *Server) handleNotify(w http.ResponseWriter, r *http.Request) {
 func (s *Server) handleCallback(w http.ResponseWriter, r *http.Request) {
 	raw := r.URL.Query().Get("id_max")
 	answer := r.URL.Query().Get("answer")
-
 	idMax, err := strconv.ParseInt(raw, 10, 64)
 	if err != nil {
 		http.Error(w, "id_max invalid", 400)

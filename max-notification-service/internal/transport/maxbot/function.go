@@ -39,18 +39,19 @@ func (b *Bot) deleteMessage(ctx context.Context, messageID string) error {
 	return nil
 }
 
+// отправка сообщения с кнопками
 func (b *Bot) SendComeOverRequest(ctx context.Context, idMax int64) error {
 	keyboard := b.client.Messages.NewKeyboardBuilder()
 	keyboard.AddRow().
-		AddCallback("Да", schemes.POSITIVE, "member_yes").
-		AddCallback("Нет", schemes.NEGATIVE, "member_no")
+		AddCallback("Да", schemes.POSITIVE, fmt.Sprintf("member_yes:%d", idMax)).
+		AddCallback("Нет", schemes.NEGATIVE, fmt.Sprintf("member_no:%d", idMax))
 
-	message := maxbot.NewMessage().
+	msg := maxbot.NewMessage().
 		SetUser(idMax).
 		AddKeyboard(keyboard).
-		SetText("Сосал?:")
+		SetText("Выберите вариант:")
 
-	_, err := b.client.Messages.SendMessageResult(ctx, message)
+	_, err := b.client.Messages.SendMessageResult(ctx, msg)
 
 	return err
 }
