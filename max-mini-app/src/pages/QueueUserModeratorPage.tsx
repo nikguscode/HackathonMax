@@ -13,6 +13,7 @@ const createApiConfiguration = (): Configuration => {
 
   const authId = localStorage.getItem("authId");
   const maxHash = localStorage.getItem("maxHash");
+  const orgId = localStorage.getItem("orgId");
 
   return new Configuration({
     basePath,
@@ -20,6 +21,7 @@ const createApiConfiguration = (): Configuration => {
       headers: {
         ...(authId ? { authId } : {}),
         ...(maxHash ? { maxHash } : {}),
+        ...(orgId ? { orgId } : {}),
       },
     },
   });
@@ -33,6 +35,8 @@ const QueueUserModeratorPage: React.FC = () => {
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUserEntryId, setSelectedUserEntryId] = useState<string | null>(null);
+  // const [isAddEmployeeModalOpen, setIsAddEmployeeModalOpen] = useState(false);
+
 
   const [currentView, setCurrentView] = useState('users');
   const [employees, setEmployees] = useState<QueueStaff[]>([]);
@@ -71,6 +75,22 @@ const QueueUserModeratorPage: React.FC = () => {
   const handleOpenAddUserModal = () => {
     setIsAddUserModalOpen(true);
   };
+
+//   const handleAddEmployee = async (userId: number) => {
+//   try {
+//     const config = createApiConfiguration();
+//     const usersApi = new UsersApi(config);
+
+//     await usersApi.updateOrganizationUserRole(userId, authId, maxHash);
+
+//     console.log(`✅ Пользователь ${userId} назначен сотрудником`);
+
+//     setEmployees(prev => [...prev, { staffId: String(userId), username: `ID ${userId}` }]);
+//     setIsAddEmployeeModalOpen(false);
+//   } catch (err) {
+//     console.error('Ошибка при добавлении сотрудника:', err);
+//   }
+// };
 
 
   if (!queueId) {

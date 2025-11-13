@@ -147,7 +147,6 @@ const ModeratorDashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const { id: orgId } = useParams<{ id: string }>();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [organizationName, setOrganizationName] = useState<string>('');
   const [queues, setQueues] = useState<ExtendedQueue[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -165,9 +164,6 @@ const ModeratorDashboardPage: React.FC = () => {
         const apiConfig = createApiConfiguration();
         const organizationsApi = new OrganizationsApi(apiConfig, apiConfig.basePath, axios);
         const queuesApi = new QueuesApi(apiConfig, apiConfig.basePath, axios);
-
-        const settingsResponse = await organizationsApi.getOrganizationSettings(orgId, authId, maxHash);
-        setOrganizationName(settingsResponse.data.organization?.name ?? '');
 
         const queuesResponse = await organizationsApi.getOrganizationQueues(orgId, authId, maxHash);
         const queueList = queuesResponse.data.queues || [];
@@ -325,7 +321,7 @@ const ModeratorDashboardPage: React.FC = () => {
               textOverflow: 'ellipsis',
             }}
           >
-            {organizationName}
+            
           </Typography.Title>
         </Flex>
 
