@@ -27,13 +27,13 @@ const configuration = new Configuration();
 const apiInstance = new OrganizationsApi(configuration);
 
 let organizationId: string; //Organization id (default to undefined)
-let maxId: number; //Id provided by the Max massenger (default to undefined)
+let authId: string; //Auth Id provided by orchestrator service (default to undefined)
 let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 let queueCreatingRequest: QueueCreatingRequest; //Add user in queue (optional)
 
 const { status, data } = await apiInstance.createOrganizationQueue(
     organizationId,
-    maxId,
+    authId,
     maxHash,
     queueCreatingRequest
 );
@@ -45,7 +45,7 @@ const { status, data } = await apiInstance.createOrganizationQueue(
 |------------- | ------------- | ------------- | -------------|
 | **queueCreatingRequest** | **QueueCreatingRequest**| Add user in queue | |
 | **organizationId** | [**string**] | Organization id | defaults to undefined|
-| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **authId** | [**string**] | Auth Id provided by orchestrator service | defaults to undefined|
 | **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
@@ -89,12 +89,12 @@ const configuration = new Configuration();
 const apiInstance = new OrganizationsApi(configuration);
 
 let organizationId: string; //Organization id (default to undefined)
-let maxId: number; //Id provided by the Max massenger (default to undefined)
+let authId: string; //Auth Id provided by orchestrator service (default to undefined)
 let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 
 const { status, data } = await apiInstance.getOrganizationGraphics(
     organizationId,
-    maxId,
+    authId,
     maxHash
 );
 ```
@@ -104,7 +104,7 @@ const { status, data } = await apiInstance.getOrganizationGraphics(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **organizationId** | [**string**] | Organization id | defaults to undefined|
-| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **authId** | [**string**] | Auth Id provided by orchestrator service | defaults to undefined|
 | **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
@@ -148,12 +148,12 @@ const configuration = new Configuration();
 const apiInstance = new OrganizationsApi(configuration);
 
 let organizationId: string; //Organization id (default to undefined)
-let maxId: number; //Id provided by the Max massenger (default to undefined)
+let authId: string; //Auth Id provided by orchestrator service (default to undefined)
 let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 
 const { status, data } = await apiInstance.getOrganizationMetrics(
     organizationId,
-    maxId,
+    authId,
     maxHash
 );
 ```
@@ -163,7 +163,7 @@ const { status, data } = await apiInstance.getOrganizationMetrics(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **organizationId** | [**string**] | Organization id | defaults to undefined|
-| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **authId** | [**string**] | Auth Id provided by orchestrator service | defaults to undefined|
 | **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
@@ -207,12 +207,12 @@ const configuration = new Configuration();
 const apiInstance = new OrganizationsApi(configuration);
 
 let organizationId: string; //Organization id (default to undefined)
-let maxId: number; //Id provided by the Max massenger (default to undefined)
+let authId: string; //Auth Id provided by orchestrator service (default to undefined)
 let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 
 const { status, data } = await apiInstance.getOrganizationQueues(
     organizationId,
-    maxId,
+    authId,
     maxHash
 );
 ```
@@ -222,7 +222,7 @@ const { status, data } = await apiInstance.getOrganizationQueues(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **organizationId** | [**string**] | Organization id | defaults to undefined|
-| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **authId** | [**string**] | Auth Id provided by orchestrator service | defaults to undefined|
 | **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
@@ -266,12 +266,12 @@ const configuration = new Configuration();
 const apiInstance = new OrganizationsApi(configuration);
 
 let organizationId: string; //Organization id (default to undefined)
-let maxId: number; //Id provided by the Max massenger (default to undefined)
+let authId: string; //Auth Id provided by orchestrator service (default to undefined)
 let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 
 const { status, data } = await apiInstance.getOrganizationSettings(
     organizationId,
-    maxId,
+    authId,
     maxHash
 );
 ```
@@ -281,7 +281,7 @@ const { status, data } = await apiInstance.getOrganizationSettings(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **organizationId** | [**string**] | Organization id | defaults to undefined|
-| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **authId** | [**string**] | Auth Id provided by orchestrator service | defaults to undefined|
 | **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 

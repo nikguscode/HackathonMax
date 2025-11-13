@@ -3,6 +3,7 @@ package com.nikguscode.orchestrator.core.service.authentication;
 import com.nikguscode.orchestrator.dto.MaxUserDataDto;
 import com.nikguscode.orchestrator.core.service.user.MaxUserDataExtractor;
 import com.nikguscode.orchestrator.core.service.user.UserService;
+import java.util.UUID;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +21,11 @@ public class MaxAuthenticationService implements AuthenticationService {
   }
 
   @Override
-  public MaxUserDataDto authenticate(String miniAppInitDataDto, Long maxId) {
+  public MaxUserDataDto authenticate(UUID authId, String miniAppInitDataDto) {
     MaxUserDataDto maxUserDataDto = maxUserDataExtractor.extract(miniAppInitDataDto);
 
     log.info("UserDataDto:{}", maxUserDataDto);
-    userService.getOrUpdateUserHashInformation(miniAppInitDataDto, maxId, maxUserDataDto.getHash());
+    userService.getOrUpdateUserHashInformation(miniAppInitDataDto, authId, maxUserDataDto.getHash());
 
     return maxUserDataDto;
   }

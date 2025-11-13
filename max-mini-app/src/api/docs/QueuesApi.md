@@ -26,12 +26,12 @@ const configuration = new Configuration();
 const apiInstance = new QueuesApi(configuration);
 
 let queueId: string; //Queue id (default to undefined)
-let maxId: number; //Id provided by the Max massenger (default to undefined)
+let authId: string; //Auth Id provided by orchestrator service (default to undefined)
 let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 
 const { status, data } = await apiInstance.getQueueGraphics(
     queueId,
-    maxId,
+    authId,
     maxHash
 );
 ```
@@ -41,7 +41,7 @@ const { status, data } = await apiInstance.getQueueGraphics(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **queueId** | [**string**] | Queue id | defaults to undefined|
-| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **authId** | [**string**] | Auth Id provided by orchestrator service | defaults to undefined|
 | **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
@@ -85,12 +85,12 @@ const configuration = new Configuration();
 const apiInstance = new QueuesApi(configuration);
 
 let queueId: string; //Queue id (default to undefined)
-let maxId: number; //Id provided by the Max massenger (default to undefined)
+let authId: string; //Auth Id provided by orchestrator service (default to undefined)
 let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 
 const { status, data } = await apiInstance.getQueueMembers(
     queueId,
-    maxId,
+    authId,
     maxHash
 );
 ```
@@ -100,7 +100,7 @@ const { status, data } = await apiInstance.getQueueMembers(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **queueId** | [**string**] | Queue id | defaults to undefined|
-| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **authId** | [**string**] | Auth Id provided by orchestrator service | defaults to undefined|
 | **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
@@ -144,12 +144,12 @@ const configuration = new Configuration();
 const apiInstance = new QueuesApi(configuration);
 
 let queueId: string; //Queue id (default to undefined)
-let maxId: number; //Id provided by the Max massenger (default to undefined)
+let authId: string; //Auth Id provided by orchestrator service (default to undefined)
 let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 
 const { status, data } = await apiInstance.getQueueMetrics(
     queueId,
-    maxId,
+    authId,
     maxHash
 );
 ```
@@ -159,7 +159,7 @@ const { status, data } = await apiInstance.getQueueMetrics(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **queueId** | [**string**] | Queue id | defaults to undefined|
-| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **authId** | [**string**] | Auth Id provided by orchestrator service | defaults to undefined|
 | **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
@@ -203,12 +203,12 @@ const configuration = new Configuration();
 const apiInstance = new QueuesApi(configuration);
 
 let queueId: string; //Queue id (default to undefined)
-let maxId: number; //Id provided by the Max massenger (default to undefined)
+let authId: string; //Auth Id provided by orchestrator service (default to undefined)
 let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 
 const { status, data } = await apiInstance.getQueueSettings(
     queueId,
-    maxId,
+    authId,
     maxHash
 );
 ```
@@ -218,7 +218,7 @@ const { status, data } = await apiInstance.getQueueSettings(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **queueId** | [**string**] | Queue id | defaults to undefined|
-| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **authId** | [**string**] | Auth Id provided by orchestrator service | defaults to undefined|
 | **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 
@@ -262,12 +262,12 @@ const configuration = new Configuration();
 const apiInstance = new QueuesApi(configuration);
 
 let queueId: string; //Queue id (default to undefined)
-let maxId: number; //Id provided by the Max massenger (default to undefined)
+let authId: string; //Auth Id provided by orchestrator service (default to undefined)
 let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 
 const { status, data } = await apiInstance.getQueueStaff(
     queueId,
-    maxId,
+    authId,
     maxHash
 );
 ```
@@ -277,7 +277,7 @@ const { status, data } = await apiInstance.getQueueStaff(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **queueId** | [**string**] | Queue id | defaults to undefined|
-| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **authId** | [**string**] | Auth Id provided by orchestrator service | defaults to undefined|
 | **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 

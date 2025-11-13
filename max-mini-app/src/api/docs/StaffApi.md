@@ -22,12 +22,12 @@ const configuration = new Configuration();
 const apiInstance = new StaffApi(configuration);
 
 let staffId: string; //Staff id (default to undefined)
-let maxId: number; //Id provided by the Max massenger (default to undefined)
+let authId: string; //Auth Id provided by orchestrator service (default to undefined)
 let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
 
 const { status, data } = await apiInstance.deleteStaffMember(
     staffId,
-    maxId,
+    authId,
     maxHash
 );
 ```
@@ -37,7 +37,7 @@ const { status, data } = await apiInstance.deleteStaffMember(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **staffId** | [**string**] | Staff id | defaults to undefined|
-| **maxId** | [**number**] | Id provided by the Max massenger | defaults to undefined|
+| **authId** | [**string**] | Auth Id provided by orchestrator service | defaults to undefined|
 | **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
 
 

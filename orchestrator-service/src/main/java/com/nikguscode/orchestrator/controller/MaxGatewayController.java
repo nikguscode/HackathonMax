@@ -45,10 +45,10 @@ public class MaxGatewayController {
     log.info("MiniAppInitData:{}", maxMiniAppInitDataDto);
 
     MaxUserDataDto maxUserDataDto =
-        authenticationService.authenticate(maxMiniAppInitDataDto.getMiniAppInitData(), maxId);
+        authenticationService.authenticate(authId, maxMiniAppInitDataDto.getMiniAppInitData());
 
     MiniAppInitResponseDto response =
-        miniAppDtoMapper.userDataToMiniAppInitResponseDto(maxUserDataDto.getUser(), maxUserDataDto);
+        miniAppDtoMapper.userDataToMiniAppInitResponseDto(authId, maxUserDataDto);
     return ResponseEntity.ok(response);
   }
 }
