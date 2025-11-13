@@ -3,14 +3,21 @@ package com.nikguscode.orchestrator.dao.queue;
 import static com.nikguscode.jooq.tables.Queue.QUEUE;
 import static com.nikguscode.jooq.tables.QueueEntry.QUEUE_ENTRY;
 import static com.nikguscode.jooq.tables.User.USER;
+import static com.nikguscode.jooq.tables.QueueStaff.QUEUE_STAFF;
+import static com.nikguscode.jooq.tables.QueueEntryMeta.QUEUE_ENTRY_META;
 
 import com.nikguscode.jooq.enums.QueueStatus;
 import com.nikguscode.orchestrator.dao.result.QueueMemberRecord;
 import com.nikguscode.orchestrator.core.model.Queue;
+import com.nikguscode.orchestrator.dao.result.QueueMetricsRecord;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,6 +33,43 @@ public class JooqQueueDao implements QueueDao {
 
         .where(QUEUE.ID_ORGANIZATION.eq(organizationId))
         .fetchInto(Queue.class);
+  }
+
+  @Override
+  public List<QueueMetricsRecord> getQueuesWithMetricsByOrganizationId(UUID organizationId) {
+    var Q = QUEUE.as("Q");
+
+    var amountOfEmployees = DSL
+        .selectCount()
+        .from(QUEUE_STAFF)
+        .where(Q.ID.eq(QUEUE_STAFF.ID_QUEUE))
+        .asField("amountOfEmployees");
+
+    var maxSizeOfTodayQueueField = DSL.val(0).as("maxSizeOfTodayQueue");
+    var amountOfServedPeopleField = DSL
+        .selectCount()
+        .from(QUEUE_ENTRY)
+
+        .join(QUEUE_ENTRY_META)
+        .on(QUEUE_ENTRY_META.ID_QUEUE_ENTRY.eq(QUEUE_ENTRY.ID))
+
+        .where(
+            Q.ID.eq(QUEUE_ENTRY.ID_QUEUE)
+                .and(QUEUE_ENTRY.STATUS.eq(QueueStatus.SERVED))
+        )
+        .asField("amountOfServedPeople");
+
+    return dsl
+        .select(
+            Q.ID,
+            Q.NAME,
+            amountOfEmployees,
+            maxSizeOfTodayQueueField,
+            amountOfServedPeopleField
+        )
+        .from(Q)
+        .where(Q.ID_ORGANIZATION.eq(organizationId))
+        .fetchInto(QueueMetricsRecord.class);
   }
 
   @Override

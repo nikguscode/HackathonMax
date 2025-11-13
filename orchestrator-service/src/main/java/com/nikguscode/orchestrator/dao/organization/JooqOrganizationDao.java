@@ -8,8 +8,11 @@ import static com.nikguscode.jooq.tables.Organization.ORGANIZATION;
 import static com.nikguscode.jooq.tables.UserRoles.USER_ROLES;
 
 import com.nikguscode.openapi.model.UserRoleDto;
+import com.nikguscode.orchestrator.core.model.Organization;
 import com.nikguscode.orchestrator.dao.result.OrganizationRecord;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
@@ -20,7 +23,13 @@ import org.springframework.stereotype.Service;
 public class JooqOrganizationDao implements OrganizationDao {
   private final DSLContext dsl;
 
-
+  @Override
+  public Optional<Organization> findByOrganizationId(UUID organizationId) {
+    return dsl
+        .selectFrom(ORGANIZATION)
+        .where(ORGANIZATION.ID.eq(organizationId))
+        .fetchOptionalInto(Organization.class);
+  }
 
   @Override
   public List<OrganizationRecord> findByMaxId(Long maxId) {
