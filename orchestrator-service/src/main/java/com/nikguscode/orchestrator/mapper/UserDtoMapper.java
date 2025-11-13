@@ -25,8 +25,6 @@ public interface UserDtoMapper {
   UserHashDto userToHashDto(User user, String maxHash);
 
   @Mapping(target = "createdAt", source = "createdAt")
-  @Mapping(target = "user.idMax", source = "userDto.id")
+  @Mapping(target = "idMax", source = "userDto.id")
   User userToMaxUserDataDto(UserDto userDto, OffsetDateTime createdAt);
-
-
 }

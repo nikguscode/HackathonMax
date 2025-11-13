@@ -7,9 +7,9 @@ spring:
 
   data:
     redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
-      password: ${REDIS_PASSWORD}
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
 
   liquibase:
     enabled: false
@@ -22,4 +22,4 @@ server:
 
 max:
   bot:
-    token: ${MAX_BOT_TOKEN}
+    token: ${MAX_BOT_TOKEN:null}
