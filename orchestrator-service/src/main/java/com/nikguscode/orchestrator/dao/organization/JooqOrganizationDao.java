@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 public class JooqOrganizationDao implements OrganizationDao {
   private final DSLContext dsl;
 
+
+
   @Override
   public List<OrganizationRecord> findByMaxId(Long maxId) {
     var roleField = USER_ROLES.ROLE;
@@ -63,5 +65,4 @@ public class JooqOrganizationDao implements OrganizationDao {
             record.get(countField, Integer.class)
         ));
   }
-
 }

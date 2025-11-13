@@ -1,18 +1,20 @@
 package com.nikguscode.orchestrator.service.authentication;
 
-import org.springframework.beans.factory.annotation.Value;
+import com.nikguscode.orchestrator.dto.MaxUserDataDto;
+import com.nikguscode.orchestrator.service.user.MaxUserDataExtractor;
+import com.nikguscode.orchestrator.service.user.UserService;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MaxAuthenticationService implements AuthenticationService {
-  private final String maxBotToken;
-  private final MaxHashVerifyService maxHashVerifyService;
+  private final UserService userService;
+  private final MaxUserDataExtractor maxUserDataExtractor;
 
   public MaxAuthenticationService(
-      @Value("${max.bot.token}") String maxBotToken,
-      MaxHashVerifyService maxHashVerifyService) {
-    this.maxBotToken = maxBotToken;
-    this.maxHashVerifyService = maxHashVerifyService;
+      UserService userService,
+      MaxUserDataExtractor maxUserDataExtractor) {
+    this.userService = userService;
+    this.maxUserDataExtractor = maxUserDataExtractor;
   }
 
   // 1. Проверка, есть ли юзер в кэше
@@ -20,9 +22,8 @@ public class MaxAuthenticationService implements AuthenticationService {
   // 3. Если есть в БД, извлекаем => добавляем в кэш
   // 4. Если нет в БД, добавляем в БД, затем в кэщ
   @Override
-  public void authenticate(String miniAppInitDataDto) {
-    if (maxHashVerifyService.check(miniAppInitDataDto, maxBotToken)) {
-
-    }
+  public void authenticate(String miniAppInitDataDto, Long maxId) {
+    MaxUserDataDto maxUserDataDto = maxUserDataExtractor.extract(miniAppInitDataDto);
+    userService.getOrUpdateUserHashInformation(miniAppInitDataDto, maxId, maxUserDataDto.getHash());
   }
 }

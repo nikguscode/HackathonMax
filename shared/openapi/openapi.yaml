@@ -244,9 +244,10 @@ paths:
         - name: organizationId
           in: path
           required: true
-          descripiton: Organization ID
+          description: Organization ID
           schema:
             type: string
+            format: uuid
       requestBody:
         description: Add user in queue
         content:
@@ -308,6 +309,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrganizationSettingsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /organizations/{organizationId}/staff:
+    get:
+      tags: [organizations]
+      summary: Get staff members of an organization
+      operationId: getOrganizationStaff
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          description: Organization ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Organization staff members retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationStaffResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -793,6 +821,13 @@ components:
           items:
             $ref: '#/components/schemas/QueueMember'
 
+    OrganizationStaffResponse:
+      properties:
+        staff:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizationStaff'
+
     QueueSettings:
       type: object
       properties:
@@ -871,6 +906,18 @@ components:
           type: integer
           format: int64
         queueEntryId:
+          type: string
+          format: uuid
+        username:
+          type: string
+
+    OrganizationStaff:
+      type: object
+      properties:
+        maxId:
+          type: integer
+          format: int64
+        queueId:
           type: string
           format: uuid
         username:

@@ -5,7 +5,7 @@ import com.nikguscode.openapi.model.UserResponseDto;
 import com.nikguscode.orchestrator.dao.user.UserDao;
 import com.nikguscode.orchestrator.mapper.UserDtoMapper;
 import com.nikguscode.orchestrator.model.User;
-import com.nikguscode.orchestrator.service.UserService;
+import com.nikguscode.orchestrator.service.user.UserService;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Qualifier;
