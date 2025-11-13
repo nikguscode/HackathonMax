@@ -19,8 +19,11 @@ public class QueueController {
   }
 
   @GetMapping("organizations/{organizationId}/queues")
-  public QueueResponseDto getQueues(
-      @PathVariable UUID organizationId) {
+  public QueueResponseDto getQueues(@PathVariable UUID organizationId) {
+    if (organizationId == null) {
+      throw new RuntimeException("Organization id can't be null");
+    }
+
     return queueService.getQueues(organizationId);
   }
 

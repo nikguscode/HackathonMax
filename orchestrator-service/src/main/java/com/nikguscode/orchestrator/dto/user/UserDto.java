@@ -1,4 +1,4 @@
-package com.nikguscode.orchestrator.dto;
+package com.nikguscode.orchestrator.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

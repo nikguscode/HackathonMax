@@ -849,7 +849,7 @@ components:
         name:
           type: string
           example: Bakery Queue 1
-        amoutOfEmployees:
+        amountOfEmployees:
           type: integer
           format: int32
           example: 2
