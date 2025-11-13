@@ -1,9 +1,9 @@
-package com.nikguscode.orchestrator.mapper;
+package com.nikguscode.orchestrator.core.mapper;
 
 import com.nikguscode.openapi.model.QueueDto;
 import com.nikguscode.openapi.model.QueueMemberDto;
 import com.nikguscode.orchestrator.dao.result.QueueMemberRecord;
-import com.nikguscode.orchestrator.model.Queue;
+import com.nikguscode.orchestrator.core.model.Queue;
 import java.util.List;
 import org.mapstruct.Mapper;
 

@@ -27,7 +27,7 @@ paths:
       summary: Add user in maxqueue system
       operationId: addUserInMaxQueueSystem
       parameters:
-        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/AuthIdHeader'
         - $ref: '#/components/parameters/MaxHashHeader'
       requestBody:
         description: Add user in maxqueue system
@@ -84,7 +84,7 @@ paths:
       operationId: updateOrganizationUserRole
       parameters:
         - $ref: '#/components/parameters/MaxIdPathParameter'
-        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/AuthIdHeader'
         - $ref: '#/components/parameters/MaxHashHeader'
       requestBody:
         description: Update user role in organization
@@ -113,7 +113,7 @@ paths:
       operationId: updateUserInMaxQueueSystem
       parameters:
         - $ref: '#/components/parameters/MaxIdPathParameter'
-        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/AuthIdHeader'
         - $ref: '#/components/parameters/MaxHashHeader'
       requestBody:
         description: Update user in maxqueue system
@@ -137,7 +137,7 @@ paths:
       operationId: getUserByMaxId
       parameters:
         - $ref: '#/components/parameters/MaxIdPathParameter'
-        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/AuthIdHeader'
         - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
@@ -159,7 +159,7 @@ paths:
       summary: Add user in queue
       operationId: addQueueEntry
       parameters:
-        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/AuthIdHeader'
         - $ref: '#/components/parameters/MaxHashHeader'
       requestBody:
         description: Add user in queue
@@ -184,7 +184,7 @@ paths:
       operationId: deleteQueueEntry
       parameters:
         - $ref: '#/components/parameters/QueueEntryIdPathParameter'
-        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/AuthIdHeader'
         - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
@@ -202,7 +202,7 @@ paths:
       operationId: getQueueEntry
       parameters:
         - $ref: '#/components/parameters/QueueEntryIdPathParameter'
-        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/AuthIdHeader'
         - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
@@ -226,7 +226,7 @@ paths:
       operationId: createOrganizationQueue
       parameters:
         - $ref: '#/components/parameters/OrganizationIdPathParameter'
-        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/AuthIdHeader'
         - $ref: '#/components/parameters/MaxHashHeader'
       requestBody:
         description: Add user in queue
@@ -250,7 +250,7 @@ paths:
       operationId: getOrganizationQueues
       parameters:
         - $ref: '#/components/parameters/OrganizationIdPathParameter'
-        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/AuthIdHeader'
         - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
@@ -273,7 +273,7 @@ paths:
       operationId: getOrganizationSettings
       parameters:
         - $ref: '#/components/parameters/OrganizationIdPathParameter'
-        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/AuthIdHeader'
         - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
@@ -296,7 +296,7 @@ paths:
       operationId: getOrganizationMetrics
       parameters:
         - $ref: '#/components/parameters/OrganizationIdPathParameter'
-        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/AuthIdHeader'
         - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
@@ -319,7 +319,7 @@ paths:
       operationId: getOrganizationGraphics
       parameters:
         - $ref: '#/components/parameters/OrganizationIdPathParameter'
-        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/AuthIdHeader'
         - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
@@ -342,7 +342,7 @@ paths:
       operationId: getQueueMembers
       parameters:
         - $ref: '#/components/parameters/QueueIdPathParameter'
-        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/AuthIdHeader'
         - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
@@ -365,7 +365,7 @@ paths:
       operationId: getQueueSettings
       parameters:
         - $ref: '#/components/parameters/QueueIdPathParameter'
-        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/AuthIdHeader'
         - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
@@ -389,7 +389,7 @@ paths:
       operationId: getQueueMetrics
       parameters:
         - $ref: '#/components/parameters/QueueIdPathParameter'
-        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/AuthIdHeader'
         - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
@@ -413,7 +413,7 @@ paths:
       operationId: getQueueGraphics
       parameters:
         - $ref: '#/components/parameters/QueueIdPathParameter'
-        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/AuthIdHeader'
         - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
@@ -436,7 +436,7 @@ paths:
       operationId: getQueueStaff
       parameters:
         - $ref: '#/components/parameters/QueueIdPathParameter'
-        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/AuthIdHeader'
         - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
@@ -459,7 +459,7 @@ paths:
       operationId: deleteStaffMember
       parameters:
         - $ref: '#/components/parameters/StaffIdPathParameter'
-        - $ref: '#/components/parameters/MaxIdHeader'
+        - $ref: '#/components/parameters/AuthIdHeader'
         - $ref: '#/components/parameters/MaxHashHeader'
       responses:
         '200':
@@ -523,15 +523,14 @@ components:
 
     ### Headers ###
 
-    MaxIdHeader:
-      name: Max-Id
+    AuthIdHeader:
+      name: Auth-Id
       in: header
       required: true
-      description: Id provided by the Max massenger
+      description: Auth Id provided by orchestrator service
       schema:
-        type: integer
-        format: int64
-        example: 9932441
+        type: string
+        format: uuid
 
     MaxHashHeader:
       name: Max-Hash
@@ -691,13 +690,13 @@ components:
     MiniAppInitResponse:
       type: object
       properties:
-        maxId:
-          type: integer
-          format: int64
+        authId:
+          type: string
+          format: uuid
         maxHash:
           type: string
       required:
-        - maxId
+        - authId
         - maxHash
 
     ### Queue Entry Responses ###
@@ -849,9 +848,28 @@ components:
           format: uuid
         name:
           type: string
+          example: Bakery Queue 1
+        amoutOfEmployees:
+          type: integer
+          format: int32
+          example: 2
+        maxSizeOfTodayQueue:
+          type: integer
+          format: int32
+          example: 43
+        amountOfServedPeople:
+          type: integer
+          format: int32
+          example: 1024
 
     QueueResponse:
       properties:
+        organizationId:
+          type: string
+          format: uuid
+        organizationName:
+          type: string
+          example: Tasty Bakery
         queues:
           type: array
           items:

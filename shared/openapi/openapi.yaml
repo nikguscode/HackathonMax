@@ -848,9 +848,28 @@ components:
           format: uuid
         name:
           type: string
+          example: Bakery Queue 1
+        amoutOfEmployees:
+          type: integer
+          format: int32
+          example: 2
+        maxSizeOfTodayQueue:
+          type: integer
+          format: int32
+          example: 43
+        amountOfServedPeople:
+          type: integer
+          format: int32
+          example: 1024
 
     QueueResponse:
       properties:
+        organizationId:
+          type: string
+          format: uuid
+        organizationName:
+          type: string
+          example: Tasty Bakery
         queues:
           type: array
           items:

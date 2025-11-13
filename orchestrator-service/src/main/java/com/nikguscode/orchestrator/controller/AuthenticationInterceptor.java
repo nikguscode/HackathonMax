@@ -1,8 +1,9 @@
 package com.nikguscode.orchestrator.controller;
 
-import com.nikguscode.orchestrator.service.user.UserService;
+import com.nikguscode.orchestrator.core.service.user.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.UUID;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -18,25 +19,49 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
   @Override
   public boolean preHandle(
       HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-    Long maxIdHeader = Long.parseLong(request.getHeader("maxId"));
-    String maxHashHeader = request.getHeader("maxHash");
+    try {
+      if (request.getMethod().equalsIgnoreCase("OPTIONS")) {
+        return true;
+      }
 
-    if (maxHashHeader == null) {
-      throw new RuntimeException("zaglushka");
+      UUID authId = UUID.fromString(request.getHeader("Auth-Id"));
+      String maxHash = request.getHeader("Max-Hash");
+
+      if (maxHash == null) {
+        throw new RuntimeException("Max hash header can't be null");
+      }
+
+      boolean isAuthenticated = userService.verifyUserAccess(authId, maxHash);
+
+      if (!isAuthenticated) {
+        response.sendError(
+            HttpServletResponse.SC_UNAUTHORIZED, "Invalid authentication credentials.");
+      }
+
+      return isAuthenticated;
+    } catch (Exception e) {
+      response.sendError(
+          HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+          "An internal error occurred during authentication.");
+      return false;
     }
-
-    return userService.verifyUserAccess(maxIdHeader, maxHashHeader);
   }
 
   @Override
-  public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+  public void postHandle(
+      HttpServletRequest request,
+      HttpServletResponse response,
+      Object handler,
       ModelAndView modelAndView) throws Exception {
     HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
   }
 
   @Override
-  public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
-      Object handler, Exception ex) throws Exception {
+  public void afterCompletion(
+      HttpServletRequest request,
+      HttpServletResponse response,
+      Object handler,
+      Exception ex) throws Exception {
     HandlerInterceptor.super.afterCompletion(request, response, handler, ex);
   }
 }

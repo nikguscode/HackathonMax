@@ -78,6 +78,9 @@ export interface OrganizationSettingsResponse {
 export interface Queue {
     'id'?: string;
     'name'?: string;
+    'amoutOfEmployees'?: number;
+    'maxSizeOfTodayQueue'?: number;
+    'amountOfServedPeople'?: number;
 }
 export interface QueueCreatingRequest {
     'name': string;
@@ -156,6 +159,8 @@ export interface QueueMetricsResponse {
     'metrics'?: QueueMetrics;
 }
 export interface QueueResponse {
+    'organizationId'?: string;
+    'organizationName'?: string;
     'queues'?: Array<Queue>;
 }
 export interface QueueSettings {

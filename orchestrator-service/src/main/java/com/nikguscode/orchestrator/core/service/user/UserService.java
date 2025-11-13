@@ -1,4 +1,4 @@
-package com.nikguscode.orchestrator.service.user;
+package com.nikguscode.orchestrator.core.service.user;
 
 import com.nikguscode.openapi.model.UserResponseDto;
 import com.nikguscode.orchestrator.dao.organization.OrganizationDao;
@@ -8,12 +8,13 @@ import com.nikguscode.orchestrator.dao.result.QueueEntryActiveRecord;
 import com.nikguscode.orchestrator.dao.user.UserDao;
 import com.nikguscode.orchestrator.dto.MaxUserDataDto;
 import com.nikguscode.orchestrator.dto.UserHashDto;
-import com.nikguscode.orchestrator.mapper.UserDtoMapper;
-import com.nikguscode.orchestrator.model.User;
-import com.nikguscode.orchestrator.service.authentication.MaxHashVerifyService;
+import com.nikguscode.orchestrator.core.mapper.UserDtoMapper;
+import com.nikguscode.orchestrator.core.model.User;
+import com.nikguscode.orchestrator.core.service.authentication.MaxHashVerifyService;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -50,8 +51,8 @@ public class UserService {
     return userDtoMapper.dtoToResponse(organizations, queueEntries);
   }
 
-  public boolean verifyUserAccess(Long maxId, String maxHash) {
-    UserHashDto userHashDto = userCachingService.getUserByMaxId(maxId);
+  public boolean verifyUserAccess(UUID authId, String maxHash) {
+    UserHashDto userHashDto = userCachingService.getUserByMaxId(authId);
 
     if (userHashDto == null) {
       return false;
@@ -65,12 +66,16 @@ public class UserService {
   }
 
   public UserHashDto getOrUpdateUserHashInformation(
-      String maxMiniAppInitInformation, Long maxId, String maxHash) {
-    if (maxId == null) {
-      throw new RuntimeException("zaglushka");
+      String maxMiniAppInitInformation, UUID authId, String maxHash) {
+    if (maxMiniAppInitInformation == null || maxMiniAppInitInformation.isBlank()) {
+      throw new RuntimeException("Max mini-app init information not found");
     }
 
-    UserHashDto cachedUser = userCachingService.getUserByMaxId(maxId);
+    if (authId == null) {
+      throw new RuntimeException("Auth id can't be null");
+    }
+
+    UserHashDto cachedUser = userCachingService.getUserByMaxId(authId);
 
     if (cachedUser != null) {
       if (maxHash.equals(cachedUser.getMaxHash())) {
@@ -78,29 +83,36 @@ public class UserService {
       }
     }
 
+    System.out.println("Проверка токена: " + maxHashVerifyService.check(maxMiniAppInitInformation));
+
     if (!maxHashVerifyService.check(maxMiniAppInitInformation)) {
-      throw new RuntimeException("заглушка, добавить исключение для некорректной аутентификации");
+      throw new RuntimeException("Max hash did not pass validation");
     }
 
-    return updateUserCache(maxMiniAppInitInformation, maxId, maxHash);
+    return updateUserCache(maxMiniAppInitInformation, authId, maxHash);
   }
 
   private UserHashDto updateUserCache(
-      String maxMiniAppInitInformation, Long maxId, String maxHash) {
-    UserHashDto uncachedUserHashDto = loadUserFromDb(maxMiniAppInitInformation, maxId, maxHash);
-    userCachingService.saveOrUpdateUser(maxId, uncachedUserHashDto);
+      String maxMiniAppInitInformation, UUID authId, String maxHash) {
+    UserHashDto uncachedUserHashDto = loadUserFromDb(maxMiniAppInitInformation, maxHash);
+    userCachingService.saveOrUpdateUser(authId, uncachedUserHashDto);
     return uncachedUserHashDto;
   }
 
-  private UserHashDto loadUserFromDb(String maxMiniAppInitInformation, Long maxId, String maxHash) {
-    Optional<User> userOpt = userDao.findByMaxId(maxId);
+  private UserHashDto loadUserFromDb(String maxMiniAppInitInformation, String maxHash) {
+    MaxUserDataDto maxUserDataDto = maxUserDataExtractor.extract(maxMiniAppInitInformation);
+
+    if (maxUserDataDto.getUser() == null || maxUserDataDto.getUser().getId() == null) {
+      throw new RuntimeException("Max user data dto can't be null");
+    }
+
+    Optional<User> userOpt = userDao.findByMaxId(maxUserDataDto.getUser().getId());
 
     if (userOpt.isPresent()) {
       User user = userOpt.get();
       return userDtoMapper.userToHashDto(user, maxHash);
     }
 
-    MaxUserDataDto maxUserDataDto = maxUserDataExtractor.extract(maxMiniAppInitInformation);
     User user = userDtoMapper.userToMaxUserDataDto(maxUserDataDto.getUser(), OffsetDateTime.now());
     userDao.add(user);
 

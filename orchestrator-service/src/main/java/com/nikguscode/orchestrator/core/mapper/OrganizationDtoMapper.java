@@ -1,4 +1,4 @@
-package com.nikguscode.orchestrator.mapper;
+package com.nikguscode.orchestrator.core.mapper;
 
 import com.nikguscode.openapi.model.OrganizationDto;
 import com.nikguscode.orchestrator.dao.result.OrganizationRecord;

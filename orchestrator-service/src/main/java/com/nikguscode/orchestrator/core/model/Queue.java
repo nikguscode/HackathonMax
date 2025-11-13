@@ -1,4 +1,4 @@
-package com.nikguscode.orchestrator.model;
+package com.nikguscode.orchestrator.core.model;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;

@@ -3,7 +3,7 @@ package com.nikguscode.orchestrator.dao.user;
 import static com.nikguscode.jooq.tables.User.USER;
 
 import com.nikguscode.jooq.tables.records.UserRecord;
-import com.nikguscode.orchestrator.model.User;
+import com.nikguscode.orchestrator.core.model.User;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;

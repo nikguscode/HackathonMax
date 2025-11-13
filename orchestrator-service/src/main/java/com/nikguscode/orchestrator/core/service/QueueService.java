@@ -1,11 +1,11 @@
-package com.nikguscode.orchestrator.service;
+package com.nikguscode.orchestrator.core.service;
 
 import com.nikguscode.openapi.model.QueueMembersResponseDto;
 import com.nikguscode.openapi.model.QueueResponseDto;
 import com.nikguscode.orchestrator.dao.queue.QueueDao;
 import com.nikguscode.orchestrator.dao.result.QueueMemberRecord;
-import com.nikguscode.orchestrator.mapper.QueueDtoMapper;
-import com.nikguscode.orchestrator.model.Queue;
+import com.nikguscode.orchestrator.core.mapper.QueueDtoMapper;
+import com.nikguscode.orchestrator.core.model.Queue;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;

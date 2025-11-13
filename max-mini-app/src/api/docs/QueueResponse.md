@@ -5,6 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**organizationId** | **string** |  | [optional] [default to undefined]
+**organizationName** | **string** |  | [optional] [default to undefined]
 **queues** | [**Array&lt;Queue&gt;**](Queue.md) |  | [optional] [default to undefined]
 
 ## Example
@@ -13,6 +15,8 @@ Name | Type | Description | Notes
 import { QueueResponse } from './api';
 
 const instance: QueueResponse = {
+    organizationId,
+    organizationName,
     queues,
 };
 ```

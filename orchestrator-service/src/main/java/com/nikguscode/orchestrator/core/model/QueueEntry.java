@@ -1,4 +1,4 @@
-package com.nikguscode.orchestrator.model;
+package com.nikguscode.orchestrator.core.model;
 
 import com.nikguscode.openapi.model.QueueEntryStatusDto;
 import java.util.UUID;

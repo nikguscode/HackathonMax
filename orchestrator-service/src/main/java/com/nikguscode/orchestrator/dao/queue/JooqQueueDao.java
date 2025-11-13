@@ -6,7 +6,7 @@ import static com.nikguscode.jooq.tables.User.USER;
 
 import com.nikguscode.jooq.enums.QueueStatus;
 import com.nikguscode.orchestrator.dao.result.QueueMemberRecord;
-import com.nikguscode.orchestrator.model.Queue;
+import com.nikguscode.orchestrator.core.model.Queue;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;

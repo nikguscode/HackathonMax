@@ -1,9 +1,9 @@
-package com.nikguscode.orchestrator.service;
+package com.nikguscode.orchestrator.core.service;
 
 import com.nikguscode.openapi.model.QueueEntryResponseDto;
 import com.nikguscode.orchestrator.dao.queueentry.QueueEntryDao;
 import com.nikguscode.orchestrator.dao.result.QueueEntryRecord;
-import com.nikguscode.orchestrator.mapper.QueueEntryDtoMapper;
+import com.nikguscode.orchestrator.core.mapper.QueueEntryDtoMapper;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Qualifier;

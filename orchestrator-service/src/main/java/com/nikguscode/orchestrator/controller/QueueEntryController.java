@@ -2,7 +2,7 @@ package com.nikguscode.orchestrator.controller;
 
 import com.nikguscode.openapi.model.QueueEntryResponseDto;
 import com.nikguscode.orchestrator.dao.queueentry.QueueEntryDao;
-import com.nikguscode.orchestrator.service.QueueEntryService;
+import com.nikguscode.orchestrator.core.service.QueueEntryService;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.DeleteMapping;

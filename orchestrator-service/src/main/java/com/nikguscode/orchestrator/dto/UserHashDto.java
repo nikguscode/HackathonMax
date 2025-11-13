@@ -2,7 +2,7 @@ package com.nikguscode.orchestrator.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.nikguscode.orchestrator.model.User;
+import com.nikguscode.orchestrator.core.model.User;
 import lombok.Getter;
 import lombok.ToString;
 

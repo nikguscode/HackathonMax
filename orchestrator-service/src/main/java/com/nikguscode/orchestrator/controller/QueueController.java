@@ -2,7 +2,7 @@ package com.nikguscode.orchestrator.controller;
 
 import com.nikguscode.openapi.model.QueueMembersResponseDto;
 import com.nikguscode.openapi.model.QueueResponseDto;
-import com.nikguscode.orchestrator.service.QueueService;
+import com.nikguscode.orchestrator.core.service.QueueService;
 import java.util.UUID;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
