@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Container, Flex, Button, Typography, Panel } from '@maxhub/max-ui';
 import AddUserModal from '../components/AddUserModal';
 import Logo from '../components/Logo'; 
-import { QueueMember, QueuesApi, Configuration, QueueEntriesApi, StaffApi } from '../api';
+import { QueueMember, QueuesApi, Configuration, QueueEntriesApi, StaffApi, QueueStaff } from '../api';
 import ConfirmationModal from '../components/ConfirmationModal'; 
 
 
@@ -35,7 +35,11 @@ const QueueUserModeratorPage: React.FC = () => {
   const [selectedUserEntryId, setSelectedUserEntryId] = useState<string | null>(null);
 
   const [currentView, setCurrentView] = useState<'users' | 'employees'>('users');
-  const [employees, setEmployees] = useState<QueueMember[]>([]);
+  const [employees, setEmployees] = useState<QueueStaff[]>([]);
+
+  const maxId = localStorage.getItem("maxId");
+  const maxHash = localStorage.getItem("maxHash") ?? '';
+
 
   
   const handleDeleteUser = ( entryId: string ) => {
@@ -80,8 +84,6 @@ const QueueUserModeratorPage: React.FC = () => {
   const defaultShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
 
-  const maxId = localStorage.getItem("maxId");
-  const maxHash = localStorage.getItem("maxHash") ?? '';
 
   const handleDeleteQueue = async (entryId: string) => {
     if (!entryId) { 
@@ -92,14 +94,15 @@ const QueueUserModeratorPage: React.FC = () => {
       console.log('🟡 Отправляем запрос на удаление:', entryId);
 
       const config = createApiConfiguration();
-      const queueEntriesApi = new QueueEntriesApi(config);
-      
-      await queueEntriesApi.deleteQueueEntry(entryId, Number(maxId), maxHash);
 
       if (currentView === 'users') {
+        const queueEntriesApi = new QueueEntriesApi(config);
+        await queueEntriesApi.deleteQueueEntry(entryId, Number(maxId), maxHash);
         setUsers(prevUsers => prevUsers.filter(user => user.queueEntryId !== entryId));
       } else {
-        setEmployees(prevEmps => prevEmps.filter(emp => emp.queueEntryId !== entryId));
+        const staffApi = new StaffApi(config);
+        await staffApi.deleteStaffMember(entryId, Number(maxId), maxHash);
+        setEmployees(prevEmps => prevEmps.filter(emp => emp.staffId !== entryId));
       }
 
       console.log('✅ Элемент удалён локально:', entryId);
@@ -112,9 +115,8 @@ const QueueUserModeratorPage: React.FC = () => {
   useEffect(() => { 
     const config = createApiConfiguration();
     const queueApi = new QueuesApi(config);
+    const staffApi = new QueuesApi(config);
 
-
-    // 1. Загрузка пользователей
     queueApi.getQueueMembers(queueId, Number(maxId), maxHash)
       .then(res => {
       const members: QueueMember[] = (res.data.members || []).map(
@@ -127,12 +129,30 @@ const QueueUserModeratorPage: React.FC = () => {
     }) 
     .catch(console.error);
 
+    const fetchEmployees = async () => {
+        try {
+            const res = await staffApi.getQueueStaff(queueId, Number(maxId), maxHash);
+            
+            const staffMembers: QueueStaff[] = (res.data.staff || []).map(
+                q=> ({
+                    staffId: q.staffId,
+                    username: q.username || '',
+                }));
+            
+            setEmployees(staffMembers);
+            
+        } catch (err) {
+            console.error("Ошибка при загрузке сотрудников:", err);
+        }
+    };
 
-  }, [queueId])
+    fetchEmployees();
+
+  }, [queueId, maxId, maxHash])
 
   const handleConfirmExit = async () => {
     if (selectedUserEntryId) {
-      await handleDeleteQueue(selectedUserEntryId, Number(maxId), maxHash);
+      await handleDeleteQueue(selectedUserEntryId);
       setSelectedUserEntryId(null);
       setIsModalOpen(false);
     }
@@ -224,7 +244,7 @@ const QueueUserModeratorPage: React.FC = () => {
           {dataToDisplay.length > 0 ? (
             dataToDisplay.map((item) => ( 
               <Panel
-                key={item.maxId}
+                key={maxId}
                 mode="secondary"
                 style={{
                   width: '100%',
@@ -266,7 +286,7 @@ const QueueUserModeratorPage: React.FC = () => {
                   
                 <Button
                   mode="primary"
-                  onClick={() => handleDeleteUser(item.queueEntryId!)}
+                  onClick={() => handleDeleteUser(maxId!)}
                   style={{
                     minWidth: '24px',
                     width: '24px',

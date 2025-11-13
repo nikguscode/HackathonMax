@@ -78,6 +78,8 @@ public class UserService {
       }
     }
 
+    System.out.println("Проверка токена: " + maxHashVerifyService.check(maxMiniAppInitInformation));
+
     if (!maxHashVerifyService.check(maxMiniAppInitInformation)) {
       throw new RuntimeException("заглушка, добавить исключение для некорректной аутентификации");
     }
