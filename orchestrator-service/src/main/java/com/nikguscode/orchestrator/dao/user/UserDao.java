@@ -1,6 +1,6 @@
 package com.nikguscode.orchestrator.dao.user;
 
-import com.nikguscode.orchestrator.model.User;
+import com.nikguscode.orchestrator.core.model.User;
 import java.util.Optional;
 
 public interface UserDao {

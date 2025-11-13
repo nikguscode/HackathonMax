@@ -1,8 +1,8 @@
-package com.nikguscode.orchestrator.service.authentication;
+package com.nikguscode.orchestrator.core.service.authentication;
 
 import com.nikguscode.orchestrator.dto.MaxUserDataDto;
-import com.nikguscode.orchestrator.service.user.MaxUserDataExtractor;
-import com.nikguscode.orchestrator.service.user.UserService;
+import com.nikguscode.orchestrator.core.service.user.MaxUserDataExtractor;
+import com.nikguscode.orchestrator.core.service.user.UserService;
 import org.springframework.stereotype.Service;
 
 @Service

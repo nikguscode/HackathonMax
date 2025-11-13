@@ -1,4 +1,4 @@
-package com.nikguscode.orchestrator.service.user;
+package com.nikguscode.orchestrator.core.service.user;
 
 import com.nikguscode.openapi.model.UserResponseDto;
 import com.nikguscode.orchestrator.dao.organization.OrganizationDao;
@@ -8,9 +8,9 @@ import com.nikguscode.orchestrator.dao.result.QueueEntryActiveRecord;
 import com.nikguscode.orchestrator.dao.user.UserDao;
 import com.nikguscode.orchestrator.dto.MaxUserDataDto;
 import com.nikguscode.orchestrator.dto.UserHashDto;
-import com.nikguscode.orchestrator.mapper.UserDtoMapper;
-import com.nikguscode.orchestrator.model.User;
-import com.nikguscode.orchestrator.service.authentication.MaxHashVerifyService;
+import com.nikguscode.orchestrator.core.mapper.UserDtoMapper;
+import com.nikguscode.orchestrator.core.model.User;
+import com.nikguscode.orchestrator.core.service.authentication.MaxHashVerifyService;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;

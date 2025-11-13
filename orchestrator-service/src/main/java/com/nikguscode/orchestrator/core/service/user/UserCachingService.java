@@ -1,4 +1,4 @@
-package com.nikguscode.orchestrator.service.user;
+package com.nikguscode.orchestrator.core.service.user;
 
 import com.nikguscode.orchestrator.dto.UserHashDto;
 import java.time.Duration;

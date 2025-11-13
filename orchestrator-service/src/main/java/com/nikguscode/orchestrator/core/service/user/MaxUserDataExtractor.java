@@ -1,4 +1,4 @@
-package com.nikguscode.orchestrator.service.user;
+package com.nikguscode.orchestrator.core.service.user;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

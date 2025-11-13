@@ -1,4 +1,4 @@
-package com.nikguscode.orchestrator.model;
+package com.nikguscode.orchestrator.core.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

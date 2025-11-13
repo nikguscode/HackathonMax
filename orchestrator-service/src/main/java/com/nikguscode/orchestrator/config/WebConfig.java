@@ -33,8 +33,8 @@ public class WebConfig implements WebMvcConfigurer {
 
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
-    System.out.println("voshel");
     registry.addInterceptor(authenticationInterceptor)
-        .addPathPatterns(pathPrefix + "/**");
+        .addPathPatterns(pathPrefix + "/**")
+        .excludePathPatterns(pathPrefix + "/users/{maxId}/mini-app");
   }
 }

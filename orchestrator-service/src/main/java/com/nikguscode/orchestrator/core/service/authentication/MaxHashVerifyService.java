@@ -1,4 +1,4 @@
-package com.nikguscode.orchestrator.service.authentication;
+package com.nikguscode.orchestrator.core.service.authentication;
 
 import com.github.dockerjava.zerodep.shaded.org.apache.commons.codec.binary.Hex;
 import java.net.URLDecoder;
