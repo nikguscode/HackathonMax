@@ -66,8 +66,6 @@ const HomePage: React.FC = () => {
   const [userQueues, setUserQueues] = useState<QueueEntryInUserResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const authId = localStorage.getItem("authId") ?? '';
-  const maxHash = localStorage.getItem("maxHash") ?? '';
 
   useEffect(() => {
     const initAndLoadUserData = async () => {
@@ -78,88 +76,111 @@ const HomePage: React.FC = () => {
 
       setLoading(true);
       setError(null);
-      
-      try {
-        const maxId = getMaxId();
-        if (!maxId) {
-          setError("Max ID не найден");
-          setLoading(false);
-          return;
-        }
 
-        
+      const maxId = getMaxId();
+      if (!maxId) {
+        setError("Max ID не найден");
+        setLoading(false);
+        return;
+      }
+
+      const savedAuthId = localStorage.getItem("authId");
+      const savedMaxHash = localStorage.getItem("maxHash");
+
+      const config = createApiConfiguration();
+      const usersApi = new UsersApi(config);
+
+      if (savedAuthId && savedMaxHash) {
+        try {
+          const userResponse = await usersApi.getUserByMaxId(
+            Number(maxId),
+            savedAuthId,
+            savedMaxHash
+          );
+
+          if (userResponse.data) {
+            console.log("Токен валиден. Используем сохранённые authId и maxHash.");
+            await loadUserData(Number(maxId), savedAuthId, savedMaxHash);
+            setLoading(false);
+            return;
+          }
+        } catch (err: any) {
+          if (err.response?.status === 401) {
+            console.warn("Токен недействителен (401). Переавторизация...");
+            localStorage.removeItem("authId");
+            localStorage.removeItem("maxHash");
+          } else {
+            console.error("Ошибка при проверке токена:", err);
+          }
+        }
+      }
+
+      try {
         const authConfig = createApiConfiguration();
         const usersApiAuth = new UsersApi(authConfig);
-        const body = { miniAppInitData: window.WebApp.initData };
-        if (authId === ''){
-          const authResponse = await usersApiAuth.sendUserMiniAppData(Number(maxId), body);
-          console.log("auth_date", body);
-          const bodi = { start_param: window.WebApp.initData };
-          console.log(bodi);
-        
-            if (authResponse.status === 200 && (authResponse.data as any)?.authId) {
-              const maxHash = (authResponse.data as any).maxHash;
-              const authId = (authResponse.data as any).authId;
-              localStorage.setItem("maxHash", maxHash);
-              localStorage.setItem("authId", authId);
-              console.log("✅ Авторизация успешна, maxHash сохранён:", maxHash);
-              console.log("✅ Авторизация успешна, maxId сохранён:", authId);
-              console.log("✅ Авторизация успешна, maxHash сохранён:", authResponse.request);
-              console.log("StartApp:", authResponse)
-            };
-          }
-            const config = createApiConfiguration();
-            const usersApi = new UsersApi(config);
-            const userResponse = (await usersApi.getUserByMaxId(Number(maxId), authId, maxHash)).data;
 
-            if (!userResponse) {
-              setError("Ответ от сервера пустой. Проверьте подключение к API");
-              setLoading(false);
-              return;
-            }
+        const authResponse = await usersApiAuth.sendUserMiniAppData(Number(maxId), {
+          miniAppInitData: window.WebApp.initData,
+        });
 
-            const organizationsList = userResponse.organizations || [];
-            const queueList = userResponse["queue-entries"] || [];
+        if (authResponse.status === 200 && authResponse.data?.authId) {
+          const newAuthId = authResponse.data.authId;
+          const newMaxHash = authResponse.data.maxHash;
 
-            const adminOrgs: Organization[] = [];
-            const queues: QueueEntryInUserResponse[] = [];
+          localStorage.setItem("authId", newAuthId);
+          localStorage.setItem("maxHash", newMaxHash);
 
-            for (const org of organizationsList) {
-              if (org.role === "MODERATOR" || org.role === "EMPLOYEE") {
-                adminOrgs.push({
-                  id: org.id,
-                  name: org.name,
-                  role: org.role,
-                  amountOfQueues: org.amountOfQueues,
-                });
-                
-              }
-            }
+          console.log("Авторизация успешна. Сохранены authId и maxHash.");
 
-            for (const queue of queueList) {
-              queues.push({
-                id: queue.id,
-                name: queue.name,
-                peopleInFront: queue.peopleInFront,
-              });
-            }
-
-            setModeratorOrgs(adminOrgs);
-            setUserQueues(queues);
-
-      } catch (err: any) {
-        console.error("Ошибка при загрузке данных:", err);
-
-        if (err.response?.status === 401) {
-          setError("⛔ Доступ запрещён. Перезапустите мини-приложение.");
-        } else if (err.response?.status === 404) {
-          setError("Пользователь не найден.");
+          await loadUserData(Number(maxId), newAuthId, newMaxHash);
         } else {
-          setError("Ошибка при загрузке данных с сервера.");
+          throw new Error("Не удалось получить authId");
         }
+      } catch (err: any) {
+        console.error("Ошибка авторизации:", err);
+        setError("Не удалось авторизоваться. Попробуйте позже.");
       } finally {
         setLoading(false);
       }
+    };
+
+    const loadUserData = async (maxId: number, authId: string, maxHash: string) => {
+      const config = createApiConfiguration();
+      const usersApi = new UsersApi(config);
+
+      const userResponse = await usersApi.getUserByMaxId(maxId, authId, maxHash);
+
+      if (!userResponse.data) {
+        throw new Error("Пустой ответ от сервера");
+      }
+
+      const organizationsList = userResponse.data.organizations || [];
+      const queueList = userResponse.data["queue-entries"] || [];
+
+      const adminOrgs: Organization[] = [];
+      const queues: QueueEntryInUserResponse[] = [];
+
+      for (const org of organizationsList) {
+        if (org.role === "MODERATOR" || org.role === "EMPLOYEE") {
+          adminOrgs.push({
+            id: org.id,
+            name: org.name,
+            role: org.role,
+            amountOfQueues: org.amountOfQueues,
+          });
+        }
+      }
+
+      for (const queue of queueList) {
+        queues.push({
+          id: queue.id,
+          name: queue.name,
+          peopleInFront: queue.peopleInFront,
+        });
+      }
+
+      setModeratorOrgs(adminOrgs);
+      setUserQueues(queues);
     };
 
     initAndLoadUserData();

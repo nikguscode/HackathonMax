@@ -12,6 +12,7 @@ import {
   QueueMetricsResponse,
 } from '../api';
 
+// === Адаптивность ===
 const useMediaQuery = (query: string) => {
   const [matches, setMatches] = useState(false);
   useEffect(() => {
@@ -24,6 +25,7 @@ const useMediaQuery = (query: string) => {
   return matches;
 };
 
+// === Конфиг API ===
 const createApiConfiguration = (): Configuration => {
   const basePath =
     import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
@@ -35,13 +37,14 @@ const createApiConfiguration = (): Configuration => {
     basePath,
     baseOptions: {
       headers: {
-        ...(authId ? { authId } : {}),
-        ...(maxHash ? { maxHash } : {}),
+        ...(authId ? { 'Auth-Id': authId } : {}),
+        ...(maxHash ? { 'Max-Hash': maxHash } : {}),
       },
     },
   });
 };
 
+/* ---------------------- Компонент ---------------------- */
 const ModeratorQueueDetailsPage: React.FC = () => {
   const { id: queueId } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -55,12 +58,62 @@ const ModeratorQueueDetailsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isPressed, setIsPressed] = useState(false);
 
+  // === Редактирование ===
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedSettings, setEditedSettings] = useState<QueueSettingsResponse['settings'] | null>(null);
+
   const defaultShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
 
   const handleBack = () => navigate(-1);
   const handleManage = () => navigate(`/moderator-queue/queue/${queueId}`);
 
+  // === Функции редактирования ===
+  const startEditing = () => {
+    setEditedSettings(settings);
+    setIsEditing(true);
+  };
+
+  const cancelEditing = () => {
+    setIsEditing(false);
+    setEditedSettings(null);
+  };
+
+  const handleInputChange = (field: keyof NonNullable<typeof editedSettings>, value: string | boolean) => {
+    if (!editedSettings) return;
+    const numValue = typeof value === 'string' ? parseInt(value) || 0 : value;
+    setEditedSettings({ ...editedSettings, [field]: numValue });
+  };
+
+  const isFormValid = editedSettings?.maxQueueSize !== undefined &&
+                      editedSettings.maxQueueSize > 0 &&
+                      editedSettings.arrivalGracePeriod !== undefined &&
+                      editedSettings.arrivalGracePeriod >= 0;
+
+  const saveSettings = async () => {
+    if (!editedSettings || !isFormValid || !queueId) return;
+
+    setLoading(true);
+    const config = createApiConfiguration();
+    const queuesApi = new QueuesApi(config);
+    const authId = localStorage.getItem('authId') ?? '';
+    const maxHash = localStorage.getItem('maxHash') ?? '';
+
+    try {
+      await queuesApi.updateQueueSettings(queueId, authId, maxHash);
+
+      setSettings(editedSettings);
+      setIsEditing(false);
+      setEditedSettings(null);
+    } catch (err) {
+      console.error('Failed to update queue settings:', err);
+      alert('Не удалось сохранить настройки очереди');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // === Загрузка данных ===
   useEffect(() => {
     if (!queueId) return;
 
@@ -90,7 +143,7 @@ const ModeratorQueueDetailsPage: React.FC = () => {
         const [settingsRes, metricsRes, graphicsRes] = await Promise.all([
           queuesApi.getQueueSettings(queueId, authId, maxHash),
           queuesApi.getQueueMetrics(queueId, authId, maxHash),
-          queuesApi.getQueueGraphics(queueId, authId, maxHash), 
+          queuesApi.getQueueGraphics(queueId, authId, maxHash),
         ]);
 
         setSettings(settingsRes.data.settings ?? null);
@@ -154,7 +207,6 @@ const ModeratorQueueDetailsPage: React.FC = () => {
     );
   }
 
-  // === Стили ===
   const containerStyle = isDesktop
     ? { maxWidth: '800px', margin: '0 auto', padding: '24px', gap: '24px' }
     : { maxWidth: '300px', margin: '0 auto', padding: '0 16px 100px 16px', gap: '16px' };
@@ -179,12 +231,91 @@ const ModeratorQueueDetailsPage: React.FC = () => {
           </Typography.Title>
         </Panel>
 
+        {/* === ДЕСКТОП === */}
         {isDesktop ? (
           <Flex direction="row" style={{ width: '100%', gap: '24px', flexWrap: 'wrap' }}>
-          
+
+            {/* === Настройки (с редактированием) === */}
             <Panel mode="secondary" style={{ flex: '1 1 45%', minWidth: '280px', padding: '20px', borderRadius: '12px', backgroundColor: '#F0F0F0' }}>
-              <Typography.Title style={{ fontSize: '16px', margin: '0 0 12px' }}>Настройки</Typography.Title>
-              {settings ? (
+              <Flex justify="space-between" align="center" style={{ marginBottom: '12px' }}>
+                <Typography.Title style={{ fontSize: '16px', margin: 0 }}>Настройки</Typography.Title>
+                {!isEditing ? (
+                  <Typography.Title onClick={startEditing} style={{ fontSize: '14px', cursor: 'pointer' }}>
+                    Редактировать
+                  </Typography.Title>
+                ) : (
+                  <Typography.Title onClick={cancelEditing} style={{ fontSize: '14px', color: '#666' }}>
+                    Отмена
+                  </Typography.Title>
+                )}
+              </Flex>
+
+              {isEditing && editedSettings ? (
+                <Flex direction="column" style={{ gap: '12px', fontSize: '14px' }}>
+                  <input
+                    type="number"
+                    placeholder="Макс. размер очереди *"
+                    value={editedSettings.maxQueueSize}
+                    onChange={(e) => handleInputChange('maxQueueSize', e.target.value)}
+                    style={{
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      border: '1px solid #ccc',
+                      fontSize: '14px',
+                      width: '96%',
+                    }}
+                  />
+                  <input
+                    type="number"
+                    placeholder="Льготный период (мин) *"
+                    value={editedSettings.arrivalGracePeriod}
+                    onChange={(e) => handleInputChange('arrivalGracePeriod', e.target.value)}
+                    style={{
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      border: '1px solid #ccc',
+                      fontSize: '14px',
+                      width: '96%',
+                    }}
+                  />
+                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                    <input
+                      type="checkbox"
+                      id="isActive"
+                      checked={editedSettings.isActive}
+                      onChange={(e) => handleInputChange('isActive', e.target.checked)}
+                    />
+                    <label htmlFor="isActive" style={{ cursor: 'pointer', userSelect: 'none' }}>
+                      Очередь активна
+                    </label>
+                  </div>
+
+                  {isFormValid && (
+                    <Flex
+                      onClick={saveSettings}
+                      style={{
+                        marginTop: '8px',
+                        padding: '10px',
+                        backgroundColor: '#00AA00',
+                        color: 'white',
+                        borderRadius: '8px',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        fontWeight: 500,
+                        userSelect: 'none',
+                        boxShadow: isPressed ? pressedShadow : defaultShadow,
+                        transform: isPressed ? 'scale(0.98)' : 'scale(1)',
+                        transition: 'all 0.15s ease',
+                      }}
+                      onMouseDown={() => setIsPressed(true)}
+                      onMouseUp={() => setIsPressed(false)}
+                      onMouseLeave={() => setIsPressed(false)}
+                    >
+                      Сохранить
+                    </Flex>
+                  )}
+                </Flex>
+              ) : settings ? (
                 <Flex direction="column" style={{ gap: '10px', fontSize: '14px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span>Макс. размер:</span> <strong>{settings.maxQueueSize}</strong>
@@ -204,7 +335,7 @@ const ModeratorQueueDetailsPage: React.FC = () => {
               )}
             </Panel>
 
-            {/* Метрики */}
+            {/* === Метрики === */}
             <Panel mode="secondary" style={{ flex: '1 1 45%', minWidth: '280px', padding: '20px', borderRadius: '12px', backgroundColor: '#F0F0F0' }}>
               <Typography.Title style={{ fontSize: '16px', margin: '0 0 12px' }}>Метрики</Typography.Title>
               {metrics ? (
@@ -230,6 +361,7 @@ const ModeratorQueueDetailsPage: React.FC = () => {
               )}
             </Panel>
 
+            {/* === График === */}
             <Panel mode="secondary" style={{ flex: '1 1 100%', padding: '20px', borderRadius: '12px', backgroundColor: '#F0F0F0', minHeight: '300px' }}>
               <Typography.Title style={{ fontSize: '16px', margin: '0 0 16px' }}>Динамика за день</Typography.Title>
               {chartData ? (
@@ -253,6 +385,7 @@ const ModeratorQueueDetailsPage: React.FC = () => {
               )}
             </Panel>
 
+            {/* === Кнопка управления === */}
             <Flex style={{ width: '100%' }} justify="center">
               <Flex
                 onClick={handleManage}
@@ -282,9 +415,69 @@ const ModeratorQueueDetailsPage: React.FC = () => {
             </Flex>
           </Flex>
         ) : (
+          /* === МОБИЛЬНАЯ ВЕРСИЯ === */
           <>
+            {/* === Настройки (моб.) === */}
             <Panel mode="secondary" style={{ width: '100%', padding: '16px', borderRadius: '12px', backgroundColor: '#F0F0F0' }}>
-              {settings ? (
+              <Flex justify="space-between" align="center" style={{ marginBottom: '12px' }}>
+                <Typography.Title style={{ fontSize: '15px', margin: 0 }}>Настройки</Typography.Title>
+                {!isEditing && (
+                  <Typography.Title onClick={startEditing} style={{ fontSize: '13px' }}>
+                    Редактировать
+                  </Typography.Title>
+                )}
+              </Flex>
+
+              {isEditing && editedSettings ? (
+                <Flex direction="column" style={{ gap: '10px' }}>
+                  <input
+                    type="number"
+                    placeholder="Макс. размер *"
+                    value={editedSettings.maxQueueSize}
+                    onChange={(e) => handleInputChange('maxQueueSize', e.target.value)}
+                    style={{ padding: '8px', borderRadius: '8px', border: '1px solid #ccc', fontSize: '13px' }}
+                  />
+                  <input
+                    type="number"
+                    placeholder="Льготный период (мин) *"
+                    value={editedSettings.arrivalGracePeriod}
+                    onChange={(e) => handleInputChange('arrivalGracePeriod', e.target.value)}
+                    style={{ padding: '8px', borderRadius: '8px', border: '1px solid #ccc', fontSize: '13px' }}
+                  />
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <input
+                      type="checkbox"
+                      id="mobileIsActive"
+                      checked={editedSettings.isActive}
+                      onChange={(e) => handleInputChange('isActive', e.target.checked)}
+                    />
+                    <label htmlFor="mobileIsActive" style={{ fontSize: '13px', cursor: 'pointer' }}>
+                      Активна
+                    </label>
+                  </div>
+
+                  {isFormValid && (
+                    <Flex
+                      onClick={saveSettings}
+                      style={{
+                        marginTop: '8px',
+                        padding: '10px',
+                        backgroundColor: '#00AA00',
+                        color: 'white',
+                        borderRadius: '8px',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        fontWeight: 500,
+                      }}
+                    >
+                      Сохранить
+                    </Flex>
+                  )}
+                  <Typography.Title onClick={cancelEditing} style={{ fontSize: '12px', textAlign: 'center', marginTop: '4px' }}>
+                    Отмена
+                  </Typography.Title>
+                </Flex>
+              ) : settings ? (
                 <Flex direction="column" style={{ gap: '8px', fontSize: '13px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span>Макс. размер:</span> <strong>{settings.maxQueueSize}</strong>
@@ -306,6 +499,7 @@ const ModeratorQueueDetailsPage: React.FC = () => {
               )}
             </Panel>
 
+            {/* === Метрики (моб.) === */}
             <Panel
               mode="secondary"
               style={{
@@ -350,6 +544,7 @@ const ModeratorQueueDetailsPage: React.FC = () => {
               )}
             </Panel>
 
+            {/* === Кнопка управления (моб.) === */}
             <Flex
               onClick={handleManage}
               onMouseDown={() => setIsPressed(true)}
