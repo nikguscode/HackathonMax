@@ -224,6 +224,7 @@ export type UserRole = typeof UserRole[keyof typeof UserRole];
 
 export interface UserRoleRequest {
     'organizationId': string;
+    'queueId': string;
     'role': UserRole;
 }
 
