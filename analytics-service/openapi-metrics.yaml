@@ -4,6 +4,9 @@ info:
   version: 0.0.1
 
 paths:
+  ### Analitycs service ###
+  
+  # Metrics
   /organizations/{organizationId}/metrics:
     get:
       tags: [organizations]
@@ -42,9 +45,50 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/QueueMetricsResponse'
-
+  
+  # Graphics
+  /organizations/{organizationId}/graphics:
+    get:
+      tags: [organizations]
+      summary: Get organization graphics
+      operationId: getOrganizationGraphics
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          description: Organization ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Organization graphics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationGraphicsResponse'
+  
+  /queues/{queueId}/graphics:
+    get:
+      tags: [queues]
+      summary: Get queue graphics
+      operationId: getQueueGraphics
+      parameters:
+        - name: queueId
+          in: path
+          required: true
+          description: Queue ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Queue graphics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueGraphicsResponse'
 components:
   schemas:
+  # --- Organization metrics ---
     OrganizationMetricsResponse:
       type: object
       properties:
@@ -72,7 +116,8 @@ components:
           format: float
         numberOfServedMembers:
           type: integer
-
+          
+  # --- Queue metrics ---
     QueueMetricsResponse:
       type: object
       properties:
@@ -100,3 +145,66 @@ components:
           type: integer
         averageInQueue:
           type: integer
+          
+  # --- Queue graphics ---
+    QueueGraphicsResponse:
+      type: object
+      properties:
+        graphics:
+          $ref: '#/components/schemas/QueueGraphics'
+
+    QueueGraphics:
+      type: object
+      properties:
+        membersInQueueByTime:
+          type: array
+          items:
+            type: object
+            properties:
+              time:
+                type: string
+                format: date-time
+              count:
+                type: integer
+        averageWaitingTimeByTime:
+          type: array
+          items:
+            type: object
+            properties:
+              time:
+                type: string
+                format: date-time
+              waitingTime:
+                type: number
+                format: float
+    
+  # --- Organization graphics ---
+    OrganizationGraphicsResponse:
+      type: object
+      properties:
+        graphics:
+          $ref: '#/components/schemas/OrganizationGraphics'
+
+    OrganizationGraphics:
+      type: object
+      properties:
+        throughputByTime:
+          type: array
+          items:
+            type: object
+            properties:
+              time:
+                type: string
+                format: date-time
+              throughput:
+                type: integer
+        totalLoadByTime:
+          type: array
+          items:
+            type: object
+            properties:
+              time:
+                type: string
+                format: date-time
+              totalLoad:
+                type: integer

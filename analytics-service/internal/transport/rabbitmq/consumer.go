@@ -3,6 +3,7 @@ package rabbitmq
 import (
 	"analytics_service/internal/service"
 	"encoding/json"
+	"fmt"
 	"log"
 
 	"github.com/streadway/amqp"
@@ -25,6 +26,18 @@ func NewConsumer(ch *amqp.Channel, queue string, svc *service.MetricsService, pu
 }
 
 func (c *Consumer) Start() error {
+	_, err := c.channel.QueueDeclare(
+		c.queueName,
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		return fmt.Errorf("failed to declare queue: %w", err)
+	}
+
 	msgs, err := c.channel.Consume(
 		c.queueName,
 		"",

@@ -13,7 +13,9 @@ func main() {
 	if err != nil {
 		log.Fatalf("Bootstrap initialization failed: %v", err)
 	}
-	defer bs.RabbitConn.Close()
+	if bs.RabbitConn != nil {
+		defer bs.RabbitConn.Close()
+	}
 
 	a := app.New(bs)
 	if err := a.Run(); err != nil {

@@ -29,12 +29,17 @@ func Init() (*Bootstrap, error) {
 
 	repoQueue := repository.NewQueueMetricsRepo(conn)
 	repoOrg := repository.NewOrgMetricsRepo(conn)
+	graphQueue := repository.NewQueueGraphicsRepo(conn)
+	graphOrg := repository.NewOrgGraphicsRepo(conn)
 
-	metricsService := service.NewMetricsService(repoOrg, repoQueue)
+	metricsService := service.NewMetricsService(repoOrg, repoQueue, graphOrg, graphQueue)
 
-	rbconn, err := rabbitmq.NewConnection(cfg.RabbitURL())
-	if err != nil {
-		return nil, err
+	var rbconn *rabbitmq.Connection
+	if cfg.AppMode == "rabbit" {
+		rbconn, err = rabbitmq.NewConnection(cfg.RabbitURL())
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &Bootstrap{
