@@ -80,6 +80,8 @@ const QueueDetailsPage: React.FC = () => {
   const authId = localStorage.getItem("authId") ?? '';
   const maxHash = localStorage.getItem("maxHash") ?? '';
 
+  const Status = queueDetails?.status;
+
   useEffect(() => { 
     if (!entryId) return;
     const fetchQueueEntry = async () => {
@@ -108,10 +110,14 @@ const QueueDetailsPage: React.FC = () => {
     try {
       const config = createApiConfiguration();
       const queueApi = new QueueEntriesApi(config);
-
-      await queueApi.deleteQueueEntry(entryId, authId, maxHash);
-      console.log('Очередь успешно удалена:', entryId);
-
+      
+      if (status == "WAITING"){
+        await queueApi.updateQueueEntryStatus(entryId, authId, maxHash, {status: "CANCELED"});
+        console.log('Отменено:', entryId);
+      } else if (status == "SERVING"){
+        await queueApi.updateQueueEntryStatus(entryId, authId, maxHash, {status: "SERVED"});
+        console.log('Обслужено:', entryId);       
+      }
       navigate('/');
     } catch (err) {
       console.error('Ошибка при удалении очереди:', err);
@@ -158,7 +164,7 @@ const QueueDetailsPage: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  const Status = queueDetails?.status;
+  
 
   if (Status === 'WAITING'){
     status = 'Ожидание';
