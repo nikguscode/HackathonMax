@@ -1,4 +1,4 @@
-package com.nikguscode.orchestrator.dao.organization;
+package com.nikguscode.orchestrator.dao.tables.organization;
 
 import com.nikguscode.orchestrator.core.model.Organization;
 import com.nikguscode.orchestrator.dao.result.OrganizationRecord;

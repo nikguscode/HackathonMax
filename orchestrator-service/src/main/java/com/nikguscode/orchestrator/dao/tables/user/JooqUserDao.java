@@ -1,4 +1,4 @@
-package com.nikguscode.orchestrator.dao.user;
+package com.nikguscode.orchestrator.dao.tables.user;
 
 import static com.nikguscode.jooq.tables.User.USER;
 

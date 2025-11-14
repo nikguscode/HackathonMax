@@ -1,4 +1,4 @@
-package com.nikguscode.orchestrator.dao.queue;
+package com.nikguscode.orchestrator.dao.tables.queue;
 
 import com.nikguscode.orchestrator.core.model.Queue;
 import com.nikguscode.orchestrator.core.model.QueueParams;

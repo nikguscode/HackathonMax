@@ -1,4 +1,4 @@
-package com.nikguscode.orchestrator.dao.user;
+package com.nikguscode.orchestrator.dao.tables.user;
 
 import com.nikguscode.orchestrator.core.model.User;
 import java.util.Optional;

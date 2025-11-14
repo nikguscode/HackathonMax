@@ -23,19 +23,34 @@ public class MaxUserDataExtractor {
     try {
       Map<String, String> queryParams = parseQueryString(rawMiniAppInitData);
 
-      UserDto user = objectMapper.readValue(queryParams.get("user"), UserDto.class);
-      ChatDto chat = objectMapper.readValue(queryParams.get("chat"), ChatDto.class);
+      String userJsonEncoded = queryParams.get("user");
+      String chatJsonEncoded = queryParams.get("chat");
 
-      MaxUserDataDto dataDto = MaxUserDataDto.builder()
+      if (userJsonEncoded == null || userJsonEncoded.isEmpty()) {
+        log.error("Параметр 'user' отсутствует в rawMiniAppInitData.");
+        throw new IllegalArgumentException("Missing 'user' data in init string.");
+      }
+      String userJsonDecoded = URLDecoder.decode(userJsonEncoded, StandardCharsets.UTF_8);
+      UserDto user = objectMapper.readValue(userJsonDecoded, UserDto.class);
+
+      MaxUserDataDto.MaxUserDataDtoBuilder maxUserDataDtoBuilder = MaxUserDataDto.builder()
           .user(user)
-          .chat(chat)
           .queryId(queryParams.get("query_id"))
           .hash(queryParams.get("hash"))
           .ip(queryParams.get("ip"))
           .authDate(Long.parseLong(queryParams.get("auth_date")))
-          .build();
+          .startParam(queryParams.get("start_param"));
 
-      return dataDto;
+      if (chatJsonEncoded == null || chatJsonEncoded.isEmpty()) {
+        log.warn("Параметр 'chat' отсутствует. MiniAppInitData не содержит данных о чате.");
+        return maxUserDataDtoBuilder.build();
+      }
+      String chatJsonDecoded = URLDecoder.decode(chatJsonEncoded, StandardCharsets.UTF_8);
+      ChatDto chat = objectMapper.readValue(chatJsonDecoded, ChatDto.class);
+
+      return maxUserDataDtoBuilder
+          .chat(chat)
+          .build();
     } catch (JsonProcessingException e) {
       log.error("Не удалось десериализовать JSON из Max: {}", e.getMessage());
       throw new RuntimeException("Ошибка парсинга JSON данных", e);
@@ -50,9 +65,7 @@ public class MaxUserDataExtractor {
       return Map.of();
     }
 
-    String decodedData = URLDecoder.decode(rawMiniAppInitData, StandardCharsets.UTF_8);
-
-    return UriComponentsBuilder.fromUriString("?" + decodedData)
+    return UriComponentsBuilder.fromUriString("?" + rawMiniAppInitData)
         .build()
         .getQueryParams()
         .toSingleValueMap();

@@ -1,11 +1,11 @@
 package com.nikguscode.orchestrator.core.service.user;
 
 import com.nikguscode.openapi.model.UserResponseDto;
-import com.nikguscode.orchestrator.dao.organization.OrganizationDao;
-import com.nikguscode.orchestrator.dao.queueentry.QueueEntryDao;
+import com.nikguscode.orchestrator.dao.tables.organization.OrganizationDao;
+import com.nikguscode.orchestrator.dao.tables.queueentry.QueueEntryDao;
 import com.nikguscode.orchestrator.dao.result.OrganizationRecord;
 import com.nikguscode.orchestrator.dao.result.QueueEntryActiveRecord;
-import com.nikguscode.orchestrator.dao.user.UserDao;
+import com.nikguscode.orchestrator.dao.tables.user.UserDao;
 import com.nikguscode.orchestrator.dto.max.MaxUserDataDto;
 import com.nikguscode.orchestrator.dto.user.UserHashDto;
 import com.nikguscode.orchestrator.core.mapper.UserDtoMapper;
@@ -43,10 +43,6 @@ public class UserService {
     this.userCachingService = userCachingService;
     this.maxHashVerifyService = maxHashVerifyService;
     this.maxUserDataExtractor = maxUserDataExtractor;
-  }
-
-  public void addUser(Long maxId) {
-
   }
 
   public UserResponseDto getUserQueueInformation(Long maxId) {

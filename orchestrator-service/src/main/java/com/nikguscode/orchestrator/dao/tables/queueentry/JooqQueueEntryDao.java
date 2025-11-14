@@ -1,4 +1,4 @@
-package com.nikguscode.orchestrator.dao.queueentry;
+package com.nikguscode.orchestrator.dao.tables.queueentry;
 
 import static com.nikguscode.jooq.tables.Queue.QUEUE;
 import static com.nikguscode.jooq.tables.QueueEntry.QUEUE_ENTRY;
@@ -7,6 +7,7 @@ import static com.nikguscode.jooq.tables.User.USER;
 
 import com.nikguscode.jooq.enums.QueueEntryStatus;
 import com.nikguscode.orchestrator.core.model.QueueEntry;
+import com.nikguscode.orchestrator.core.model.QueueEntryMeta;
 import com.nikguscode.orchestrator.dao.result.QueueEntryActiveRecord;
 import com.nikguscode.orchestrator.dao.result.QueueEntryRecord;
 import java.util.List;
@@ -26,23 +27,31 @@ public class JooqQueueEntryDao implements QueueEntryDao {
   private final DSLContext dsl;
 
   @Override
+  public void create(QueueEntry queueEntry, QueueEntryMeta queueEntryMeta) {
+    var queueEntryRecord = dsl.newRecord(QUEUE_ENTRY);
+    var queueEntryMetaRecord = dsl.newRecord(QUEUE_ENTRY_META);
+
+    queueEntryRecord.setId(queueEntry.getId());
+    queueEntryRecord.setIdQueue(queueEntry.getQueueId());
+    queueEntryRecord.setIdMax(queueEntry.getMaxId());
+    queueEntryRecord.setStatus(QueueEntryStatus.valueOf(queueEntry.getStatus().toString()));
+
+    queueEntryMetaRecord.setId(queueEntryMeta.getId());
+    queueEntryMetaRecord.setIdQueueEntry(queueEntryMeta.getQueueEntryId());
+    queueEntryMetaRecord.setJoinedAt(queueEntryMeta.getJoinedAt().toLocalDateTime());
+
+    System.out.println(queueEntryRecord);
+    System.out.println(queueEntryMetaRecord);
+    queueEntryRecord.store();
+    queueEntryMetaRecord.store();
+  }
+
+  @Override
   public void updateByEntryId(UUID queueEntryId, QueueEntryStatus status) {
     dsl.update(QUEUE_ENTRY)
         .set(QUEUE_ENTRY.STATUS, status)
         .where(QUEUE_ENTRY.ID.eq(queueEntryId))
         .execute();
-  }
-
-  @Override
-  public List<QueueEntry> findActiveByQueueId(UUID queueId) {
-    var excludedStatuses
-        = List.of(QueueEntryStatus.MISSED, QueueEntryStatus.SERVED, QueueEntryStatus.CANCELED);
-
-    return dsl
-        .select(QUEUE_ENTRY.fields())
-        .from(QUEUE_ENTRY)
-        .where(QUEUE_ENTRY.STATUS.notIn(excludedStatuses))
-        .fetchInto(QueueEntry.class);
   }
 
   @Override

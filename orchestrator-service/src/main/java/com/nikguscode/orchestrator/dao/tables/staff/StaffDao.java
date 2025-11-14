@@ -1,4 +1,4 @@
-package com.nikguscode.orchestrator.dao.staff;
+package com.nikguscode.orchestrator.dao.tables.staff;
 
 import com.nikguscode.orchestrator.dao.result.StaffRecord;
 import java.util.List;

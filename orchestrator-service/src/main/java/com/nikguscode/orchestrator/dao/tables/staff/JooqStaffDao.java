@@ -1,4 +1,4 @@
-package com.nikguscode.orchestrator.dao.staff;
+package com.nikguscode.orchestrator.dao.tables.staff;
 
 import static com.nikguscode.jooq.tables.QueueStaff.QUEUE_STAFF;
 import static com.nikguscode.jooq.tables.User.USER;

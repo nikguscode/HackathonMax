@@ -2,7 +2,7 @@ package com.nikguscode.orchestrator.controller;
 
 import com.nikguscode.openapi.model.UserCreatingRequestDto;
 import com.nikguscode.openapi.model.UserResponseDto;
-import com.nikguscode.orchestrator.dao.user.UserDao;
+import com.nikguscode.orchestrator.dao.tables.user.UserDao;
 import com.nikguscode.orchestrator.core.mapper.UserDtoMapper;
 import com.nikguscode.orchestrator.core.model.User;
 import com.nikguscode.orchestrator.core.service.user.UserService;
