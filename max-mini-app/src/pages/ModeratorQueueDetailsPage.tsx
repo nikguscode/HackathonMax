@@ -4,7 +4,6 @@ import { Container, Flex, Panel, Typography } from '@maxhub/max-ui';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import Logo from '../components/Logo';
 
-// === API ===
 import {
   QueuesApi,
   OrganizationsApi,
@@ -13,7 +12,6 @@ import {
   QueueMetricsResponse,
 } from '../api';
 
-// === Адаптивность ===
 const useMediaQuery = (query: string) => {
   const [matches, setMatches] = useState(false);
   useEffect(() => {
@@ -26,29 +24,24 @@ const useMediaQuery = (query: string) => {
   return matches;
 };
 
-// === Конфиг API ===
 const createApiConfiguration = (): Configuration => {
-  const basePath = import.meta.env.VITE_API_BASE_PATH
-    ? `${import.meta.env.VITE_API_BASE_PATH.replace(/\/+$/, '')}/v1/api`
-    : 'http://localhost:8080/v1/api';
+  const basePath =
+    import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
 
-  const authId = localStorage.getItem('authId') ?? '';
-  const maxHash = localStorage.getItem('maxHash') ?? '';
-  const orgId = localStorage.getItem('orgId') ?? '';
+  const authId = localStorage.getItem("authId");
+  const maxHash = localStorage.getItem("maxHash");
 
   return new Configuration({
     basePath,
     baseOptions: {
       headers: {
-        ...(authId ? { 'Auth-Id': authId } : {}),
-        ...(maxHash ? { 'Max-Hash': maxHash } : {}),
-        ...(orgId ? { orgId } : {}),
+        ...(authId ? { authId } : {}),
+        ...(maxHash ? { maxHash } : {}),
       },
     },
   });
 };
 
-/* ---------------------- Компонент ---------------------- */
 const ModeratorQueueDetailsPage: React.FC = () => {
   const { id: queueId } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -57,6 +50,7 @@ const ModeratorQueueDetailsPage: React.FC = () => {
   const [queueName, setQueueName] = useState<string>('Загрузка...');
   const [settings, setSettings] = useState<QueueSettingsResponse['settings'] | null>(null);
   const [metrics, setMetrics] = useState<QueueMetricsResponse['metrics'] | null>(null);
+  const [chartData, setChartData] = useState<Array<{ time: string; inQueue: number; served: number }> | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isPressed, setIsPressed] = useState(false);
@@ -66,17 +60,6 @@ const ModeratorQueueDetailsPage: React.FC = () => {
 
   const handleBack = () => navigate(-1);
   const handleManage = () => navigate(`/moderator-queue/queue/${queueId}`);
-
-  // === Мок-данные для графика (в реале — с бэка) ===
-  const chartData = [
-    { time: '00:00', inQueue: 2, served: 0 },
-    { time: '01:00', inQueue: 3, served: 2 },
-    { time: '02:00', inQueue: 5, served: 5 },
-    { time: '03:00', inQueue: 4, served: 8 },
-    { time: '04:00', inQueue: 6, served: 12 },
-    { time: '05:00', inQueue: 8, served: 15 },
-    { time: '06:00', inQueue: 3, served: 15 },
-  ];
 
   useEffect(() => {
     if (!queueId) return;
@@ -104,17 +87,57 @@ const ModeratorQueueDetailsPage: React.FC = () => {
         const queue = orgQueuesRes.data.queues?.find(q => q.id === queueId);
         setQueueName(queue?.name || `Очередь ${queueId}`);
 
-        const [settingsRes, metricsRes] = await Promise.all([
+        const [settingsRes, metricsRes, graphicsRes] = await Promise.all([
           queuesApi.getQueueSettings(queueId, authId, maxHash),
           queuesApi.getQueueMetrics(queueId, authId, maxHash),
+          queuesApi.getQueueGraphics(queueId, authId, maxHash), 
         ]);
 
         setSettings(settingsRes.data.settings ?? null);
         setMetrics(metricsRes.data.metrics ?? null);
+
+        const graphics = graphicsRes.data.graphics;
+        if (graphics) {
+          const inQueueData = graphics.membersInQueueByTime || [];
+          const waitingTimeData = graphics.averageWaitingTimeByTime || [];
+
+          const timeMap = new Map<string, { time: string; inQueue: number; served: number }>();
+
+          inQueueData.forEach(item => {
+            if (item.time && item.count !== undefined) {
+              timeMap.set(item.time, {
+                time: item.time,
+                inQueue: item.count,
+                served: timeMap.get(item.time)?.served || 0,
+              });
+            }
+          });
+
+          let cumulativeServed = 0;
+          const servedPerMinute = 1 / 5;
+          waitingTimeData.forEach(item => {
+            if (item.time && item.waitingTime !== undefined) {
+              const entry = timeMap.get(item.time) || { time: item.time, inQueue: 0, served: 0 };
+              const servedInPeriod = Math.max(0, Math.round(item.waitingTime * servedPerMinute));
+              cumulativeServed += servedInPeriod;
+              entry.served = cumulativeServed;
+              timeMap.set(item.time, entry);
+            }
+          });
+
+          const sortedData = Array.from(timeMap.values()).sort((a, b) =>
+            a.time.localeCompare(b.time)
+          );
+
+          setChartData(sortedData.length > 0 ? sortedData : null);
+        } else {
+          setChartData(null);
+        }
       } catch (err: any) {
         console.error('API Error:', err);
         setError('Ошибка загрузки');
         setQueueName(`Очередь ${queueId}`);
+        setChartData(null);
       } finally {
         setLoading(false);
       }
@@ -140,12 +163,7 @@ const ModeratorQueueDetailsPage: React.FC = () => {
     <Container style={{ backgroundColor: '#ffffffff', minHeight: '100vh', padding: 0 }}>
       <Logo onBack={handleBack} />
 
-      <Flex
-        direction="column"
-        align="center"
-        style={containerStyle}
-      >
-        {/* === НАЗВАНИЕ === */}
+      <Flex direction="column" align="center" style={containerStyle}>
         <Panel
           mode="secondary"
           style={{
@@ -161,11 +179,9 @@ const ModeratorQueueDetailsPage: React.FC = () => {
           </Typography.Title>
         </Panel>
 
-        {/* === ОСНОВНОЙ КОНТЕНТ === */}
         {isDesktop ? (
-          /* === ДЕСКТОП: ГРИД 2x2 === */
           <Flex direction="row" style={{ width: '100%', gap: '24px', flexWrap: 'wrap' }}>
-            {/* Настройки */}
+          
             <Panel mode="secondary" style={{ flex: '1 1 45%', minWidth: '280px', padding: '20px', borderRadius: '12px', backgroundColor: '#F0F0F0' }}>
               <Typography.Title style={{ fontSize: '16px', margin: '0 0 12px' }}>Настройки</Typography.Title>
               {settings ? (
@@ -214,27 +230,30 @@ const ModeratorQueueDetailsPage: React.FC = () => {
               )}
             </Panel>
 
-            {/* График */}
             <Panel mode="secondary" style={{ flex: '1 1 100%', padding: '20px', borderRadius: '12px', backgroundColor: '#F0F0F0', minHeight: '300px' }}>
               <Typography.Title style={{ fontSize: '16px', margin: '0 0 16px' }}>Динамика за день</Typography.Title>
-              <ResponsiveContainer width="100%" height={240}>
-                <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="time" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="inQueue" stroke="#8884d8" name="В очереди" />
-                  <Line type="monotone" dataKey="served" stroke="#82ca9d" name="Обслужено" />
-                </LineChart>
-              </ResponsiveContainer>
+              {chartData ? (
+                <ResponsiveContainer width="100%" height={240}>
+                  <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="time" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey="inQueue" stroke="#8884d8" name="В очереди" strokeWidth={2} />
+                    <Line type="monotone" dataKey="served" stroke="#82ca9d" name="Обслужено" strokeWidth={2} />
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                <Flex justify="center" align="center" style={{ height: 240 }}>
+                  <Typography.Body style={{ color: '#666' }}>
+                    {loading ? 'Загрузка графика...' : 'Нет данных за день'}
+                  </Typography.Body>
+                </Flex>
+              )}
             </Panel>
 
-            {/* Кнопка */}
-            <Flex
-              style={{ width: '100%' }}
-              justify="center"
-            >
+            <Flex style={{ width: '100%' }} justify="center">
               <Flex
                 onClick={handleManage}
                 onMouseDown={() => setIsPressed(true)}
@@ -263,9 +282,7 @@ const ModeratorQueueDetailsPage: React.FC = () => {
             </Flex>
           </Flex>
         ) : (
-          /* === МОБИЛЬНАЯ ВЕРСИЯ === */
           <>
-            {/* Настройки */}
             <Panel mode="secondary" style={{ width: '100%', padding: '16px', borderRadius: '12px', backgroundColor: '#F0F0F0' }}>
               {settings ? (
                 <Flex direction="column" style={{ gap: '8px', fontSize: '13px' }}>
@@ -289,7 +306,6 @@ const ModeratorQueueDetailsPage: React.FC = () => {
               )}
             </Panel>
 
-            {/* Метрики */}
             <Panel
               mode="secondary"
               style={{
@@ -334,7 +350,6 @@ const ModeratorQueueDetailsPage: React.FC = () => {
               )}
             </Panel>
 
-            {/* Кнопка */}
             <Flex
               onClick={handleManage}
               onMouseDown={() => setIsPressed(true)}

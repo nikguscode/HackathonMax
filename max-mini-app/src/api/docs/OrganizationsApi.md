@@ -9,6 +9,7 @@ All URIs are relative to *http://orchestrator-service:8080*
 |[**getOrganizationMetrics**](#getorganizationmetrics) | **GET** /organizations/{organizationId}/metrics | Get organization metrics|
 |[**getOrganizationQueues**](#getorganizationqueues) | **GET** /organizations/{organizationId}/queues | Get list of queues in an organization|
 |[**getOrganizationSettings**](#getorganizationsettings) | **GET** /organizations/{organizationId}/settings | Get organization settings|
+|[**updateSettingsOrganization**](#updatesettingsorganization) | **POST** /organizations/{organizationId}/settings | Update settings|
 
 # **createOrganizationQueue**
 > createOrganizationQueue()
@@ -303,6 +304,69 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 |**200** | Organization settings retrieved successfully |  -  |
+|**400** | Invalid request parameters |  -  |
+|**404** | Resource not found |  -  |
+|**0** | Unexpected server error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **updateSettingsOrganization**
+> updateSettingsOrganization()
+
+
+### Example
+
+```typescript
+import {
+    OrganizationsApi,
+    Configuration,
+    OrganizationSettingsResponse
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new OrganizationsApi(configuration);
+
+let organizationId: string; //Organization id (default to undefined)
+let authId: string; //Auth Id provided by orchestrator service (default to undefined)
+let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
+let organizationSettingsResponse: OrganizationSettingsResponse; //Update organization settings (optional)
+
+const { status, data } = await apiInstance.updateSettingsOrganization(
+    organizationId,
+    authId,
+    maxHash,
+    organizationSettingsResponse
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **organizationSettingsResponse** | **OrganizationSettingsResponse**| Update organization settings | |
+| **organizationId** | [**string**] | Organization id | defaults to undefined|
+| **authId** | [**string**] | Auth Id provided by orchestrator service | defaults to undefined|
+| **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
+
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: Not defined
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | Organization update settings |  -  |
 |**400** | Invalid request parameters |  -  |
 |**404** | Resource not found |  -  |
 |**0** | Unexpected server error |  -  |

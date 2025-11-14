@@ -475,6 +475,56 @@ export const OrganizationsApiAxiosParamCreator = function (configuration?: Confi
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @summary Update settings
+         * @param {string} organizationId Organization id
+         * @param {string} authId Auth Id provided by orchestrator service
+         * @param {string} maxHash Authentication hash provided by the Max massenger
+         * @param {OrganizationSettingsResponse} [organizationSettingsResponse] Update organization settings
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateSettingsOrganization: async (organizationId: string, authId: string, maxHash: string, organizationSettingsResponse?: OrganizationSettingsResponse, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'organizationId' is not null or undefined
+            assertParamExists('updateSettingsOrganization', 'organizationId', organizationId)
+            // verify required parameter 'authId' is not null or undefined
+            assertParamExists('updateSettingsOrganization', 'authId', authId)
+            // verify required parameter 'maxHash' is not null or undefined
+            assertParamExists('updateSettingsOrganization', 'maxHash', maxHash)
+            const localVarPath = `/organizations/{organizationId}/settings`
+                .replace(`{${"organizationId"}}`, encodeURIComponent(String(organizationId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            if (authId != null) {
+                localVarHeaderParameter['Auth-Id'] = String(authId);
+            }
+            if (maxHash != null) {
+                localVarHeaderParameter['Max-Hash'] = String(maxHash);
+            }
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(organizationSettingsResponse, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -560,6 +610,22 @@ export const OrganizationsApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['OrganizationsApi.getOrganizationSettings']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * 
+         * @summary Update settings
+         * @param {string} organizationId Organization id
+         * @param {string} authId Auth Id provided by orchestrator service
+         * @param {string} maxHash Authentication hash provided by the Max massenger
+         * @param {OrganizationSettingsResponse} [organizationSettingsResponse] Update organization settings
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateSettingsOrganization(organizationId: string, authId: string, maxHash: string, organizationSettingsResponse?: OrganizationSettingsResponse, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateSettingsOrganization(organizationId, authId, maxHash, organizationSettingsResponse, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['OrganizationsApi.updateSettingsOrganization']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -629,6 +695,19 @@ export const OrganizationsApiFactory = function (configuration?: Configuration, 
          */
         getOrganizationSettings(organizationId: string, authId: string, maxHash: string, options?: RawAxiosRequestConfig): AxiosPromise<OrganizationSettingsResponse> {
             return localVarFp.getOrganizationSettings(organizationId, authId, maxHash, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Update settings
+         * @param {string} organizationId Organization id
+         * @param {string} authId Auth Id provided by orchestrator service
+         * @param {string} maxHash Authentication hash provided by the Max massenger
+         * @param {OrganizationSettingsResponse} [organizationSettingsResponse] Update organization settings
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateSettingsOrganization(organizationId: string, authId: string, maxHash: string, organizationSettingsResponse?: OrganizationSettingsResponse, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.updateSettingsOrganization(organizationId, authId, maxHash, organizationSettingsResponse, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -701,6 +780,20 @@ export class OrganizationsApi extends BaseAPI {
      */
     public getOrganizationSettings(organizationId: string, authId: string, maxHash: string, options?: RawAxiosRequestConfig) {
         return OrganizationsApiFp(this.configuration).getOrganizationSettings(organizationId, authId, maxHash, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Update settings
+     * @param {string} organizationId Organization id
+     * @param {string} authId Auth Id provided by orchestrator service
+     * @param {string} maxHash Authentication hash provided by the Max massenger
+     * @param {OrganizationSettingsResponse} [organizationSettingsResponse] Update organization settings
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public updateSettingsOrganization(organizationId: string, authId: string, maxHash: string, organizationSettingsResponse?: OrganizationSettingsResponse, options?: RawAxiosRequestConfig) {
+        return OrganizationsApiFp(this.configuration).updateSettingsOrganization(organizationId, authId, maxHash, organizationSettingsResponse, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
