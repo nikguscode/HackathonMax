@@ -1012,6 +1012,8 @@ components:
           format: uuid
         username:
           type: string
+        status:
+          $ref: '#/components/schemas/QueueEntryStatus'
 
     QueueStaff:
       type: object
