@@ -81,7 +81,7 @@ public class JooqQueueDao implements QueueDao {
         List.of(QueueEntryStatus.CANCELED, QueueEntryStatus.SERVED);
 
     return dsl
-        .select(QUEUE_ENTRY.ID_MAX, QUEUE_ENTRY.ID, USER.USERNAME)
+        .select(QUEUE_ENTRY.ID_MAX, QUEUE_ENTRY.ID, USER.FIRST_NAME)
         .from(QUEUE)
 
         .join(QUEUE_ENTRY)

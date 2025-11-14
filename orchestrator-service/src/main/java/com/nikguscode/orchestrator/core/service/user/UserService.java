@@ -48,7 +48,7 @@ public class UserService {
   public UserResponseDto getUserQueueInformation(Long maxId) {
     List<OrganizationRecord> organizations = organizationDao.findByMaxId(maxId);
     List<QueueEntryActiveRecord> queueEntries = queueEntryDao.findActiveByMaxId(maxId);
-    return userDtoMapper.dtoToResponse(organizations, queueEntries);
+    return userDtoMapper.toResponseDto(organizations, queueEntries);
   }
 
   public boolean verifyUserAccess(UUID authId, String maxHash) {
@@ -110,12 +110,12 @@ public class UserService {
 
     if (userOpt.isPresent()) {
       User user = userOpt.get();
-      return userDtoMapper.userToHashDto(user, maxHash);
+      return userDtoMapper.toHashDto(user, maxHash);
     }
 
-    User user = userDtoMapper.userToMaxUserDataDto(maxUserDataDto.getUser(), OffsetDateTime.now());
+    User user = userDtoMapper.toUser(maxUserDataDto.getUser(), OffsetDateTime.now());
     userDao.add(user);
 
-    return userDtoMapper.userToHashDto(user, maxHash);
+    return userDtoMapper.toHashDto(user, maxHash);
   }
 }

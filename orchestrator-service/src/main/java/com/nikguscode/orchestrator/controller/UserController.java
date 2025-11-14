@@ -40,14 +40,14 @@ public class UserController {
 
   @PutMapping("/users/{maxId}")
   public String editUser(@RequestBody UserCreatingRequestDto dto) {
-    User user = userDtoMapper.dtoToUser(dto, OffsetDateTime.now());
+    User user = userDtoMapper.toUser(dto, OffsetDateTime.now());
     userDao.update(user);
     return "zaglushka";
   }
 
   @PostMapping("/users")
   public String addUser(@RequestBody UserCreatingRequestDto dto) {
-    User user = userDtoMapper.dtoToUser(dto, OffsetDateTime.now());
+    User user = userDtoMapper.toUser(dto, OffsetDateTime.now());
     userDao.add(user);
     return "zaglushka";
   }

@@ -1,5 +1,6 @@
 package com.nikguscode.orchestrator.core.service.queue;
 
+import com.nikguscode.openapi.model.QueueEntryCreatingRequestDto;
 import com.nikguscode.openapi.model.QueueEntryResponseDto;
 import com.nikguscode.openapi.model.QueueEntryStatusUpdateRequestDto;
 import com.nikguscode.orchestrator.core.enums.enums.QueueEntryStatus;
@@ -26,12 +27,17 @@ public class QueueEntryService {
     this.queueEntryDtoMapper = queueEntryDtoMapper;
   }
 
-  // WAITING
-  // CALLED -> в мету добавляем join_at
-  // SERVING -> в мету добавляем
-  // SERVED
-  // CANCELED ->
-  // MISSING -> вызов следующего
+  // (даётся при создании) WAITING -> в мету добавляем joined_at
+
+  public void createQueueEntry(QueueEntryCreatingRequestDto dto) {
+
+  }
+
+  // CALLED -> в мету добавляем called_at
+  // SERVING -> в мету добавляем arrived_at, started_at
+  // SERVED -> в мету добавляем finished_at
+  // CANCELED
+  // MISSING -> в мету добавляем missed_at
   public void updateQueueEntryStatus(UUID entryId, QueueEntryStatusUpdateRequestDto dto) {
     queueEntryDao.updateByEntryId(entryId, queueEntryDtoMapper.toEnum(dto.getStatus()));
 
