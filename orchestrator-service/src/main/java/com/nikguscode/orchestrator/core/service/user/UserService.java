@@ -45,6 +45,10 @@ public class UserService {
     this.maxUserDataExtractor = maxUserDataExtractor;
   }
 
+  public void addUser(Long maxId) {
+
+  }
+
   public UserResponseDto getUserQueueInformation(Long maxId) {
     List<OrganizationRecord> organizations = organizationDao.findByMaxId(maxId);
     List<QueueEntryActiveRecord> queueEntries = queueEntryDao.findActiveByMaxId(maxId);

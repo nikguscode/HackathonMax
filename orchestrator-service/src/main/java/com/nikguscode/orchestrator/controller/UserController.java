@@ -38,6 +38,11 @@ public class UserController {
     return userService.getUserQueueInformation(maxId);
   }
 
+  // 1. Добавить в user_roles
+  // 2. Добавить в queue_staff
+  // 3. Удалить все связанные с ним queue_entry и queue_entry_meta со статусом WAITING, SERVING
+//  @PutMapping("/users/{maxId}/role")
+
   @PutMapping("/users/{maxId}")
   public String editUser(@RequestBody UserCreatingRequestDto dto) {
     User user = userDtoMapper.toUser(dto, OffsetDateTime.now());
