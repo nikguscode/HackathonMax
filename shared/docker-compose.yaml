@@ -104,6 +104,46 @@ services:
       - dev
       - local
       - docker
+  
+  analytics-service:
+    container_name: analytics-service
+    build:
+      context: ../analytics-service
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - rabbitmq
+    environment:
+      APP_MODE: http
+      DB_HOST: db
+      POSTGRES_PORT: 5432
+      RABBIT_HOST: rabbitmq
+      RABBIT_PORT: 5672
+      HTTP_PORT: 8081
+    ports:
+      - "8081:8081"
+    profiles:
+      - local
+      - docker
+  
+  max-notification-service:
+    container_name: max-notification-service
+    build:
+      context: ../max-notification-service
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      HTTP_PORT: 8082
+      POST_HOST: api
+      POST_PORT: 8080
+    ports:
+      - "8082:8082"
+    profiles:
+      - local
+      - docker
 
   caddy:
     image: caddy:2
