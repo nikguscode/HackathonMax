@@ -89,7 +89,8 @@ const QueueUserModeratorPage: React.FC = () => {
 
     await usersApi.updateOrganizationUserRole(userId, authId, maxHash, {
       role: "EMPLOYEE",
-      organizationId: orgId ?? ''
+      organizationId: orgId ?? '',
+      queueId: queueId ?? '',
     });
 
     console.log(`✅ Пользователь ${userId} назначен сотрудником`);
