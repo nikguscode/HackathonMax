@@ -7,14 +7,23 @@ import (
 	"github.com/google/uuid"
 )
 
-// создаёт отчёт по очереди
+// NewQueueMetricsResponse создаёт объект ответа, содержащий метрики очереди.
 func NewQueueMetricsResponse(metrics *QueueMetrics) QueueMetricsResponse {
 	return QueueMetricsResponse{
 		Metrics: metrics,
 	}
 }
 
-// формирует полный JSON-отчёт по очереди
+// GenerateQueueReport формирует полный JSON-отчёт по очереди.
+// Собирает данные из репозитория и агрегирует их в структуру QueueMetricsResponse.
+//
+// Параметры:
+//   - repo — репозиторий для получения метрик очереди.
+//   - queueID — строковый UUID очереди.
+//
+// Возвращает:
+//   - сформированный отчёт QueueMetricsResponse
+//   - ошибку, если парсинг UUID или выполнение запросов завершилось неуспешно.
 func GenerateQueueReport(repo repository.QueueMetricsRepository, queueID string) (QueueMetricsResponse, error) {
 
 	qID, _ := uuid.Parse(queueID)
@@ -44,6 +53,18 @@ func GenerateQueueReport(repo repository.QueueMetricsRepository, queueID string)
 	return report, nil
 }
 
+// GenerateQueueGraphicsReport формирует графический отчёт по очереди
+// за указанный период. В отчёте содержатся данные о среднем времени ожидания
+// и количестве участников очереди по времени.
+//
+// Параметры:
+//   - repo — репозиторий графических метрик очереди.
+//   - queueID — строковый UUID очереди.
+//   - from, to — временной диапазон.
+//
+// Возвращает:
+//   - графический отчёт QueueGraphicsResponse
+//   - ошибку при некорректном UUID или сбоях в запросах.
 func GenerateQueueGraphicsReport(repo repository.QueueGraphicsRepository, queueID string, from, to time.Time) (QueueGraphicsResponse, error) {
 	qID, _ := uuid.Parse(queueID)
 

@@ -7,12 +7,12 @@ import (
 	"time"
 )
 
-// сериализует любую структуру в JSON
+// ToJSON сериализует любую структуру в JSON.
 func ToJSON(v any) ([]byte, error) {
 	return json.Marshal(v)
 }
 
-// возвращает форматированный JSON
+// PrettyJSON возвращает форматированный JSON с отступами для удобного чтения.
 func PrettyJSON(v any) ([]byte, error) {
 	data, err := json.MarshalIndent(v, "", "  ")
 	if err != nil {
@@ -21,6 +21,8 @@ func PrettyJSON(v any) ([]byte, error) {
 	return data, nil
 }
 
+// MetricsService предоставляет методы для генерации отчётов
+// и графиков для организаций и очередей.
 type MetricsService struct {
 	orgRepo    repository.OrganizationMetricsRepository
 	queueRepo  repository.QueueMetricsRepository
@@ -28,6 +30,7 @@ type MetricsService struct {
 	queueGraph repository.QueueGraphicsRepository
 }
 
+// NewMetricsService создаёт новый сервис для работы с метриками.
 func NewMetricsService(
 	orgRepo repository.OrganizationMetricsRepository,
 	queueRepo repository.QueueMetricsRepository,
@@ -42,15 +45,23 @@ func NewMetricsService(
 	}
 }
 
+// MetricsCommand описывает команду для генерации отчёта или графика.
 type MetricsCommand struct {
-	Type       string `json:"type"`       // "queue" или "organization"
-	ReportKind string `json:"reportKind"` // "metrics" или "graphics"
-	ID         string `json:"id"`
-	From       string `json:"from,omitempty"` // для графиков: начальная дата
-	To         string `json:"to,omitempty"`   // для графиков: конечная дата
+	Type       string `json:"type"`           // Тип сущности: "queue" или "organization"
+	ReportKind string `json:"reportKind"`     // Вид отчёта: "metrics" или "graphics"
+	ID         string `json:"id"`             // UUID очереди или организации
+	From       string `json:"from,omitempty"` // Начальная дата для графиков (RFC3339)
+	To         string `json:"to,omitempty"`   // Конечная дата для графиков (RFC3339)
 }
 
-// какой отчет форматировать
+// GenerateReport возвращает отчёт или график на основе команды MetricsCommand.
+//
+// В зависимости от Type ("queue"/"organization") и ReportKind ("metrics"/"graphics")
+// вызывает соответствующие функции генерации отчёта.
+//
+// Возвращает:
+//   - сгенерированный отчёт (структура или срез структур)
+//   - ошибку, если тип или вид отчёта неизвестен, либо некорректные даты
 func (s *MetricsService) GenerateReport(cmd MetricsCommand) (interface{}, error) {
 	switch cmd.Type {
 	case "queue":
@@ -86,6 +97,10 @@ func (s *MetricsService) GenerateReport(cmd MetricsCommand) (interface{}, error)
 	}
 }
 
+// parseDates преобразует строки с датами в объекты time.Time.
+//
+// Ожидается формат RFC3339.
+// Возвращает ошибку, если парсинг одной из дат не удался.
 func parseDates(fromStr, toStr string) (time.Time, time.Time, error) {
 	from, err := time.Parse(time.RFC3339, fromStr)
 	if err != nil {

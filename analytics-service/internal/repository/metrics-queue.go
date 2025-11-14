@@ -7,26 +7,50 @@ import (
 	"gorm.io/gorm"
 )
 
+// QueueMetricsRepository описывает набор методов для получения
+// метрик конкретной очереди, таких как общее количество записей,
+// среднее время ожидания, статистика обслуженных и покинувших клиентов,
+// а также расчёт различных характеристик нагрузки.
 type QueueMetricsRepository interface {
+	// CountEntries возвращает общее количество записей в очереди.
 	CountEntries(IDqueue uuid.UUID) (int, error)
+
+	// CountServedMembers возвращает количество обслуженных клиентов очереди.
 	CountServedMembers(IDqueue uuid.UUID) (int, error)
+
+	// CountLeftMembers возвращает количество клиентов, покинувших очередь.
 	CountLeftMembers(IDqueue uuid.UUID) (int, error)
+
+	// AverageWaitingTime рассчитывает среднее время ожидания в очереди (в секундах).
 	AverageWaitingTime(IDqueue uuid.UUID) (float32, error)
+
+	// AverageServiceTime рассчитывает среднее время обслуживания в очереди (в секундах).
 	AverageServiceTime(IDqueue uuid.UUID) (float32, error)
+
+	// MaxInQueue возвращает максимальное количество людей,
+	// одновременно находившихся в очереди.
 	MaxInQueue(IDqueue uuid.UUID) (int, error)
+
+	// MinInQueue возвращает минимальное количество людей в очереди
+	// (исключая нулевые значения), зафиксированное в течение периода.
 	MinInQueue(IDqueue uuid.UUID) (int, error)
+
+	// AverageInQueue рассчитывает среднее количество людей в очереди
+	// на основе временных интервалов.
 	AverageInQueue(IDqueue uuid.UUID) (int, error)
 }
 
+// queueMetricsRepo — реализация QueueMetricsRepository, использующая GORM.
 type queueMetricsRepo struct {
 	db *gorm.DB
 }
 
+// NewQueueMetricsRepo создаёт новый репозиторий для работы с метриками очередей.
 func NewQueueMetricsRepo(db *gorm.DB) QueueMetricsRepository {
 	return &queueMetricsRepo{db: db}
 }
 
-// Общее кол-во записей в очередь
+// CountEntries возвращает общее количество записей в указанной очереди.
 func (r *queueMetricsRepo) CountEntries(IDqueue uuid.UUID) (int, error) {
 	var count int64
 	err := r.db.Model(&model.QueueEntry{}).
@@ -35,7 +59,7 @@ func (r *queueMetricsRepo) CountEntries(IDqueue uuid.UUID) (int, error) {
 	return int(count), err
 }
 
-// Кол-во обслуженных
+// CountServedMembers возвращает количество обслуженных клиентов для очереди.
 func (r *queueMetricsRepo) CountServedMembers(IDqueue uuid.UUID) (int, error) {
 	var count int64
 	err := r.db.Model(&model.QueueEntry{}).
@@ -44,7 +68,7 @@ func (r *queueMetricsRepo) CountServedMembers(IDqueue uuid.UUID) (int, error) {
 	return int(count), err
 }
 
-// Кол-во покинувших
+// CountLeftMembers возвращает количество клиентов, покинувших очередь.
 func (r *queueMetricsRepo) CountLeftMembers(IDqueue uuid.UUID) (int, error) {
 	var count int64
 	err := r.db.Model(&model.QueueEntry{}).
@@ -53,7 +77,8 @@ func (r *queueMetricsRepo) CountLeftMembers(IDqueue uuid.UUID) (int, error) {
 	return int(count), err
 }
 
-// Среднее время ожидания
+// AverageWaitingTime вычисляет среднее время ожидания клиента в очереди.
+// Значение возвращается в секундах.
 func (r *queueMetricsRepo) AverageWaitingTime(IDqueue uuid.UUID) (float32, error) {
 	var avg *float32
 	err := r.db.Table(model.QueueEntry{}.TableName()+" AS qe").
@@ -68,7 +93,8 @@ func (r *queueMetricsRepo) AverageWaitingTime(IDqueue uuid.UUID) (float32, error
 	return 0, err
 }
 
-// Среднее время обслуживания
+// AverageServiceTime рассчитывает среднее время обслуживания клиента.
+// Значение возвращается в секундах.
 func (r *queueMetricsRepo) AverageServiceTime(IDqueue uuid.UUID) (float32, error) {
 	var avg *float32
 	err := r.db.Table(model.QueueEntry{}.TableName()+" AS qe").
@@ -83,7 +109,9 @@ func (r *queueMetricsRepo) AverageServiceTime(IDqueue uuid.UUID) (float32, error
 	return 0, err
 }
 
-// Максимум в очереди
+// MaxInQueue вычисляет максимальное количество людей,
+// одновременно находившихся в очереди.
+// Основано на реконструкции временной линии входов и выходов.
 func (r *queueMetricsRepo) MaxInQueue(IDqueue uuid.UUID) (int, error) {
 	var max int
 	err := r.db.Raw(`
@@ -109,7 +137,8 @@ func (r *queueMetricsRepo) MaxInQueue(IDqueue uuid.UUID) (int, error) {
 	return max, err
 }
 
-// Минимум в очереди
+// MinInQueue вычисляет минимальное количество людей в очереди,
+// исключая моменты, когда очередь была пуста.
 func (r *queueMetricsRepo) MinInQueue(IDqueue uuid.UUID) (int, error) {
 	var min int
 	err := r.db.Raw(`
@@ -135,7 +164,8 @@ func (r *queueMetricsRepo) MinInQueue(IDqueue uuid.UUID) (int, error) {
 	return min, err
 }
 
-// Среднее количество людей в очереди
+// AverageInQueue рассчитывает среднее количество людей в очереди.
+// Расчёт основан на длительности интервалов с фиксированным количеством людей.
 func (r *queueMetricsRepo) AverageInQueue(IDqueue uuid.UUID) (int, error) {
 	var avg float32
 	err := r.db.Raw(`

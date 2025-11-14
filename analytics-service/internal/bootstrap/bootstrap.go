@@ -10,7 +10,8 @@ import (
 	"gorm.io/gorm"
 )
 
-// Bootstrap содержит все готовые зависимости
+// Bootstrap содержит все инициализированные зависимости приложения,
+// включая конфигурацию, подключение к БД, сервисы и соединение RabbitMQ.
 type Bootstrap struct {
 	Config         *config.Config
 	DBConn         *gorm.DB
@@ -18,7 +19,10 @@ type Bootstrap struct {
 	RabbitConn     *rabbitmq.Connection
 }
 
-// Init инициализирует все зависимости приложения
+// Init инициализирует все зависимости приложения: загружает конфигурацию,
+// подключается к базе данных, создаёт репозитории и сервисы,
+// а также (при режиме rabbit) устанавливает соединение с RabbitMQ.
+// Возвращает структуру Bootstrap, содержащую все готовые зависимости.
 func Init() (*Bootstrap, error) {
 	cfg := config.LoadConfig()
 

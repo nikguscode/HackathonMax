@@ -7,6 +7,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// NewRouter создаёт и настраивает HTTP-маршруты для приложения.
+//
+// Параметры:
+//   - metricsService — сервис для работы с метриками и графиками.
+//
+// Возвращает:
+//   - настроенный Gin Engine с зарегистрированными маршрутами.
 func NewRouter(metricsService *service.MetricsService) *gin.Engine {
 	r := gin.Default()
 

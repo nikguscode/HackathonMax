@@ -13,14 +13,18 @@ import (
 	"syscall"
 )
 
+// App представляет собой основное приложение, управляющее запуском разных транспортов.
 type App struct {
 	bs *bootstrap.Bootstrap
 }
 
+// New создаёт новый экземпляр приложения.
 func New(bs *bootstrap.Bootstrap) *App {
 	return &App{bs: bs}
 }
 
+// Run запускает приложение в зависимости от режима работы,
+// указанного в конфигурации (HTTP или RabbitMQ).
 func (a *App) Run() error {
 	switch a.bs.Config.AppMode {
 	case "rabbit":
@@ -32,6 +36,8 @@ func (a *App) Run() error {
 	}
 }
 
+// runRabbit запускает приложение в режиме RabbitMQ.
+// Инициализирует паблишер и консюмер и запускает обработку сообщений.
 func (a *App) runRabbit() error {
 	if a.bs.RabbitConn == nil {
 		return fmt.Errorf("rabbit mode selected, but RabbitConn is nil")
@@ -49,6 +55,8 @@ func (a *App) runRabbit() error {
 	select {}
 }
 
+// runHTTP запускает HTTP-сервер.
+// Настраивает маршруты, запускает сервер и ожидает системный сигнал для корректного выключения.
 func (a *App) runHTTP() error {
 	port := 8080
 	if a.bs.Config.HTTPPort != "" {

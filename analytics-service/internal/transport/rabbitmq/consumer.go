@@ -9,6 +9,7 @@ import (
 	"github.com/streadway/amqp"
 )
 
+// Consumer слушает очередь RabbitMQ и обрабатывает команды для генерации метрик.
 type Consumer struct {
 	channel   *amqp.Channel
 	queueName string

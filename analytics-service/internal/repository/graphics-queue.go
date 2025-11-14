@@ -8,31 +8,48 @@ import (
 	"gorm.io/gorm"
 )
 
-// простые структуры для репозитория
+// QueueWaitingTime представляет собой агрегированные данные
+// о среднем времени ожидания клиентов в очереди за определённый час.
 type QueueWaitingTime struct {
 	Time        time.Time
 	WaitingTime float32
 }
 
+// QueueMembersCount содержит агрегированную информацию
+// о количестве участников очереди за каждый час.
 type QueueMembersCount struct {
 	Time  time.Time
 	Count int
 }
 
+// QueueGraphicsRepository описывает интерфейс для получения
+// аналитических данных по очереди — среднего времени ожидания
+// и количества участников по часам.
 type QueueGraphicsRepository interface {
+	// AverageWaitingTimeByTime возвращает среднее время ожидания
+	// клиентов в очереди, сгруппированное по часам в указанном интервале.
 	AverageWaitingTimeByTime(queueID uuid.UUID, from, to time.Time) ([]QueueWaitingTime, error)
+
+	// MembersInQueueByTime возвращает количество участников очереди,
+	// сгруппированное по часам в указанном временном диапазоне.
 	MembersInQueueByTime(queueID uuid.UUID, from, to time.Time) ([]QueueMembersCount, error)
 }
 
+// queueGraphicsRepo — реализация QueueGraphicsRepository
+// на основе PostgreSQL через GORM.
 type queueGraphicsRepo struct {
 	db *gorm.DB
 }
 
+// NewQueueGraphicsRepo создаёт новый репозиторий для получения
+// аналитики по очередям.
 func NewQueueGraphicsRepo(db *gorm.DB) QueueGraphicsRepository {
 	return &queueGraphicsRepo{db: db}
 }
 
-// Среднее время ожидания по времени
+// AverageWaitingTimeByTime рассчитывает среднее время ожидания клиентов
+// в очереди за каждый час указанного периода.
+// Вычисляется разница между arrived_at и joined_at.
 func (r *queueGraphicsRepo) AverageWaitingTimeByTime(queueID uuid.UUID, from, to time.Time) ([]QueueWaitingTime, error) {
 	var result []QueueWaitingTime
 
@@ -47,7 +64,8 @@ func (r *queueGraphicsRepo) AverageWaitingTimeByTime(queueID uuid.UUID, from, to
 	return result, err
 }
 
-// Кол-во участников в очереди по времени
+// MembersInQueueByTime возвращает количество записей, вошедших в очередь,
+// сгруппированных по часу, в заданном временном диапазоне.
 func (r *queueGraphicsRepo) MembersInQueueByTime(queueID uuid.UUID, from, to time.Time) ([]QueueMembersCount, error) {
 	var result []QueueMembersCount
 

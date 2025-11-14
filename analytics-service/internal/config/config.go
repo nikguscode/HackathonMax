@@ -4,8 +4,11 @@ import (
 	"os"
 )
 
+// Config содержит все параметры конфигурации приложения,
+// загружаемые из переменных окружения.
 type Config struct {
-	AppMode string // "rabbit" / "htpp"
+	// AppMode определяет режим работы приложения: "rabbit" или "http".
+	AppMode string
 
 	RabbitUser string
 	RabbitPass string
@@ -21,6 +24,8 @@ type Config struct {
 	HTTPPort string
 }
 
+// LoadConfig загружает конфигурацию приложения из переменных окружения
+// и возвращает экземпляр структуры Config.
 func LoadConfig() *Config {
 	return &Config{
 		AppMode: os.Getenv("APP_MODE"),
@@ -40,6 +45,8 @@ func LoadConfig() *Config {
 	}
 }
 
+// RabbitURL формирует и возвращает строку подключения к RabbitMQ
+// в формате amqp://user:pass@host:port.
 func (c *Config) RabbitURL() string {
 	return "amqp://" + c.RabbitUser + ":" + c.RabbitPass + "@" + c.RabbitHost + ":" + c.RabbitPort
 }

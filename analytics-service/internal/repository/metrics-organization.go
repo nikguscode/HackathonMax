@@ -7,26 +7,51 @@ import (
 	"gorm.io/gorm"
 )
 
+// OrganizationMetricsRepository определяет набор метрик,
+// вычисляемых для организации: активные очереди, общее количество очередей,
+// клиенты, сотрудники, время ожидания и показатели нагрузки.
 type OrganizationMetricsRepository interface {
+	// NumberOfActiveQueues возвращает количество активных очередей организации.
 	NumberOfActiveQueues(IDorg uuid.UUID) (int, error)
+
+	// NumberOfQueues возвращает общее количество очередей организации.
 	NumberOfQueues(IDorg uuid.UUID) (int, error)
+
+	// NumberOfMembersInAllQueues возвращает количество клиентов,
+	// находящихся во всех очередях организации.
 	NumberOfMembersInAllQueues(IDorg uuid.UUID) (int, error)
+
+	// NumberOfEmployees возвращает количество сотрудников организации.
 	NumberOfEmployees(IDorg uuid.UUID) (int, error)
+
+	// AverageWaitingTimeOrg вычисляет среднее время ожидания клиентов
+	// по всем очередям организации.
 	AverageWaitingTimeOrg(IDorg uuid.UUID) (float32, error)
+
+	// NumberOfServedMembersOrg возвращает количество обслуженных клиентов.
 	NumberOfServedMembersOrg(IDorg uuid.UUID) (int, error)
+
+	// MembersInDay возвращает количество клиентов, вошедших в очередь за текущие сутки.
 	MembersInDay(IDorg uuid.UUID) (int, error)
+
+	// AverageLoadInQueues возвращает среднюю загрузку очередей
+	// (отношение размера очереди к максимальному размеру).
 	AverageLoadInQueues(IDorg uuid.UUID) (float32, error)
 }
 
+// orgMetricsRepo — реализация OrganizationMetricsRepository на GORM/Postgres.
 type orgMetricsRepo struct {
 	db *gorm.DB
 }
 
+// NewOrgMetricsRepo создаёт репозиторий для получения
+// агрегированных метрик по организации.
 func NewOrgMetricsRepo(db *gorm.DB) OrganizationMetricsRepository {
 	return &orgMetricsRepo{db: db}
 }
 
-// Кол-во активных очередей
+// NumberOfActiveQueues возвращает количество активных очередей организации.
+// Активность определяется параметрами очереди (is_active = true).
 func (r *orgMetricsRepo) NumberOfActiveQueues(IDorg uuid.UUID) (int, error) {
 	var count int64
 	err := r.db.Table(model.Queue{}.TableName()).
@@ -35,7 +60,7 @@ func (r *orgMetricsRepo) NumberOfActiveQueues(IDorg uuid.UUID) (int, error) {
 	return int(count), err
 }
 
-// Кол-во всех очередей
+// NumberOfQueues возвращает общее количество очередей организации.
 func (r *orgMetricsRepo) NumberOfQueues(IDorg uuid.UUID) (int, error) {
 	var count int64
 	err := r.db.Table(model.Queue{}.TableName()).
@@ -44,7 +69,8 @@ func (r *orgMetricsRepo) NumberOfQueues(IDorg uuid.UUID) (int, error) {
 	return int(count), err
 }
 
-// Кол-во клиентов во всех очередях организации
+// NumberOfMembersInAllQueues возвращает общее количество клиентов,
+// находящихся во всех очередях организации.
 func (r *orgMetricsRepo) NumberOfMembersInAllQueues(IDorg uuid.UUID) (int, error) {
 	var count int64
 	err := r.db.Table(model.QueueEntry{}.TableName()).
@@ -54,7 +80,7 @@ func (r *orgMetricsRepo) NumberOfMembersInAllQueues(IDorg uuid.UUID) (int, error
 	return int(count), err
 }
 
-// Кол-во сотрудников организации
+// NumberOfEmployees возвращает количество сотрудников организации.
 func (r *orgMetricsRepo) NumberOfEmployees(IDorg uuid.UUID) (int, error) {
 	var count int64
 	err := r.db.Table(model.UserRole{}.TableName()).
@@ -63,7 +89,8 @@ func (r *orgMetricsRepo) NumberOfEmployees(IDorg uuid.UUID) (int, error) {
 	return int(count), err
 }
 
-// Среднее время ожидания по организации
+// AverageWaitingTimeOrg вычисляет среднее время ожидания клиентов
+// по всем очередям организации (arrived_at - joined_at).
 func (r *orgMetricsRepo) AverageWaitingTimeOrg(IDorg uuid.UUID) (float32, error) {
 	var avg *float32
 	err := r.db.Table(model.QueueEntry{}.TableName()+" AS qe").
@@ -79,7 +106,8 @@ func (r *orgMetricsRepo) AverageWaitingTimeOrg(IDorg uuid.UUID) (float32, error)
 	return 0, err
 }
 
-// Кол-во обслуженных клиентов по организации
+// NumberOfServedMembersOrg возвращает количество клиентов,
+// которые были обслужены (status = 'SERVED') в организации.
 func (r *orgMetricsRepo) NumberOfServedMembersOrg(IDorg uuid.UUID) (int, error) {
 	var count int64
 	err := r.db.Table(model.QueueEntry{}.TableName()+" AS qe").
@@ -89,7 +117,8 @@ func (r *orgMetricsRepo) NumberOfServedMembersOrg(IDorg uuid.UUID) (int, error) 
 	return int(count), err
 }
 
-// Кол-во клиентов, вошедших в очередь за текущие сутки
+// MembersInDay возвращает количество клиентов, вошедших в очередь
+// за текущие сутки (по joined_at).
 func (r *orgMetricsRepo) MembersInDay(IDorg uuid.UUID) (int, error) {
 	var count int64
 	err := r.db.Table(model.QueueEntry{}.TableName()+" AS qe").
@@ -104,7 +133,9 @@ func (r *orgMetricsRepo) MembersInDay(IDorg uuid.UUID) (int, error) {
 	return int(count), err
 }
 
-// Средняя загрузка очередей (отношение текущего размера к максимальному)
+// AverageLoadInQueues возвращает среднюю загрузку очередей организации,
+// рассчитываемую как count(queue_entry) / max_queue_size.
+// Неактивные очереди игнорируются.
 func (r *orgMetricsRepo) AverageLoadInQueues(IDorg uuid.UUID) (float32, error) {
 	var avg *float32
 	err := r.db.Raw(`

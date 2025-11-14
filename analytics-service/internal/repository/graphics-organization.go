@@ -8,29 +8,47 @@ import (
 	"gorm.io/gorm"
 )
 
+// OrgThroughput представляет собой агрегированные данные
+// о пропускной способности организации (количестве завершённых операций)
+// за определённый временной интервал.
 type OrgThroughput struct {
 	Time       time.Time
 	Throughput int
 }
 
+// OrgTotalLoad представляет собой агрегированную информацию
+// о нагрузке (общем количестве активных записей) за час.
 type OrgTotalLoad struct {
 	Time      time.Time
 	TotalLoad int
 }
 
+// OrganizationGraphicsRepository определяет интерфейс для получения
+// агрегированной аналитики по организации: пропускной способности и нагрузке.
 type OrganizationGraphicsRepository interface {
+	// ThroughputByTime возвращает количество завершённых записей
+	// по организации в разбивке по каждому часу в указанном диапазоне.
 	ThroughputByTime(orgID uuid.UUID, from, to time.Time) ([]OrgThroughput, error)
+
+	// TotalLoadByTime возвращает общее количество записей,
+	// вошедших в очередь за каждый час в заданном интервале.
 	TotalLoadByTime(orgID uuid.UUID, from, to time.Time) ([]OrgTotalLoad, error)
 }
 
+// orgGraphicsRepo — реализация OrganizationGraphicsRepository,
+// использующая PostgreSQL через GORM.
 type orgGraphicsRepo struct {
 	db *gorm.DB
 }
 
+// NewOrgGraphicsRepo создаёт новый репозиторий для получения
+// графической аналитики по организациям.
 func NewOrgGraphicsRepo(db *gorm.DB) OrganizationGraphicsRepository {
 	return &orgGraphicsRepo{db: db}
 }
 
+// ThroughputByTime выполняет запрос к БД и возвращает количество завершённых
+// записей (finished_at) организации по часам в заданном диапазоне.
 func (r *orgGraphicsRepo) ThroughputByTime(orgID uuid.UUID, from, to time.Time) ([]OrgThroughput, error) {
 	var result []OrgThroughput
 
@@ -46,6 +64,9 @@ func (r *orgGraphicsRepo) ThroughputByTime(orgID uuid.UUID, from, to time.Time) 
 	return result, err
 }
 
+// TotalLoadByTime выполняет запрос к БД и возвращает количество записей,
+// вошедших в очередь (joined_at), сгруппированных по часам,
+// в указанном временном интервале.
 func (r *orgGraphicsRepo) TotalLoadByTime(orgID uuid.UUID, from, to time.Time) ([]OrgTotalLoad, error) {
 	var result []OrgTotalLoad
 

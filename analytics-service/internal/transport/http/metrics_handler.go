@@ -7,15 +7,25 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// MetricsHandler обрабатывает HTTP-запросы для метрик и графиков организаций и очередей.
 type MetricsHandler struct {
 	svc *service.MetricsService
 }
 
+// NewMetricsHandler создаёт новый обработчик метрик с переданным сервисом.
 func NewMetricsHandler(svc *service.MetricsService) *MetricsHandler {
 	return &MetricsHandler{svc: svc}
 }
 
-// GET /organizations/:organizationId/metrics
+// GetOrganizationMetrics обрабатывает GET-запрос для получения метрик организации.
+//
+// Путь: GET /organizations/:organizationId/metrics
+// Параметры:
+//   - organizationId — UUID организации в URL.
+//
+// Ответ:
+//   - 200 OK с JSON, содержащим метрики организации.
+//   - 500 Internal Server Error при ошибке генерации отчёта.
 func (h *MetricsHandler) GetOrganizationMetrics(c *gin.Context) {
 	orgID := c.Param("organizationId")
 
@@ -34,7 +44,18 @@ func (h *MetricsHandler) GetOrganizationMetrics(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "success", "data": report})
 }
 
-// GET /organizations/:organizationId/graphics?from=YYYY-MM-DD&to=YYYY-MM-DD
+// GetOrganizationGraphics обрабатывает GET-запрос для получения графиков организации.
+//
+// Путь: GET /organizations/:organizationId/graphics
+// Параметры URL:
+//   - organizationId — UUID организации
+//   - from — начальная дата (YYYY-MM-DD)
+//   - to — конечная дата (YYYY-MM-DD)
+//
+// Ответ:
+//   - 200 OK с JSON графиков организации.
+//   - 400 Bad Request при отсутствии from/to.
+//   - 500 Internal Server Error при ошибке генерации отчёта.
 func (h *MetricsHandler) GetOrganizationGraphics(c *gin.Context) {
 	orgID := c.Param("organizationId")
 	from := c.Query("from")
@@ -62,7 +83,15 @@ func (h *MetricsHandler) GetOrganizationGraphics(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "success", "data": report})
 }
 
-// GET /queues/:queueId/metrics
+// GetQueueMetrics обрабатывает GET-запрос для получения метрик очереди.
+//
+// Путь: GET /queues/:queueId/metrics
+// Параметры:
+//   - queueId — UUID очереди
+//
+// Ответ:
+//   - 200 OK с JSON метрик очереди.
+//   - 500 Internal Server Error при ошибке генерации отчёта.
 func (h *MetricsHandler) GetQueueMetrics(c *gin.Context) {
 	queueID := c.Param("queueId")
 
@@ -81,7 +110,18 @@ func (h *MetricsHandler) GetQueueMetrics(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "success", "data": report})
 }
 
-// GET /queues/:queueId/graphics?from=YYYY-MM-DD&to=YYYY-MM-DD
+// GetQueueGraphics обрабатывает GET-запрос для получения графиков очереди.
+//
+// Путь: GET /queues/:queueId/graphics
+// Параметры URL:
+//   - queueId — UUID очереди
+//   - from — начальная дата (YYYY-MM-DD)
+//   - to — конечная дата (YYYY-MM-DD)
+//
+// Ответ:
+//   - 200 OK с JSON графиков очереди.
+//   - 400 Bad Request при отсутствии from/to.
+//   - 500 Internal Server Error при ошибке генерации отчёта.
 func (h *MetricsHandler) GetQueueGraphics(c *gin.Context) {
 	queueID := c.Param("queueId")
 	from := c.Query("from")
