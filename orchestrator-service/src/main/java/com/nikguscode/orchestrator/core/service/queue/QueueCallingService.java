@@ -12,13 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class QueueCallingService {
   private final QueueEntryDao queueEntryDao;
 
-  public QueueCallingService(@Qualifier("queueEntryDao") QueueEntryDao queueEntryDao) {
+  public QueueCallingService(@Qualifier("jooqQueueEntryDao") QueueEntryDao queueEntryDao) {
     this.queueEntryDao = queueEntryDao;
   }
 
-
-  @Transactional
-  public void callUser(UUID queueEntryId) {
-    List<QueueEntryActiveRecord> queues = queueEntryDao.findActiveByQueueId();
-  }
+//
+//  @Transactional
+//  public void callUser(UUID queueEntryId) {
+//    List<QueueEntryActiveRecord> queues = queueEntryDao.findActiveByQueueId();
+//  }
 }
