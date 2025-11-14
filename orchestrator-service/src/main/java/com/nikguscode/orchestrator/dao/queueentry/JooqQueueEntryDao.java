@@ -5,7 +5,8 @@ import static com.nikguscode.jooq.tables.QueueEntry.QUEUE_ENTRY;
 import static com.nikguscode.jooq.tables.QueueEntryMeta.QUEUE_ENTRY_META;
 import static com.nikguscode.jooq.tables.User.USER;
 
-import com.nikguscode.jooq.enums.QueueStatus;
+import com.nikguscode.jooq.enums.QueueEntryStatus;
+import com.nikguscode.orchestrator.core.model.QueueEntry;
 import com.nikguscode.orchestrator.dao.result.QueueEntryActiveRecord;
 import com.nikguscode.orchestrator.dao.result.QueueEntryRecord;
 import java.util.List;
@@ -23,6 +24,26 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class JooqQueueEntryDao implements QueueEntryDao {
   private final DSLContext dsl;
+
+  @Override
+  public void updateByEntryId(UUID queueEntryId, QueueEntryStatus status) {
+    dsl.update(QUEUE_ENTRY)
+        .set(QUEUE_ENTRY.STATUS, status)
+        .where(QUEUE_ENTRY.ID.eq(queueEntryId))
+        .execute();
+  }
+
+  @Override
+  public List<QueueEntry> findActiveByQueueId(UUID queueId) {
+    var excludedStatuses
+        = List.of(QueueEntryStatus.MISSED, QueueEntryStatus.SERVED, QueueEntryStatus.CANCELED);
+
+    return dsl
+        .select(QUEUE_ENTRY.fields())
+        .from(QUEUE_ENTRY)
+        .where(QUEUE_ENTRY.STATUS.notIn(excludedStatuses))
+        .fetchInto(QueueEntry.class);
+  }
 
   @Override
   public List<QueueEntryActiveRecord> findActiveByMaxId(Long maxId) {
@@ -69,7 +90,7 @@ public class JooqQueueEntryDao implements QueueEntryDao {
 
   private SelectConditionStep<?> createRankedQueueEntriesQuery() {
     var statusPriorityExpression = DSL
-        .when(QUEUE_ENTRY.STATUS.eq(QueueStatus.SERVING), 0)
+        .when(QUEUE_ENTRY.STATUS.eq(QueueEntryStatus.SERVING), 0)
         .else_(1);
 
     var rankField = DSL.rank()
@@ -80,10 +101,10 @@ public class JooqQueueEntryDao implements QueueEntryDao {
             QUEUE_ENTRY_META.JOINED_AT.asc())
         .as("rank_in_queue");
 
-    List<QueueStatus> excludedStatuses = List.of(
-        QueueStatus.MISSED,
-        QueueStatus.CANCELED,
-        QueueStatus.SERVED);
+    List<QueueEntryStatus> excludedStatuses = List.of(
+        QueueEntryStatus.MISSED,
+        QueueEntryStatus.CANCELED,
+        QueueEntryStatus.SERVED);
 
     return dsl.select(
             QUEUE_ENTRY.ID,
@@ -113,7 +134,7 @@ public class JooqQueueEntryDao implements QueueEntryDao {
       Field<UUID> id,
       Field<String> name,
       Field<Integer> rankField,
-      Field<QueueStatus> status) {
+      Field<QueueEntryStatus> status) {
     Integer rank = record.get(rankField, Integer.class);
 
     return new QueueEntryActiveRecord(
@@ -129,7 +150,7 @@ public class JooqQueueEntryDao implements QueueEntryDao {
       Field<String> name,
       Field<String> login,
       Field<Integer> rankField,
-      Field<QueueStatus> status) {
+      Field<QueueEntryStatus> status) {
     Integer rank = record.get(rankField, Integer.class);
 
     return new QueueEntryRecord(

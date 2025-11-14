@@ -23,6 +23,7 @@ public interface QueueDtoMapper {
 
   @Mapping(target = "id", source = "queueId")
   @Mapping(target = "name", source = "dto.name")
+  @Mapping(target = "organizationId", source = "organizationId")
   Queue toEntity(
       UUID queueId, UUID organizationId, QueueCreatingRequestDto dto, OffsetDateTime createdAt);
 

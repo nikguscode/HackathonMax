@@ -1,13 +1,16 @@
 package com.nikguscode.orchestrator.controller;
 
+import com.nikguscode.openapi.model.QueueCreatingRequestDto;
 import com.nikguscode.openapi.model.QueueMembersResponseDto;
 import com.nikguscode.openapi.model.QueueResponseDto;
-import com.nikguscode.orchestrator.core.service.QueueService;
+import com.nikguscode.orchestrator.core.service.queue.QueueService;
 import java.util.UUID;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,20 +24,14 @@ public class QueueController {
   }
 
   @PostMapping("organizations/{organizationId}/queues")
-  public ResponseEntity<Void> createQueue(@PathVariable UUID organizationId) {
-    if (organizationId == null) {
-      throw new RuntimeException("Organization id can't be null");
-    }
-
-
+  public ResponseEntity<Void> createQueue(
+      @PathVariable UUID organizationId, @RequestBody QueueCreatingRequestDto dto) {
+    queueService.createQueue(organizationId, dto);
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @GetMapping("organizations/{organizationId}/queues")
   public QueueResponseDto getQueues(@PathVariable UUID organizationId) {
-    if (organizationId == null) {
-      throw new RuntimeException("Organization id can't be null");
-    }
-
     return queueService.getQueues(organizationId);
   }
 

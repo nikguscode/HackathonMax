@@ -1,6 +1,6 @@
 package com.nikguscode.orchestrator.dao.result;
 
-import com.nikguscode.jooq.enums.QueueStatus;
+import com.nikguscode.jooq.enums.QueueEntryStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
@@ -12,5 +12,5 @@ public class QueueEntryRecord {
   private final String name;
   private final String login;
   private final Integer peopleInFront;
-  private final QueueStatus status;
+  private final QueueEntryStatus status;
 }
