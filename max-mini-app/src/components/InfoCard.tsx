@@ -12,7 +12,7 @@ const InfoCard: React.FC<InfoCardProps> = ({ label, value }) => {
     <Panel
       mode="secondary"
       style={{
-        minWidth: '300px',
+        minWidth: '260px',
         maxWidth: '300px',
         padding: '16px',
         borderRadius: '12px',
@@ -23,7 +23,7 @@ const InfoCard: React.FC<InfoCardProps> = ({ label, value }) => {
     >
       <Typography.Body
         style={{
-          fontSize: '16px',
+          fontSize: '14px',
           fontWeight: 400,
           color: '#000000',
           fontFamily: 'system-ui, sans-serif',

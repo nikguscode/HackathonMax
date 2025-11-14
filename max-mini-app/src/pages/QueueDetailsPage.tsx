@@ -43,8 +43,8 @@ const QRCode: React.FC<QRCodeProps> = ({ userId, queueId }) => {
     <Panel
       mode="secondary"
       style={{
-        width: '250px',
-        height: '250px',
+        width: '200px',
+        height: '200px',
         borderRadius: '12px',
         display: 'flex',
         alignItems: 'center',
@@ -121,7 +121,7 @@ const QueueDetailsPage: React.FC = () => {
   const defaultShadow = '0 2px 4px rgba(0, 0, 0, 0.2)';
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
 
-  if (!entryId) {
+  if (!entryId || !queueDetails) {
     return (
       <Container>
         <div>Ошибка: ID очереди не указан</div>
@@ -129,7 +129,7 @@ const QueueDetailsPage: React.FC = () => {
     );
   }
 
-  if (isLoading || !queueDetails) {
+  if (isLoading) {
         return <QueueDetailsSkeleton />;
   }
 
@@ -171,7 +171,15 @@ const QueueDetailsPage: React.FC = () => {
   } else {
     status = 'Пропущено';
   }
-  
+  const isServing = queueDetails?.status === 'SERVING';
+
+  const exitButtonText = isServing
+    ? "Подтвердить обслуживание"
+    : "Выйти из очереди";
+
+  const exitButtonColor = isServing
+    ? "#3fad6dff"
+    : "#aa1818ff";
   return (
     <Container
       style={{
@@ -220,9 +228,9 @@ const QueueDetailsPage: React.FC = () => {
             onTouchCancel={handleExitQueueMouseLeave}
             style={{
               width: 'auto',
-              minWidth: '300px',
+              minWidth: '270px',
               padding: '12px 16px',
-              backgroundColor: '#aa1818ff',
+              backgroundColor: exitButtonColor,
               border: '0.3px solid rgba(0, 0, 0, 0.15)',
               borderRadius: '16px',
               boxShadow: isExitQueue ? pressedShadow : defaultShadow,
@@ -242,7 +250,7 @@ const QueueDetailsPage: React.FC = () => {
                 margin: '0 auto',
               }}
             >
-              Выйти из очереди
+              {exitButtonText}
             </Typography.Title>
           </Flex>
       </Flex>

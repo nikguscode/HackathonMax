@@ -34,6 +34,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^7.9.5",
+    "react-swipeable": "^7.0.2",
     "root": "^3.2.0",
     "router": "^2.2.0"
   }

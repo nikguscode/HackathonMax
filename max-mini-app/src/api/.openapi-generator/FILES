@@ -23,6 +23,7 @@ docs/QueueEntryCreatingRequest.md
 docs/QueueEntryInUserResponse.md
 docs/QueueEntryResponse.md
 docs/QueueEntryStatus.md
+docs/QueueEntryStatusUpdateRequest.md
 docs/QueueGraphics.md
 docs/QueueGraphicsAverageWaitingTimeByTimeInner.md
 docs/QueueGraphicsMembersInQueueByTimeInner.md
