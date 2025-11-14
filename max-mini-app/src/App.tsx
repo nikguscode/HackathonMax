@@ -91,7 +91,8 @@ const HomePage: React.FC = () => {
         const body = { miniAppInitData: window.WebApp.initData };
         const authResponse = await usersApiAuth.sendUserMiniAppData(Number(maxId), body);
         console.log("auth_date", body);
-
+        const bodi = { start_param: window.WebApp.initData };
+        console.log(bodi);
         if (authResponse.status === 200 && (authResponse.data as any)?.authId) {
           const maxHash = (authResponse.data as any).maxHash;
           const authId = (authResponse.data as any).authId;
@@ -100,10 +101,10 @@ const HomePage: React.FC = () => {
           console.log("✅ Авторизация успешна, maxHash сохранён:", maxHash);
           console.log("✅ Авторизация успешна, maxId сохранён:", authId);
           console.log("✅ Авторизация успешна, maxHash сохранён:", authResponse.request);
+          console.log("StartApp:", authResponse)
           const config = createApiConfiguration();
           const usersApi = new UsersApi(config);
           const userResponse = (await usersApi.getUserByMaxId(Number(maxId), authId, maxHash)).data;
-
 
           if (!userResponse) {
             setError("Ответ от сервера пустой. Проверьте подключение к API");
