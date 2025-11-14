@@ -5,9 +5,21 @@ spring:
   application:
     name: orchestrator-service
 
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+
   liquibase:
     enabled: false
     change-log: classpath:/db/changelog.xml
 
 server:
+  path:
+    prefix: /v1/api
   port: 8080
+
+max:
+  bot:
+    token: ${MAX_BOT_TOKEN:null}
