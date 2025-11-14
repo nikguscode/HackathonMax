@@ -5,12 +5,27 @@ import (
 	"os"
 )
 
+// Config представляет конфигурацию приложения.
 type Config struct {
-	BotToken   string
-	HTTPAddr   string
+	// BotToken содержит токен для бота.
+	BotToken string
+
+	// HTTPAddr содержит адрес и порт HTTP сервера.
+	HTTPAddr string
+
+	// BackendURL содержит адрес и порт backend сервиса.
 	BackendURL string
 }
 
+// Load загружает конфигурацию из переменных окружения.
+//
+// Переменные окружения:
+//   - HTTP_PORT: порт HTTP сервера (обязательная, иначе программа завершится с ошибкой)
+//   - POST_HOST: адрес backend сервиса
+//   - POST_PORT: порт backend сервиса
+//   - MAX_BOT_TOKEN: токен бота
+//
+// Возвращает структуру Config с заполненными полями.
 func Load() Config {
 	httpPort := os.Getenv("HTTP_PORT")
 	if httpPort == "" {

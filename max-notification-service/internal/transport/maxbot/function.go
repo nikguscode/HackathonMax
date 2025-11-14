@@ -11,7 +11,14 @@ import (
 	"github.com/max-messenger/max-bot-api-client-go/schemes"
 )
 
-// deleteMessage удаляет сообщение по его идентификатору
+// deleteMessage удаляет сообщение по его идентификатору через API MAX бота.
+//
+// Параметры:
+//   - ctx: контекст для управления запросом (отмена, таймаут)
+//   - messageID: идентификатор сообщения, которое нужно удалить
+//
+// Возвращает:
+//   - ошибку, если запрос не удалось отправить или сервер вернул статус != 200
 func (b *Bot) deleteMessage(ctx context.Context, messageID string) error {
 	baseURL := "https://botapi.max.ru/messages"
 	params := url.Values{}
@@ -39,7 +46,14 @@ func (b *Bot) deleteMessage(ctx context.Context, messageID string) error {
 	return nil
 }
 
-// отправка сообщения с кнопками
+// SendComeOverRequest отправляет пользователю сообщение с кнопками "Да" и "Нет".
+//
+// Параметры:
+//   - ctx: контекст для управления запросом
+//   - idMax: идентификатор пользователя MAX, которому отправляется сообщение
+//
+// Возвращает:
+//   - ошибку, если отправка сообщения через API бота не удалась
 func (b *Bot) SendComeOverRequest(ctx context.Context, idMax int64) error {
 	keyboard := b.client.Messages.NewKeyboardBuilder()
 	keyboard.AddRow().

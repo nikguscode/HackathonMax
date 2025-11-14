@@ -40,7 +40,7 @@ type QueueMetricsRepository interface {
 	AverageInQueue(IDqueue uuid.UUID) (int, error)
 }
 
-// queueMetricsRepo — реализация QueueMetricsRepository, использующая GORM.
+// queueMetricsRepo - реализация QueueMetricsRepository, использующая GORM.
 type queueMetricsRepo struct {
 	db *gorm.DB
 }

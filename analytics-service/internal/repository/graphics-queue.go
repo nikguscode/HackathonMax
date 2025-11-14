@@ -23,7 +23,7 @@ type QueueMembersCount struct {
 }
 
 // QueueGraphicsRepository описывает интерфейс для получения
-// аналитических данных по очереди — среднего времени ожидания
+// аналитических данных по очереди - среднего времени ожидания
 // и количества участников по часам.
 type QueueGraphicsRepository interface {
 	// AverageWaitingTimeByTime возвращает среднее время ожидания
@@ -35,7 +35,7 @@ type QueueGraphicsRepository interface {
 	MembersInQueueByTime(queueID uuid.UUID, from, to time.Time) ([]QueueMembersCount, error)
 }
 
-// queueGraphicsRepo — реализация QueueGraphicsRepository
+// queueGraphicsRepo - реализация QueueGraphicsRepository
 // на основе PostgreSQL через GORM.
 type queueGraphicsRepo struct {
 	db *gorm.DB

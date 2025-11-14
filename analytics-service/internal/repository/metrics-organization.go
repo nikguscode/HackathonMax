@@ -39,7 +39,7 @@ type OrganizationMetricsRepository interface {
 	AverageLoadInQueues(IDorg uuid.UUID) (float32, error)
 }
 
-// orgMetricsRepo — реализация OrganizationMetricsRepository на GORM/Postgres.
+// orgMetricsRepo - реализация OrganizationMetricsRepository на GORM/Postgres.
 type orgMetricsRepo struct {
 	db *gorm.DB
 }

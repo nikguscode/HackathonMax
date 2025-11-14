@@ -58,9 +58,9 @@ func GenerateQueueReport(repo repository.QueueMetricsRepository, queueID string)
 // и количестве участников очереди по времени.
 //
 // Параметры:
-//   - repo — репозиторий графических метрик очереди.
-//   - queueID — строковый UUID очереди.
-//   - from, to — временной диапазон.
+//   - repo - репозиторий графических метрик очереди.
+//   - queueID - строковый UUID очереди.
+//   - from, to - временной диапазон.
 //
 // Возвращает:
 //   - графический отчёт QueueGraphicsResponse

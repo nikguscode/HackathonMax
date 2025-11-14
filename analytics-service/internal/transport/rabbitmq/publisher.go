@@ -18,9 +18,9 @@ type Publisher struct {
 // NewPublisher создаёт нового Publisher.
 //
 // Параметры:
-//   - ch — канал RabbitMQ
-//   - exchange — имя exchange, куда будут публиковаться сообщения
-//   - routingKey — ключ маршрутизации сообщений
+//   - ch - канал RabbitMQ
+//   - exchange - имя exchange, куда будут публиковаться сообщения
+//   - routingKey - ключ маршрутизации сообщений
 func NewPublisher(ch *amqp.Channel, exchange, routingKey string) *Publisher {
 	return &Publisher{
 		channel:    ch,
@@ -32,7 +32,7 @@ func NewPublisher(ch *amqp.Channel, exchange, routingKey string) *Publisher {
 // PublishMetrics публикует отчёт (любую структуру) в RabbitMQ.
 //
 // Параметры:
-//   - report — структура отчёта, которая будет сериализована в JSON.
+//   - report - структура отчёта, которая будет сериализована в JSON.
 //
 // Возвращает ошибку, если не удалось сериализовать отчёт или отправить сообщение в очередь.
 func (p *Publisher) PublishMetrics(report interface{}) error {

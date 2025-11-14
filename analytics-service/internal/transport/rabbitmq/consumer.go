@@ -11,12 +11,19 @@ import (
 
 // Consumer слушает очередь RabbitMQ и обрабатывает команды для генерации метрик.
 type Consumer struct {
-	channel   *amqp.Channel
-	queueName string
-	service   *service.MetricsService
-	publisher *Publisher
+	channel   *amqp.Channel           // Канал RabbitMQ
+	queueName string                  // Имя очереди для подписки
+	service   *service.MetricsService // Сервис для генерации отчётов
+	publisher *Publisher              // Публикатор для отправки результатов
 }
 
+// NewConsumer создаёт новый Consumer для указанной очереди.
+//
+// Параметры:
+//   - ch - канал RabbitMQ
+//   - queue - имя очереди для подписки
+//   - svc - сервис для генерации отчётов
+//   - pub - публикатор для отправки результатов
 func NewConsumer(ch *amqp.Channel, queue string, svc *service.MetricsService, pub *Publisher) *Consumer {
 	return &Consumer{
 		channel:   ch,
@@ -26,14 +33,22 @@ func NewConsumer(ch *amqp.Channel, queue string, svc *service.MetricsService, pu
 	}
 }
 
+// Start начинает прослушивание очереди и обработку сообщений.
+//
+// Для каждого сообщения Consumer:
+//  1. Десериализует MetricsCommand из JSON.
+//  2. Генерирует отчёт через MetricsService.
+//  3. Публикует результат через Publisher.
+//
+// Возвращает ошибку, если не удалось объявить очередь или подписаться на неё.
 func (c *Consumer) Start() error {
 	_, err := c.channel.QueueDeclare(
 		c.queueName,
-		true,
-		false,
-		false,
-		false,
-		nil,
+		true,  // durable
+		false, // autoDelete
+		false, // exclusive
+		false, // noWait
+		nil,   // args
 	)
 	if err != nil {
 		return fmt.Errorf("failed to declare queue: %w", err)
@@ -41,12 +56,12 @@ func (c *Consumer) Start() error {
 
 	msgs, err := c.channel.Consume(
 		c.queueName,
-		"",
-		true,
-		false,
-		false,
-		false,
-		nil,
+		"",    // consumer
+		true,  // autoAck
+		false, // exclusive
+		false, // noLocal
+		false, // noWait
+		nil,   // args
 	)
 	if err != nil {
 		return err

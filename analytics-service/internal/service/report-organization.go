@@ -19,8 +19,8 @@ func NewOrganizationMetricsResponse(metrics *OrganizationMetrics) OrganizationMe
 // Собирает данные из репозитория и агрегирует их в структуру OrganizationMetricsResponse.
 //
 // Параметры:
-//   - repo — репозиторий для получения метрик организации.
-//   - orgID — строковый UUID организации.
+//   - repo - репозиторий для получения метрик организации.
+//   - orgID - строковый UUID организации.
 //
 // Возвращает:
 //   - сформированный отчёт OrganizationMetricsResponse
@@ -58,9 +58,9 @@ func GenerateOrganizationReport(repo repository.OrganizationMetricsRepository, o
 // и суммарной нагрузке по временным интервалам.
 //
 // Параметры:
-//   - repo — репозиторий графических метрик организации.
-//   - orgID — строковый UUID организации.
-//   - from, to — временной диапазон.
+//   - repo - репозиторий графических метрик организации.
+//   - orgID - строковый UUID организации.
+//   - from, to - временной диапазон.
 //
 // Возвращает:
 //   - графический отчёт OrganizationGraphicsResponse

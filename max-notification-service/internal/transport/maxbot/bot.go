@@ -8,12 +8,29 @@ import (
 	"github.com/max-messenger/max-bot-api-client-go/schemes"
 )
 
+// Bot представляет MAX бота с клиентом API и колбэком на ответы участников.
 type Bot struct {
-	client   *maxbot.Api
-	botID    int64
-	OnAnswer func(idMax int64, answer string) // колбэк на нажатие кнопки
+	// client является клиентом API MAX бота.
+	client *maxbot.Api
+
+	// botID содержит идентификатор бота.
+	botID int64
+
+	// OnAnswer вызывается при нажатии кнопки участником.
+	// Параметры:
+	//   - idMax: идентификатор участника
+	//   - answer: ответ участника
+	OnAnswer func(idMax int64, answer string)
 }
 
+// NewBot создаёт новый экземпляр Bot с указанным токеном.
+//
+// Параметры:
+//   - token: токен доступа к MAX API
+//
+// Возвращает:
+//   - указатель на созданный Bot
+//   - ошибку, если инициализация API или получение информации о боте не удалось
 func NewBot(token string) (*Bot, error) {
 	api, err := maxbot.New(token)
 	if err != nil {
@@ -32,7 +49,13 @@ func NewBot(token string) (*Bot, error) {
 	}, nil
 }
 
-// Start запускает бота и слушает обновления
+// Start запускает бота и слушает обновления от MAX API.
+//
+// Параметры:
+//   - ctx: контекст для управления жизненным циклом бота
+//
+// Возвращает:
+//   - ошибку, если запуск бота или получение информации о боте завершились неудачей
 func (b *Bot) Start(ctx context.Context) error {
 	info, err := b.client.Bots.GetBot(ctx)
 	if err != nil {
@@ -58,6 +81,12 @@ func (b *Bot) Start(ctx context.Context) error {
 	}
 }
 
+// handleUpdate обрабатывает входящее обновление.
+//
+// В зависимости от типа обновления вызывает соответствующие методы:
+//   - MessageCreatedUpdate - handleMessage
+//   - MessageCallbackUpdate - handleCallback
+//   - неизвестный тип - логируется как предупреждение
 func (b *Bot) handleUpdate(ctx context.Context, upd schemes.UpdateInterface) error {
 	switch u := upd.(type) {
 	case *schemes.MessageCreatedUpdate:

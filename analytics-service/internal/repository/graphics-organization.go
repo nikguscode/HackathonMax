@@ -35,7 +35,7 @@ type OrganizationGraphicsRepository interface {
 	TotalLoadByTime(orgID uuid.UUID, from, to time.Time) ([]OrgTotalLoad, error)
 }
 
-// orgGraphicsRepo — реализация OrganizationGraphicsRepository,
+// orgGraphicsRepo - реализация OrganizationGraphicsRepository,
 // использующая PostgreSQL через GORM.
 type orgGraphicsRepo struct {
 	db *gorm.DB

@@ -10,7 +10,12 @@ import (
 	"github.com/max-messenger/max-bot-api-client-go/schemes"
 )
 
-// сообщения
+// handleMessage обрабатывает входящее текстовое сообщение.
+//
+// В зависимости от команды сообщения вызывает соответствующие методы:
+//   - /start - handleStartCommand
+//   - /help - handleHelpCommand
+//   - любая другая команда - handleDefaultCommand
 func (b *Bot) handleMessage(ctx context.Context, update *schemes.MessageCreatedUpdate) error {
 	switch strings.TrimSpace(update.GetCommand()) {
 	case "/start":
@@ -22,8 +27,19 @@ func (b *Bot) handleMessage(ctx context.Context, update *schemes.MessageCreatedU
 	}
 }
 
+// handleCallback обрабатывает нажатие кнопок пользователем.
+//
+// Параметры:
+//   - ctx: контекст для управления запросами
+//   - update: объект колбэка от пользователя
+//
+// Функция:
+//   - извлекает действие и idMax из payload
+//   - удаляет сообщение через deleteMessage
+//   - вызывает OnAnswer колбэк, если установлен
+//   - обрабатывает действия "member_yes" и "member_no" через соответствующие методы
 func (b *Bot) handleCallback(ctx context.Context, update *schemes.MessageCallbackUpdate) error {
-	payload := update.Callback.Payload // формат "member_yes:123"
+	payload := update.Callback.Payload
 	parts := strings.Split(payload, ":")
 
 	if len(parts) != 2 {
@@ -61,7 +77,8 @@ func (b *Bot) handleCallback(ctx context.Context, update *schemes.MessageCallbac
 	return nil
 }
 
-// команды
+// handleStartCommand обрабатывает команду /start.
+// Отправляет приветственное сообщение пользователю с инструкцией по использованию бота.
 func (b *Bot) handleStartCommand(ctx context.Context, update *schemes.MessageCreatedUpdate) error {
 	msg := maxbot.NewMessage().
 		SetChat(update.Message.Recipient.ChatId).
@@ -71,6 +88,8 @@ func (b *Bot) handleStartCommand(ctx context.Context, update *schemes.MessageCre
 	return err
 }
 
+// handleHelpCommand обрабатывает команду /help.
+// Отправляет пользователю подсказку по использованию мини-приложения.
 func (b *Bot) handleHelpCommand(ctx context.Context, update *schemes.MessageCreatedUpdate) error {
 	msg := maxbot.NewMessage().
 		SetChat(update.Message.Recipient.ChatId).
@@ -79,6 +98,8 @@ func (b *Bot) handleHelpCommand(ctx context.Context, update *schemes.MessageCrea
 	return err
 }
 
+// handleDefaultCommand обрабатывает неизвестные команды.
+// Отправляет пользователю сообщение о том, что команда не распознана.
 func (b *Bot) handleDefaultCommand(ctx context.Context, update *schemes.MessageCreatedUpdate) error {
 	msg := maxbot.NewMessage().
 		SetChat(update.Message.Recipient.ChatId).
@@ -88,7 +109,7 @@ func (b *Bot) handleDefaultCommand(ctx context.Context, update *schemes.MessageC
 	return err
 }
 
-// кнопки
+// handleMemberComeOverYes обрабатывает нажатие кнопки "Да".
 func (b *Bot) handleMemberComeOverYes(ctx context.Context, update *schemes.MessageCallbackUpdate) error {
 	msg := maxbot.NewMessage().
 		SetUser(update.Callback.User.UserId).
@@ -97,6 +118,7 @@ func (b *Bot) handleMemberComeOverYes(ctx context.Context, update *schemes.Messa
 	return err
 }
 
+// handleMemberComeOverNo обрабатывает нажатие кнопки "Нет".
 func (b *Bot) handleMemberComeOverNo(ctx context.Context, update *schemes.MessageCallbackUpdate) error {
 	msg := maxbot.NewMessage().
 		SetUser(update.Callback.User.UserId).

@@ -20,7 +20,7 @@ func (r *Connection) Channel() *amqp.Channel {
 // NewConnection создаёт новое соединение с RabbitMQ и открывает канал.
 //
 // Параметры:
-//   - url — URL подключения к RabbitMQ (например, amqp://user:pass@host:port)
+//   - url - URL подключения к RabbitMQ (например, amqp://user:pass@host:port)
 //
 // Возвращает:
 //   - указатель на Connection

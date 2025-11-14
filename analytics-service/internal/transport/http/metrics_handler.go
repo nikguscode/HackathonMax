@@ -21,7 +21,7 @@ func NewMetricsHandler(svc *service.MetricsService) *MetricsHandler {
 //
 // Путь: GET /organizations/:organizationId/metrics
 // Параметры:
-//   - organizationId — UUID организации в URL.
+//   - organizationId - UUID организации в URL.
 //
 // Ответ:
 //   - 200 OK с JSON, содержащим метрики организации.
@@ -48,9 +48,9 @@ func (h *MetricsHandler) GetOrganizationMetrics(c *gin.Context) {
 //
 // Путь: GET /organizations/:organizationId/graphics
 // Параметры URL:
-//   - organizationId — UUID организации
-//   - from — начальная дата (YYYY-MM-DD)
-//   - to — конечная дата (YYYY-MM-DD)
+//   - organizationId - UUID организации
+//   - from - начальная дата (YYYY-MM-DD)
+//   - to - конечная дата (YYYY-MM-DD)
 //
 // Ответ:
 //   - 200 OK с JSON графиков организации.
@@ -114,9 +114,9 @@ func (h *MetricsHandler) GetQueueMetrics(c *gin.Context) {
 //
 // Путь: GET /queues/:queueId/graphics
 // Параметры URL:
-//   - queueId — UUID очереди
-//   - from — начальная дата (YYYY-MM-DD)
-//   - to — конечная дата (YYYY-MM-DD)
+//   - queueId - UUID очереди
+//   - from - начальная дата (YYYY-MM-DD)
+//   - to - конечная дата (YYYY-MM-DD)
 //
 // Ответ:
 //   - 200 OK с JSON графиков очереди.
