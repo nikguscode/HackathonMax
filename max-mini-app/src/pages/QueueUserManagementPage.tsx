@@ -51,7 +51,13 @@ const QueueUserManagementPage: React.FC = () => {
 
         await queueEntriesApi.updateQueueEntryStatus(entryId, authId, maxHash, {status: "SERVING"});
 
-        setUsers(prevUsers => prevUsers.filter(user => user.queueEntryId!== entryId));
+      setUsers(prevUsers =>
+            prevUsers.map(user =>
+              user.queueEntryId === entryId
+                ? { ...user, status: 'SERVING' }
+                : user
+            )
+          );
 
         console.log('✅ Пользователь удалён локально:', entryId);
       } catch (err){
