@@ -12,9 +12,9 @@ const createApiConfiguration = (): Configuration => {
   const basePath =
     import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
 
-  const authId = localStorage.getItem("authId");
-  const maxHash = localStorage.getItem("maxHash");
-  const orgId = localStorage.getItem("orgId");
+  const authId = sessionStorage.getItem("authId");
+  const maxHash = sessionStorage.getItem("maxHash");
+  const orgId = sessionStorage.getItem("orgId");
 
   return new Configuration({
     basePath,
@@ -42,8 +42,8 @@ const QueueUserModeratorPage: React.FC = () => {
   const [currentView, setCurrentView] = useState('users');
   const [employees, setEmployees] = useState<QueueStaff[]>([]);
 
-  const authId = localStorage.getItem("authId") ?? '';
-  const maxHash = localStorage.getItem("maxHash") ?? '';
+  const authId = sessionStorage.getItem("authId") ?? '';
+  const maxHash = sessionStorage.getItem("maxHash") ?? '';
 
 
 
@@ -80,7 +80,7 @@ const QueueUserModeratorPage: React.FC = () => {
     setIsAddEmployeeModalOpen(true);
   }
   };
-  const orgId = localStorage.getItem("orgId");
+  const orgId = sessionStorage.getItem("orgId");
 
   const handleAddEmployee = async (userId: number) => {
   try {

@@ -122,8 +122,8 @@ const createApiConfiguration = (): Configuration => {
   const basePath =
     import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
 
-  const authId = localStorage.getItem("authId");
-  const maxHash = localStorage.getItem("maxHash");
+  const authId = sessionStorage.getItem("authId");
+  const maxHash = sessionStorage.getItem("maxHash");
 
   return new Configuration({
     basePath,
@@ -147,9 +147,9 @@ const ModeratorDashboardPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [orgName, setOrgName] = useState<string | null>(null);
 
-  const authId = localStorage.getItem("authId") ?? '';
-  const maxHash = localStorage.getItem("maxHash") ?? '';
-  localStorage.setItem("orgId", orgId ?? '');
+  const authId = sessionStorage.getItem("authId") ?? '';
+  const maxHash = sessionStorage.getItem("maxHash") ?? '';
+  sessionStorage.setItem("orgId", orgId ?? '');
 
   const fetchQueues = async (organizationId: string) => {
         try {
