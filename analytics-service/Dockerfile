@@ -16,7 +16,6 @@ FROM alpine:3.20
 WORKDIR /app
 
 COPY --from=builder /app/analytics_service .
-COPY .env .
 
 EXPOSE 8081
 
