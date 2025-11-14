@@ -68,7 +68,7 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ isOpen, onClose, on
 
         <input
           type="text"
-          placeholder="Введите ID пользователя"
+          placeholder="Введите ID сотрудника"
           value={userId}
           onChange={(e) => setUserId(e.target.value)}
           style={{
