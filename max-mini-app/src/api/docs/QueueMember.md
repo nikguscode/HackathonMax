@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **maxId** | **number** |  | [optional] [default to undefined]
 **queueEntryId** | **string** |  | [optional] [default to undefined]
 **username** | **string** |  | [optional] [default to undefined]
+**status** | [**QueueEntryStatus**](QueueEntryStatus.md) |  | [optional] [default to undefined]
 
 ## Example
 
@@ -18,6 +19,7 @@ const instance: QueueMember = {
     maxId,
     queueEntryId,
     username,
+    status,
 };
 ```
 

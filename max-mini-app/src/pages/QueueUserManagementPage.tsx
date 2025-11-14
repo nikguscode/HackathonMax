@@ -164,11 +164,24 @@ const QueueUserManagementPage: React.FC = () => {
             maxId: q.maxId,
             username: q.username || '',
             queueEntryId: q.queueEntryId,
+            status: q.status,
         }));
         setUsers(members);
     }) 
     .catch(console.error);
   }, [queueId])
+  
+  useEffect(() => {
+    const servedUser = users.find(u => u.status === 'SERVED');
+    if (servedUser) {
+      // Даём время на анимацию полосы/вылета
+      const timer = setTimeout(() => {
+        handleRemoveUser(servedUser.queueEntryId!);
+      }, 400); // 400ms — чтобы анимация успела
+
+      return () => clearTimeout(timer); // чистим, если компонент размонтируется
+    }
+  }, [users]);
 
   const handleConfirmExit = async () => {
     if (selectedUserEntryId) {

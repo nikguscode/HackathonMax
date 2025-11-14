@@ -116,7 +116,8 @@ export const QueueEntryStatus = {
     Serving: 'SERVING',
     Served: 'SERVED',
     Canceled: 'CANCELED',
-    Missed: 'MISSED'
+    Missed: 'MISSED',
+    Called: 'CALLED'
 } as const;
 
 export type QueueEntryStatus = typeof QueueEntryStatus[keyof typeof QueueEntryStatus];
@@ -146,7 +147,10 @@ export interface QueueMember {
     'maxId'?: number;
     'queueEntryId'?: string;
     'username'?: string;
+    'status'?: QueueEntryStatus;
 }
+
+
 export interface QueueMembersResponse {
     'members'?: Array<QueueMember>;
 }
