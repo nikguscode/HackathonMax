@@ -1,4 +1,3 @@
-// src/components/SwipeableUserItem.tsx
 import React, { useState, useRef } from 'react';
 import { Panel, Flex, Typography } from '@maxhub/max-ui';
 import { QueueMember } from '../api';
@@ -46,6 +45,7 @@ const SwipeableUserItem: React.FC<SwipeableUserItemProps> = ({
     if (swipeOffset >= THRESHOLD) {
       setIsAnimating(true);
       setSwipeOffset(BG_WIDTH + 200);
+      setTimeout(() => {onConfirm(user.queueEntryId!)}, 100);
       try {
         await onConfirm(user.queueEntryId!);
       } catch (err) {
@@ -205,7 +205,7 @@ const SwipeableUserItem: React.FC<SwipeableUserItemProps> = ({
         height: 36,
         borderRadius: 8,
         border: 'none',
-        backgroundColor: '#0e100fff',
+        backgroundColor: 'transparent',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -213,12 +213,34 @@ const SwipeableUserItem: React.FC<SwipeableUserItemProps> = ({
         flexShrink: 0,
       }}
     >
-      <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" width="18" height="18">
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        fill="#000000" // ЧЁРНЫЙ ЦВЕТ ИКОНКИ
+        viewBox="0 0 24 24" 
+        width="18" 
+        height="18"
+    >
         <path d="M12 1a11 11 0 1 0 11 11A11.013 11.013 0 0 0 12 1zm0 20a9 9 0 1 1 9-9 9.01 9.01 0 0 1-9 9zm.5-13h-1v6l5.25 3.15.5-.86-4.75-2.79z" />
       </svg>
     </button>
   </Flex>
 </Panel>
+{user.status === 'SERVING' && (
+  <div
+    style={{
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      height: 4,
+      width: '100%',
+      background: 'linear-gradient(90deg, #28A745 0%, #34d058 100%)',
+      borderRadius: '0 0 12px 12px',
+      zIndex: 2,
+      // Плавное появление
+      animation: 'slideIn 0.3s ease-out forwards',
+    }}
+  />
+)}
     </div>
   );
 };
