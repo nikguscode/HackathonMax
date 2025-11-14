@@ -49,7 +49,7 @@ func (b *Bot) SendComeOverRequest(ctx context.Context, idMax int64) error {
 	msg := maxbot.NewMessage().
 		SetUser(idMax).
 		AddKeyboard(keyboard).
-		SetText("Выберите вариант:")
+		SetText("Скоро подойдет ваша очередь. Вы успеваете?")
 
 	_, err := b.client.Messages.SendMessageResult(ctx, msg)
 

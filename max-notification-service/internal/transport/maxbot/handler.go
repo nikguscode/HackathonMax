@@ -65,7 +65,7 @@ func (b *Bot) handleCallback(ctx context.Context, update *schemes.MessageCallbac
 func (b *Bot) handleStartCommand(ctx context.Context, update *schemes.MessageCreatedUpdate) error {
 	msg := maxbot.NewMessage().
 		SetChat(update.Message.Recipient.ChatId).
-		SetText("Добро пожаловать!")
+		SetText("Добро пожаловать! Для того чтобы запичаться в очередь необходимо отсканировать QR-код. Вы можете контролировать свои очереди в нашем мини-приложении")
 	log.Print(update.Message.Sender.UserId)
 	_, err := b.client.Messages.SendMessageResult(ctx, msg)
 	return err
@@ -74,7 +74,7 @@ func (b *Bot) handleStartCommand(ctx context.Context, update *schemes.MessageCre
 func (b *Bot) handleHelpCommand(ctx context.Context, update *schemes.MessageCreatedUpdate) error {
 	msg := maxbot.NewMessage().
 		SetChat(update.Message.Recipient.ChatId).
-		SetText("Помощь")
+		SetText("Откройте мини-приложение")
 	_, err := b.client.Messages.SendMessageResult(ctx, msg)
 	return err
 }
@@ -82,7 +82,7 @@ func (b *Bot) handleHelpCommand(ctx context.Context, update *schemes.MessageCrea
 func (b *Bot) handleDefaultCommand(ctx context.Context, update *schemes.MessageCreatedUpdate) error {
 	msg := maxbot.NewMessage().
 		SetChat(update.Message.Recipient.ChatId).
-		SetText("Команда не распознана")
+		SetText("Команда не распознана. Напишите /help")
 
 	_, err := b.client.Messages.SendMessageResult(ctx, msg)
 	return err
