@@ -12,7 +12,7 @@ import OrganizationDetailsPage from "./pages/OrganizationDetailsPage.tsx";
 import ModeratorQueueDetailsPage from "./pages/ModeratorQueueDetailsPage.tsx";
 import { UsersApi, Configuration } from "./api";
 import Logo from "./components/Logo.tsx";
-import SkeletonCard from "./components/Skeletons/Skeleton.tsx";
+import SkeletonCard from "./components/Skeletons/SkeletonApp.tsx";
 import QueueUserModeratorPage from "./pages/QueueUserModeratorPage.tsx";
 
 <script src="https://st.max.ru/js/max-web-app.js"></script>
@@ -76,7 +76,7 @@ const HomePage: React.FC = () => {
 
       setLoading(true);
       setError(null);
-
+      
       try {
         const maxId = getMaxId();
         if (!maxId) {
@@ -90,6 +90,7 @@ const HomePage: React.FC = () => {
         const usersApiAuth = new UsersApi(authConfig);
         const body = { miniAppInitData: window.WebApp.initData };
         const authResponse = await usersApiAuth.sendUserMiniAppData(Number(maxId), body);
+        console.log("auth_date", body);
 
         if (authResponse.status === 200 && (authResponse.data as any)?.authId) {
           const maxHash = (authResponse.data as any).maxHash;

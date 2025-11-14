@@ -6,6 +6,7 @@ import Logo from '../components/Logo';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { QueueEntryResponse, QueueEntriesApi, Configuration } from '../api';
 import InfoCard from '../components/InfoCard';
+import QueueDetailsSkeleton from '../components/Skeletons/SkeletonQueueDetailsPage';
 
 const createApiConfiguration = (): Configuration => {
   const basePath =
@@ -74,6 +75,7 @@ const QueueDetailsPage: React.FC = () => {
   const [isExitQueue, setisExitQueue] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isQRCodeOpen, setIsQRCodeOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const authId = localStorage.getItem("authId") ?? '';
   const maxHash = localStorage.getItem("maxHash") ?? '';
@@ -81,7 +83,7 @@ const QueueDetailsPage: React.FC = () => {
   useEffect(() => { 
     if (!entryId) return;
     const fetchQueueEntry = async () => {
-    
+      setIsLoading(true);
       try{
         const config = createApiConfiguration();
         const userInfoApi = new QueueEntriesApi(config);
@@ -93,6 +95,8 @@ const QueueDetailsPage: React.FC = () => {
         
       } catch (err) {
         console.error('Ошибка при получении информации о пользователе:', err);
+      } finally {
+        setIsLoading(false);
       }
     }
     fetchQueueEntry();
@@ -114,10 +118,6 @@ const QueueDetailsPage: React.FC = () => {
     }
   };
 
-  if (!queueDetails) {
-  return <div>Загрузка данных о пользователе...</div>;
-  }
-
   const defaultShadow = '0 2px 4px rgba(0, 0, 0, 0.2)';
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
 
@@ -127,6 +127,10 @@ const QueueDetailsPage: React.FC = () => {
         <div>Ошибка: ID очереди не указан</div>
       </Container>
     );
+  }
+
+  if (isLoading || !queueDetails) {
+        return <QueueDetailsSkeleton />;
   }
 
   const handleExitQueue = () => {

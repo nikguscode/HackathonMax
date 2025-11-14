@@ -7,7 +7,7 @@ import static com.nikguscode.jooq.tables.QueueParams.QUEUE_PARAMS;
 import static com.nikguscode.jooq.tables.QueueStaff.QUEUE_STAFF;
 import static com.nikguscode.jooq.tables.User.USER;
 
-import com.nikguscode.jooq.enums.QueueStatus;
+import com.nikguscode.jooq.enums.QueueEntryStatus;
 import com.nikguscode.jooq.tables.records.QueueParamsRecord;
 import com.nikguscode.jooq.tables.records.QueueRecord;
 import com.nikguscode.orchestrator.core.model.Queue;
@@ -30,6 +30,9 @@ public class JooqQueueDao implements QueueDao {
   public void createQueue(Queue queue, QueueParams queueParams) {
     QueueRecord queueRecord = dsl.newRecord(QUEUE, queue);
     QueueParamsRecord queueParamsRecord = dsl.newRecord(QUEUE_PARAMS, queueParams);
+
+    queueRecord.set(QUEUE.ID_ORGANIZATION, queue.getOrganizationId());
+    queueParamsRecord.set(QUEUE_PARAMS.ID_QUEUE, queueParams.getQueueId());
 
     queueRecord.store();
     queueParamsRecord.store();
@@ -55,7 +58,7 @@ public class JooqQueueDao implements QueueDao {
 
         .where(
             Q.ID.eq(QUEUE_ENTRY.ID_QUEUE)
-                .and(QUEUE_ENTRY.STATUS.eq(QueueStatus.SERVED))
+                .and(QUEUE_ENTRY.STATUS.eq(QueueEntryStatus.SERVED))
         )
         .asField("amountOfServedPeople");
 
@@ -74,7 +77,8 @@ public class JooqQueueDao implements QueueDao {
 
   @Override
   public List<QueueMemberRecord> findByQueueId(UUID queueId) {
-    List<QueueStatus> excludedStatuses = List.of(QueueStatus.CANCELED, QueueStatus.SERVED);
+    List<QueueEntryStatus> excludedStatuses =
+        List.of(QueueEntryStatus.CANCELED, QueueEntryStatus.SERVED);
 
     return dsl
         .select(QUEUE_ENTRY.ID_MAX, QUEUE_ENTRY.ID, USER.USERNAME)

@@ -1,6 +1,6 @@
 package com.nikguscode.orchestrator.dao.result;
 
-import com.nikguscode.jooq.enums.QueueStatus;
+import com.nikguscode.jooq.enums.QueueEntryStatus;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,5 +13,5 @@ public class QueueEntryActiveRecord {
   private final UUID id;
   private final String name;
   private final Integer peopleInFront;
-  private final QueueStatus status;
+  private final QueueEntryStatus status;
 }

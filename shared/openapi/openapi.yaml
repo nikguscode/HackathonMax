@@ -217,6 +217,30 @@ paths:
           $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/UnexpectedError'
+    put:
+      tags: [queue-entries]
+      summary: Update queue entry status
+      operationId: updateQueueEntryStatus
+      parameters:
+        - $ref: '#/components/parameters/QueueEntryIdPathParameter'
+        - $ref: '#/components/parameters/AuthIdHeader'
+        - $ref: '#/components/parameters/MaxHashHeader'
+      requestBody:
+        description: Update queue entry status
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueueEntryStatusUpdateRequest'
+      responses:
+        '200':
+          description: Queue entry status updated
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
 
 
   /organizations/{organizationId}/queues:
@@ -569,6 +593,7 @@ components:
         - SERVED
         - CANCELED
         - MISSED
+        - CALLED
 
     ##### Frontend requests #####
 
@@ -698,6 +723,17 @@ components:
       required:
         - authId
         - maxHash
+
+    QueueEntryStatusUpdateRequest:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/QueueEntryStatus'
+      required:
+        - status
+      example:
+        status: SERVING
+
 
     ### Queue Entry Responses ###
 

@@ -23,11 +23,12 @@ public interface QueueDtoMapper {
 
   @Mapping(target = "id", source = "queueId")
   @Mapping(target = "name", source = "dto.name")
+  @Mapping(target = "organizationId", source = "organizationId")
   Queue toEntity(
       UUID queueId, UUID organizationId, QueueCreatingRequestDto dto, OffsetDateTime createdAt);
 
   @Mapping(target = "id", source = "paramsId")
-  @Mapping(target = "arrivalGracePeriod", source = "dto.arrivalGradePeriod")
+  @Mapping(target = "arrivalGracePeriod", source = "dto.arrivalGracePeriod")
   @Mapping(target = "maxQueueSize", source = "dto.maxQueueSize")
   QueueParams toEntity(UUID paramsId, UUID queueId, QueueCreatingRequestDto dto);
 

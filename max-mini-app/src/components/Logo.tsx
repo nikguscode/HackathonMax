@@ -1,24 +1,34 @@
 import React from 'react';
 import logo from '/logo.jpg';
-// Предполагаю, что Flex импортируется корректно из @maxhub/max-ui
 import { Flex } from '@maxhub/max-ui'; 
 
 interface LogoProps {
     /** Функция обратного вызова при нажатии на кнопку "Назад". 
      * Если не передана, кнопка не отображается. */
     onBack?: () => void;
+    /** Если true, логотип всегда является ссылкой на главную страницу (/) */
+    alwaysLinkToHome?: boolean; 
 }
 
-const Logo: React.FC<LogoProps> = ({ onBack }) => {
+const Logo: React.FC<LogoProps> = ({ onBack, alwaysLinkToHome = true }) => {
+    
+    // Определяем, должен ли логотип быть кликабельным (ссылкой)
+    const isLogoClickable = alwaysLinkToHome;
+
+    // Компонент, который обернет логотип (либо <a>, либо <div>)
+    const LogoWrapper = isLogoClickable ? 'a' : 'div';
+    
+    // Определяем отступы
+    const containerPadding = onBack ? '12px 0' : '16px 0';
+
     return (
-        // Используем класс для контейнера
+        // Контейнер Flex
         <Flex
             justify="center"
             align="center"
             className="header-flex-container" 
             style={{
-                // Базовые стили для позиционирования
-                padding: onBack ? '12px 0' : '16px 0', 
+                padding: containerPadding, 
                 position: 'relative',
                 width: '100%',
             }}
@@ -60,19 +70,28 @@ const Logo: React.FC<LogoProps> = ({ onBack }) => {
                 </button>
             )}
 
-            {/* ЦЕНТРИРОВАННЫЙ ЛОГОТИП */}
-            <img
-                src={logo}
-                alt="Логотип"
-                // Добавляем класс для адаптивного изменения размера
-                className="adaptive-logo-img" 
-                style={{
-                    height: 'auto',
-                    objectFit: 'contain',
-                    // Дополнительный отступ для предотвращения перекрытия кнопкой
-                    padding: '0 40px', 
-                }}
-            />
+            {/* ЦЕНТРИРОВАННЫЙ ЛОГОТИП (обернутый в <a>, если isLogoClickable) */}
+            <LogoWrapper
+                // Если кликабелен, делаем его ссылкой
+                {...(isLogoClickable ? { 
+                    href: '/', // Ссылка на главную страницу
+                    style: { cursor: 'pointer', display: 'flex' } // Добавляем курсор
+                } : {})}
+            >
+                <img
+                    src={logo}
+                    alt="Логотип"
+                    // Добавляем класс для адаптивного изменения размера
+                    className="adaptive-logo-img" 
+                    style={{
+                        height: 'auto',
+                        objectFit: 'contain',
+                        padding: '0 40px', // Отступ, чтобы не мешать кнопке Назад
+                        // Добавляем стиль для предотвращения синего подчеркивания, если это <a>
+                        textDecoration: 'none' 
+                    }}
+                />
+            </LogoWrapper>
         </Flex>
     );
 }
