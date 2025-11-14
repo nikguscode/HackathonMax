@@ -23,6 +23,11 @@ func (s *Server) Start() error {
 	http.HandleFunc("/notify", s.handleNotify)
 	http.HandleFunc("/callback", s.handleCallback)
 
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("ok"))
+	})
+
 	log.Println("HTTP listening on", s.addr)
 	return http.ListenAndServe(s.addr, nil)
 }

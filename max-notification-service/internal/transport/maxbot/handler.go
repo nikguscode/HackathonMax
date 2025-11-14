@@ -66,6 +66,7 @@ func (b *Bot) handleStartCommand(ctx context.Context, update *schemes.MessageCre
 	msg := maxbot.NewMessage().
 		SetChat(update.Message.Recipient.ChatId).
 		SetText("Добро пожаловать!")
+	log.Print(update.Message.Sender.UserId)
 	_, err := b.client.Messages.SendMessageResult(ctx, msg)
 	return err
 }

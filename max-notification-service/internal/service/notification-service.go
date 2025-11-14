@@ -10,11 +10,15 @@ import (
 )
 
 type NotificationService struct {
-	bot *maxbot.Bot
+	bot        *maxbot.Bot
+	BackendURL string
 }
 
-func NewNotificationService(bot *maxbot.Bot) *NotificationService {
-	return &NotificationService{bot: bot}
+func NewNotificationService(bot *maxbot.Bot, backURL string) *NotificationService {
+	return &NotificationService{
+		bot:        bot,
+		BackendURL: backURL,
+	}
 }
 
 // /notify
@@ -27,17 +31,17 @@ func (s *NotificationService) StartNotify(idMax int64) error {
 func (s *NotificationService) MemberAnswer(idMax int64, answer string) {
 	log.Printf("MemberAnswer: idMax=%d, answer=%s", idMax, answer)
 
-	url := fmt.Sprintf("%s/callback?id_max=%d&answer=%s", "https://webhook.site/5c55aa19-0b6c-4683-8282-ba1ea3460865", idMax, answer)
+	url := fmt.Sprintf("http://%s/callback?id_max=%d&answer=%s", s.BackendURL, idMax, answer)
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Printf("Failed to send webhook: %v", err)
+		log.Printf("Failed to send: %v", err)
 		return
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode >= 400 {
-		log.Printf("Webhook returned error status: %s", resp.Status)
+		log.Printf("Returned error status: %s", resp.Status)
 	} else {
-		log.Printf("Webhook sent successfully: %s", url)
+		log.Printf("Sent successfully: %s", url)
 	}
 }

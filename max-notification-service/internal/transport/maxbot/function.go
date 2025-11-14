@@ -16,7 +16,7 @@ func (b *Bot) deleteMessage(ctx context.Context, messageID string) error {
 	baseURL := "https://botapi.max.ru/messages"
 	params := url.Values{}
 	params.Add("message_id", messageID)
-	params.Add("access_token", os.Getenv("BOT_TOKEN"))
+	params.Add("access_token", os.Getenv("MAX_BOT_TOKEN"))
 
 	fullURL := baseURL + "?" + params.Encode()
 

@@ -17,7 +17,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	notificationService := service.NewNotificationService(bot)
+	notificationService := service.NewNotificationService(bot, cfg.BackendURL)
 
 	bot.OnAnswer = notificationService.MemberAnswer
 
