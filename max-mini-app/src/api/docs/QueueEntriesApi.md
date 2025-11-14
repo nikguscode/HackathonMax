@@ -7,6 +7,7 @@ All URIs are relative to *http://orchestrator-service:8080*
 |[**addQueueEntry**](#addqueueentry) | **POST** /queue-entries | Add user in queue|
 |[**deleteQueueEntry**](#deletequeueentry) | **DELETE** /queue-entries/{entryId} | Delete user from queue|
 |[**getQueueEntry**](#getqueueentry) | **GET** /queue-entries/{entryId} | Get queue entry|
+|[**updateQueueEntryStatus**](#updatequeueentrystatus) | **PUT** /queue-entries/{entryId} | Update queue entry status|
 
 # **addQueueEntry**
 > addQueueEntry()
@@ -180,6 +181,69 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 |**200** | Successful operation |  -  |
+|**400** | Invalid request parameters |  -  |
+|**404** | Resource not found |  -  |
+|**0** | Unexpected server error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **updateQueueEntryStatus**
+> updateQueueEntryStatus(queueEntryStatusUpdateRequest)
+
+
+### Example
+
+```typescript
+import {
+    QueueEntriesApi,
+    Configuration,
+    QueueEntryStatusUpdateRequest
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new QueueEntriesApi(configuration);
+
+let entryId: string; //Queue Entry id (default to undefined)
+let authId: string; //Auth Id provided by orchestrator service (default to undefined)
+let maxHash: string; //Authentication hash provided by the Max massenger (default to undefined)
+let queueEntryStatusUpdateRequest: QueueEntryStatusUpdateRequest; //Update queue entry status
+
+const { status, data } = await apiInstance.updateQueueEntryStatus(
+    entryId,
+    authId,
+    maxHash,
+    queueEntryStatusUpdateRequest
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **queueEntryStatusUpdateRequest** | **QueueEntryStatusUpdateRequest**| Update queue entry status | |
+| **entryId** | [**string**] | Queue Entry id | defaults to undefined|
+| **authId** | [**string**] | Auth Id provided by orchestrator service | defaults to undefined|
+| **maxHash** | [**string**] | Authentication hash provided by the Max massenger | defaults to undefined|
+
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: Not defined
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | Queue entry status updated |  -  |
 |**400** | Invalid request parameters |  -  |
 |**404** | Resource not found |  -  |
 |**0** | Unexpected server error |  -  |
