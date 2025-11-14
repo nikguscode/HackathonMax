@@ -33,6 +33,10 @@ func (a *App) Run() error {
 }
 
 func (a *App) runRabbit() error {
+	if a.bs.RabbitConn == nil {
+		return fmt.Errorf("rabbit mode selected, but RabbitConn is nil")
+	}
+
 	ch := a.bs.RabbitConn.Channel()
 	publisher := rabbitmq.NewPublisher(ch, "", "metrics_results")
 	consumer := rabbitmq.NewConsumer(ch, "metrics_commands", a.bs.MetricsService, publisher)

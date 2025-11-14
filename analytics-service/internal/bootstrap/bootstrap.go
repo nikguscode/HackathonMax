@@ -34,9 +34,12 @@ func Init() (*Bootstrap, error) {
 
 	metricsService := service.NewMetricsService(repoOrg, repoQueue, graphOrg, graphQueue)
 
-	rbconn, err := rabbitmq.NewConnection(cfg.RabbitURL())
-	if err != nil {
-		return nil, err
+	var rbconn *rabbitmq.Connection
+	if cfg.AppMode == "rabbit" {
+		rbconn, err = rabbitmq.NewConnection(cfg.RabbitURL())
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &Bootstrap{
