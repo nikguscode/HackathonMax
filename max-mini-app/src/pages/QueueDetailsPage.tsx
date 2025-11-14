@@ -111,10 +111,10 @@ const QueueDetailsPage: React.FC = () => {
       const config = createApiConfiguration();
       const queueApi = new QueueEntriesApi(config);
       
-      if (status == "WAITING"){
+      if (Status == "WAITING"){
         await queueApi.updateQueueEntryStatus(entryId, authId, maxHash, {status: "CANCELED"});
         console.log('Отменено:', entryId);
-      } else if (status == "SERVING"){
+      } else if (Status == "SERVING"){
         await queueApi.updateQueueEntryStatus(entryId, authId, maxHash, {status: "SERVED"});
         console.log('Обслужено:', entryId);       
       }
@@ -165,7 +165,7 @@ const QueueDetailsPage: React.FC = () => {
   };
 
   
-
+  var status = '';
   if (Status === 'WAITING'){
     status = 'Ожидание';
   } else if (Status === 'SERVING'){

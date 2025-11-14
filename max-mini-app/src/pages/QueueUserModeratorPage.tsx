@@ -73,8 +73,12 @@ const QueueUserModeratorPage: React.FC = () => {
     setIsAddUserModalOpen(false); 
   };
 
-  const handleOpenAddUserModal = () => {
-    setIsAddUserModalOpen(true);
+  const handleOpenAddModal = () => {
+    if (currentView === 'users') {
+    setIsAddUserModalOpen(true);
+  } else {
+    setIsAddEmployeeModalOpen(true);
+  }
   };
   const orgId = localStorage.getItem("orgId");
 
@@ -194,8 +198,10 @@ const QueueUserModeratorPage: React.FC = () => {
           console.log('Пользователь вернулся на предыдущий экран!');
           navigate(-1);
   };
-
-
+  var st = 'Добавить сотрудника';
+  if (currentView === "users"){
+    st = 'Добавить пользователя';
+  }
   return (
     <Container
       style={{
@@ -413,16 +419,16 @@ const QueueUserModeratorPage: React.FC = () => {
                         marginLeft: '2%',
                     }}
                     >
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                   <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                         <path
-                        d="M3 4H13M5.5 4V3C5.5 2.44772 5.94772 2 6.5 2H9.5C10.0523 2 10.5 2.44772 10.5 3V4M12.5 4В13C12.5 13.5523 12.0523 14 11.5 14H4.5C3.94772 14 3.5 13.5523 3.5 13В4H12.5Z"
+                        d="M3 4H13M5.5 4V3C5.5 2.44772 5.94772 2 6.5 2H9.5C10.0523 2 10.5 2.44772 10.5 3V4M12.5 4V13C12.5 13.5523 12.0523 14 11.5 14H4.5C3.94772 14 3.5 13.5523 3.5 13V4H12.5Z"
                         stroke="white"
                         strokeWidth="1.2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         />
                         <path
-                        d="M6.5 7В11.5M9.5 7В11.5"
+                        d="M6.5 7V11.5M9.5 7V11.5"
                         stroke="white"
                         strokeWidth="1.2"
                         strokeLinecap="round"
@@ -456,7 +462,7 @@ const QueueUserModeratorPage: React.FC = () => {
         <Flex
           align="center"
           justify="space-between"
-          onClick={handleOpenAddUserModal}
+          onClick={handleOpenAddModal}
           onMouseDown={handleAddUserMouseDown}
           onMouseUp={handleAddUserMouseUp}
           onMouseLeave={handleAddUserMouseLeave}
@@ -486,13 +492,12 @@ const QueueUserModeratorPage: React.FC = () => {
               margin: '0 auto',
             }}
           >
-            Добавить пользователя
+            {st}
            </Typography.Title>
         </Flex>
         <AddUserModal 
           isOpen={isAddUserModalOpen}
-          onClose={() => {  if (currentView === 'users') setIsAddUserModalOpen(true);
-                            else setIsAddEmployeeModalOpen(true);}}
+          onClose={() => setIsAddUserModalOpen(false)}
           onAddUser={handleAddUserSubmit}
         />
       <AddEmployeeModal
