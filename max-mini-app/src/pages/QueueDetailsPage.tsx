@@ -12,8 +12,8 @@ const createApiConfiguration = (): Configuration => {
   const basePath =
     import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
 
-  const authId = localStorage.getItem("authId");
-  const maxHash = localStorage.getItem("maxHash");
+  const authId = sessionStorage.getItem("authId");
+  const maxHash = sessionStorage.getItem("maxHash");
 
   return new Configuration({
     basePath,
@@ -77,8 +77,8 @@ const QueueDetailsPage: React.FC = () => {
   const [isQRCodeOpen, setIsQRCodeOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const authId = localStorage.getItem("authId") ?? '';
-  const maxHash = localStorage.getItem("maxHash") ?? '';
+  const authId = sessionStorage.getItem("authId") ?? '';
+  const maxHash = sessionStorage.getItem("maxHash") ?? '';
 
   const Status = queueDetails?.status;
 

@@ -30,8 +30,8 @@ const createApiConfiguration = (): Configuration => {
   const basePath =
     import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
 
-  const authId = localStorage.getItem("authId");
-  const maxHash = localStorage.getItem("maxHash");
+  const authId = sessionStorage.getItem("authId");
+  const maxHash = sessionStorage.getItem("maxHash");
 
   return new Configuration({
     basePath,
@@ -96,8 +96,8 @@ const ModeratorQueueDetailsPage: React.FC = () => {
     setLoading(true);
     const config = createApiConfiguration();
     const queuesApi = new QueuesApi(config);
-    const authId = localStorage.getItem('authId') ?? '';
-    const maxHash = localStorage.getItem('maxHash') ?? '';
+    const authId = sessionStorage.getItem('authId') ?? '';
+    const maxHash = sessionStorage.getItem('maxHash') ?? '';
 
     try {
       await queuesApi.updateQueueSettings(queueId, authId, maxHash);
@@ -125,9 +125,9 @@ const ModeratorQueueDetailsPage: React.FC = () => {
       const queuesApi = new QueuesApi(config);
       const orgsApi = new OrganizationsApi(config);
 
-      const authId = localStorage.getItem('authId') ?? '';
-      const maxHash = localStorage.getItem('maxHash') ?? '';
-      const orgId = localStorage.getItem('orgId') ?? '';
+      const authId = sessionStorage.getItem('authId') ?? '';
+      const maxHash = sessionStorage.getItem('maxHash') ?? '';
+      const orgId = sessionStorage.getItem('orgId') ?? '';
 
       if (!orgId) {
         setError('orgId не найден');

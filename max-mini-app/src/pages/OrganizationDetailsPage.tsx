@@ -29,8 +29,8 @@ const createApiConfiguration = (): Configuration => {
     ? `${import.meta.env.VITE_API_BASE_PATH.replace(/\/+$/, '')}/v1/api`
     : 'http://localhost:8080/v1/api';
 
-  const authId = localStorage.getItem('authId') ?? '';
-  const maxHash = localStorage.getItem('maxHash') ?? '';
+  const authId = sessionStorage.getItem('authId') ?? '';
+  const maxHash = sessionStorage.getItem('maxHash') ?? '';
 
   return new Configuration({
     basePath,
@@ -87,8 +87,8 @@ const OrganizationDetailsPage: React.FC = () => {
     setLoading(true);
     const config = createApiConfiguration();
     const orgsApi = new OrganizationsApi(config);
-    const authId = localStorage.getItem('authId') ?? '';
-    const maxHash = localStorage.getItem('maxHash') ?? '';
+    const authId = sessionStorage.getItem('authId') ?? '';
+    const maxHash = sessionStorage.getItem('maxHash') ?? '';
 
     try {
       await orgsApi.updateSettingsOrganization(orgId ?? '', authId, maxHash, {
@@ -116,8 +116,8 @@ const OrganizationDetailsPage: React.FC = () => {
       const config = createApiConfiguration();
       const orgsApi = new OrganizationsApi(config);
 
-      const authId = localStorage.getItem('authId') ?? '';
-      const maxHash = localStorage.getItem('maxHash') ?? '';
+      const authId = sessionStorage.getItem('authId') ?? '';
+      const maxHash = sessionStorage.getItem('maxHash') ?? '';
 
       try {
         const [settingsRes, metricsRes, graphicsRes] = await Promise.all([

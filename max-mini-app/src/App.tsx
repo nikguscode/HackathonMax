@@ -38,9 +38,8 @@ const createApiConfiguration = (): Configuration => {
   const basePath =
     import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
 
-  const authId = localStorage.getItem("authId");
-  const maxHash = localStorage.getItem("maxHash");
-  // const orgName = localStorage.getItem("orgName");
+  const authId = sessionStorage.getItem("authId");
+  const maxHash = sessionStorage.getItem("maxHash");
 
   return new Configuration({
     basePath,
@@ -84,13 +83,13 @@ const HomePage: React.FC = () => {
         return;
       }
 
-      const savedAuthId = localStorage.getItem("authId");
-      const savedMaxHash = localStorage.getItem("maxHash");
+      const savedAuthId = sessionStorage.getItem("authId");
+      const savedMaxHash = sessionStorage.getItem("maxHash") ?? '';
 
       const config = createApiConfiguration();
       const usersApi = new UsersApi(config);
 
-      if (savedAuthId && savedMaxHash) {
+      if (savedAuthId != null) {
         try {
           const userResponse = await usersApi.getUserByMaxId(
             Number(maxId),
@@ -107,8 +106,8 @@ const HomePage: React.FC = () => {
         } catch (err: any) {
           if (err.response?.status === 401) {
             console.warn("Токен недействителен (401). Переавторизация...");
-            localStorage.removeItem("authId");
-            localStorage.removeItem("maxHash");
+            sessionStorage.removeItem("authId");
+            sessionStorage.removeItem("maxHash");
           } else {
             console.error("Ошибка при проверке токена:", err);
           }
@@ -127,8 +126,8 @@ const HomePage: React.FC = () => {
           const newAuthId = authResponse.data.authId;
           const newMaxHash = authResponse.data.maxHash;
 
-          localStorage.setItem("authId", newAuthId);
-          localStorage.setItem("maxHash", newMaxHash);
+          sessionStorage.setItem("authId", newAuthId);
+          sessionStorage.setItem("maxHash", newMaxHash);
 
           console.log("Авторизация успешна. Сохранены authId и maxHash.");
 
