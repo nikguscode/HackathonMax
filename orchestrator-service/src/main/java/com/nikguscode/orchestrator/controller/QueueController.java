@@ -54,7 +54,7 @@ public class QueueController {
 
   // не определены
   @GetMapping("queues/{queueId}/settings")
-  public QueueSettingsDto getSettings(@PathVariable UUID organizationId) {
+  public QueueSettingsDto getSettings(@PathVariable UUID queueId) {
     return new QueueSettingsDto().name("test").arrivalGracePeriod(2).maxQueueSize(3).isActive(true);
   }
 }

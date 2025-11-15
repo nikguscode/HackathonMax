@@ -1,11 +1,14 @@
 package com.nikguscode.orchestrator.core.service.user;
 
+import com.nikguscode.jooq.enums.UserRole;
 import com.nikguscode.openapi.model.UserResponseDto;
+import com.nikguscode.openapi.model.UserRoleRequestDto;
 import com.nikguscode.orchestrator.dao.tables.organization.OrganizationDao;
 import com.nikguscode.orchestrator.dao.tables.queueentry.QueueEntryDao;
 import com.nikguscode.orchestrator.dao.result.OrganizationRecord;
 import com.nikguscode.orchestrator.dao.result.QueueEntryActiveRecord;
 import com.nikguscode.orchestrator.dao.tables.user.UserDao;
+import com.nikguscode.orchestrator.dao.tables.userroles.UserRolesDao;
 import com.nikguscode.orchestrator.dto.max.MaxUserDataDto;
 import com.nikguscode.orchestrator.dto.user.UserHashDto;
 import com.nikguscode.orchestrator.core.mapper.UserDtoMapper;
@@ -16,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,6 +27,7 @@ public class UserService {
   private final UserDao userDao;
   private final OrganizationDao organizationDao;
   private final QueueEntryDao queueEntryDao;
+  private final UserRolesDao userRolesDao;
   private final UserDtoMapper userDtoMapper;
   private final UserCachingService userCachingService;
   private final MaxHashVerifyService maxHashVerifyService;
@@ -32,6 +37,7 @@ public class UserService {
       @Qualifier("jooqUserDao") UserDao userDao,
       @Qualifier("jooqOrganizationDao") OrganizationDao organizationDao,
       @Qualifier("jooqQueueEntryDao") QueueEntryDao queueEntryDao,
+      @Qualifier("jooqUserRolesDao") UserRolesDao userRolesDao,
       UserDtoMapper userDtoMapper,
       UserCachingService userCachingService,
       MaxHashVerifyService maxHashVerifyService,
@@ -39,10 +45,16 @@ public class UserService {
     this.userDao = userDao;
     this.organizationDao = organizationDao;
     this.queueEntryDao = queueEntryDao;
+    this.userRolesDao = userRolesDao;
     this.userDtoMapper = userDtoMapper;
     this.userCachingService = userCachingService;
     this.maxHashVerifyService = maxHashVerifyService;
     this.maxUserDataExtractor = maxUserDataExtractor;
+  }
+
+  public void editUserRole(Long maxId, UserRoleRequestDto dto) {
+//    userRolesDao.insertRoleByQueueId(maxId, dto.getQueueId(), UserRole.EMPLOYEE);
+
   }
 
   public UserResponseDto getUserQueueInformation(Long maxId) {

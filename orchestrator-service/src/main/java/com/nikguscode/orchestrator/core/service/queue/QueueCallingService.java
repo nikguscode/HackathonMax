@@ -28,6 +28,8 @@ public class QueueCallingService {
                 .isAfter(LocalDateTime.now()))
         .toList();
 
+    System.out.println(excludedUsers);
+
     excludedUsers.forEach(
         e -> queueEntryDao.updateByEntryId(e.getId(), QueueEntryStatus.MISSED));
   }

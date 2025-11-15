@@ -3,6 +3,7 @@ package com.nikguscode.orchestrator.dao.tables.staff;
 import static com.nikguscode.jooq.tables.QueueStaff.QUEUE_STAFF;
 import static com.nikguscode.jooq.tables.User.USER;
 
+import com.nikguscode.jooq.tables.QueueStaff;
 import com.nikguscode.orchestrator.dao.result.StaffRecord;
 import java.util.List;
 import java.util.UUID;
@@ -14,6 +15,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class JooqStaffDao implements StaffDao {
   private final DSLContext dsl;
+
+//  @Override
+//  public void addByQueueId(QueueStaff queueStaff) {
+//    dsl
+//        .insertInto(QUEUE_STAFF, QUEUE_STAFF.ID, QUEUE_STAFF.ID_MAX, QUEUE_STAFF.ID_QUEUE)
+//        .values(UUID.randomUUID(), maxId, queueId)
+//        .execute();
+//  }
 
   @Override
   public List<StaffRecord> findByQueueId(UUID queueId) {

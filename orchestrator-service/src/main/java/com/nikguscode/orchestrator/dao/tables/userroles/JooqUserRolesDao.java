@@ -15,7 +15,7 @@ public class JooqUserRolesDao implements UserRolesDao {
   private final DSLContext dsl;
 
   @Override
-  public void insertRoleByQueueId(Long maxId, UUID queueId) {
+  public void insertRoleByQueueId(Long maxId, UUID queueId, UserRole userRole) {
     var organizationIdOpt = dsl
         .select(QUEUE.ID_ORGANIZATION)
         .from(QUEUE)
@@ -33,7 +33,7 @@ public class JooqUserRolesDao implements UserRolesDao {
         .set(USER_ROLES.ID, UUID.randomUUID())
         .set(USER_ROLES.ID_MAX, maxId)
         .set(USER_ROLES.ID_ORGANIZATION, organizationId)
-        .set(USER_ROLES.ROLE, UserRole.CLIENT)
+        .set(USER_ROLES.ROLE, userRole)
         .execute();
   }
 }

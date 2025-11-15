@@ -1,5 +1,6 @@
 package com.nikguscode.orchestrator.core.service.queue;
 
+import com.nikguscode.jooq.enums.UserRole;
 import com.nikguscode.openapi.model.QueueEntryCreatingRequestDto;
 import com.nikguscode.openapi.model.QueueEntryResponseDto;
 import com.nikguscode.openapi.model.QueueEntryStatusUpdateRequestDto;
@@ -55,17 +56,13 @@ public class QueueEntryService {
         .maxId(maxId)
         .status(QueueEntryStatus.WAITING)
         .build();
-    System.out.println(queueEntry);
 
     QueueEntryMeta queueEntryMeta = QueueEntryMeta.builder()
         .queueEntryId(queueEntryId)
         .build();
 
-    System.out.println(queueEntryMeta);
-
     queueEntryDao.create(queueEntry, queueEntryMeta);
-
-    userRolesDao.insertRoleByQueueId(maxId, queueId);
+    userRolesDao.insertRoleByQueueId(maxId, queueId, UserRole.CLIENT);
   }
 
   // CALLED -> в мету добавляем called_at
