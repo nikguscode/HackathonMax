@@ -47,8 +47,8 @@ const createApiConfiguration = (): Configuration => {
   const basePath =
     import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
 
-  const authId = sessionStorage.getItem("authId");
-  const maxHash = sessionStorage.getItem("maxHash");
+  var authId = sessionStorage.getItem("authId");
+  var maxHash = sessionStorage.getItem("maxHash");
 
   return new Configuration({
     basePath,
@@ -75,8 +75,10 @@ const HomePage: React.FC = () => {
   const [moderatorOrgs, setModeratorOrgs] = useState<Organization[]>([]);
   const [userQueues, setUserQueues] = useState<QueueEntryInUserResponse[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showFAQ, setShowFAQ] = useState(false);
 
   useEffect(() => {
+    sessionStorage.removeItem("maxHash");
     const initAndLoadUserData = async () => {
       if (!window.WebApp) {
         console.warn("MAX Bridge не найден. Возможно, вы не в среде MAX.");
@@ -84,13 +86,14 @@ const HomePage: React.FC = () => {
       }
 
       setLoading(true);
+      setShowFAQ(false);
 
       const maxId = getMaxId();
       if (!maxId) {
         setLoading(false);
         return;
       }
-
+      
       const savedAuthId = sessionStorage.getItem("authId");
       const savedMaxHash = sessionStorage.getItem("maxHash") ?? '';
 
@@ -191,14 +194,13 @@ const HomePage: React.FC = () => {
               peopleInFront: queue.peopleInFront,
             });
           }
-          // Если данных нет — показываем FAQ
-            if (moderatorOrgs.length === 0 && userQueues.length === 0 && (authId)) {
-              return(
-                <FAQPage/>
-              );
-            };
+
           setModeratorOrgs(adminOrgs);
           setUserQueues(queues);
+          // Если данных нет — показываем FAQ
+            if (adminOrgs.length === 0 && queues.length === 0) {
+                setShowFAQ(true);
+            };
         }catch (err: any) {
           console.error("Ошибка в loadUserData:", err);
           throw err;
@@ -240,6 +242,9 @@ const HomePage: React.FC = () => {
         );
   }
 
+  if (showFAQ) {
+    return <FAQPage />;
+  }
 
   return (
     <Container
