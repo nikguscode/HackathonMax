@@ -133,22 +133,36 @@ const ModeratorQueueDetailsPage: React.FC = () => {
         return;
       }
 
+    try {
+      // === 1. Настройки ===
+      let settingsData = null;
       try {
-        
+        const res = await queuesApi.getQueueSettings(queueId, authId, maxHash);
+        settingsData = res.data.settings ?? null;
+        setSettings(settingsData);
+        setQueueName(settingsData?.name || `Очередь ${queueId}`);
+      } catch (err) {
+        console.warn('getQueueSettings failed:', err);
+        setQueueName(`Очередь ${queueId}`);
+      }
 
-        const [settingsRes, metricsRes, graphicsRes] = await Promise.all([
-          queuesApi.getQueueSettings(queueId, authId, maxHash),
-          queuesApi.getQueueMetrics(queueId, authId, maxHash),
-          queuesApi.getQueueGraphics(queueId, authId, maxHash),
-        ]);
+      // === 2. Метрики ===
+      let metricsData = null;
+      try {
+        const res = await queuesApi.getQueueMetrics(queueId, authId, maxHash);
+        metricsData = res.data.metrics ?? null;
+        setMetrics(metricsData);
+      } catch (err) {
+        console.warn('getQueueMetrics failed:', err);
+        setMetrics(null);
+      }
 
-        setSettings(settingsRes.data.settings ?? null);
-        setMetrics(metricsRes.data.metrics ?? null);
+      // === 3. Графики ===
+      let chartDataResult = null;
+      try {
+        const res = await queuesApi.getQueueGraphics(queueId, authId, maxHash);
+        const graphics = res.data.graphics;
 
-        const queueNameFromSettings = settingsRes.data.settings?.name ?? '';
-        setQueueName(queueNameFromSettings);
-        setQueueName(settingsRes.data.settings?.name || `Очередь ${queueId}`);
-        const graphics = graphicsRes.data.graphics;
         if (graphics) {
           const inQueueData = graphics.membersInQueueByTime || [];
           const waitingTimeData = graphics.averageWaitingTimeByTime || [];
@@ -181,18 +195,29 @@ const ModeratorQueueDetailsPage: React.FC = () => {
             a.time.localeCompare(b.time)
           );
 
-          setChartData(sortedData.length > 0 ? sortedData : null);
-        } else {
-          setChartData(null);
+          chartDataResult = sortedData.length > 0 ? sortedData : null;
         }
-      } catch (err: any) {
-        console.error('API Error:', err);
-        setError('Ошибка загрузки');
-        setQueueName(`Очередь ${queueId}`);
-        setChartData(null);
+      } catch (err) {
+        console.warn('getQueueGraphics failed:', err);
+        chartDataResult = null;
       } finally {
-        setLoading(false);
+        setChartData(chartDataResult);
       }
+
+      // === Если ВСЁ упало — покажем хотя бы заголовок ===
+      if (!settingsData && !metricsData && !chartDataResult) {
+        setError('Не удалось загрузить данные');
+      } else {
+        setError(null);
+      }
+
+    } catch (err: any) {
+      // Это уже не должно срабатывать
+      console.error('Unexpected error:', err);
+      setError('Критическая ошибка');
+    } finally {
+      setLoading(false);
+    }
     };
 
     loadData();
