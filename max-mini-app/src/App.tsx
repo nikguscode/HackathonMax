@@ -75,6 +75,7 @@ const HomePage: React.FC = () => {
   const [moderatorOrgs, setModeratorOrgs] = useState<Organization[]>([]);
   const [userQueues, setUserQueues] = useState<QueueEntryInUserResponse[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showFAQ, setShowFAQ] = useState(false);
 
   useEffect(() => {
     const initAndLoadUserData = async () => {
@@ -191,14 +192,13 @@ const HomePage: React.FC = () => {
               peopleInFront: queue.peopleInFront,
             });
           }
-          // Если данных нет — показываем FAQ
-            if (moderatorOrgs.length === 0 && userQueues.length === 0 && (authId)) {
-              return(
-                <FAQPage/>
-              );
-            };
+
           setModeratorOrgs(adminOrgs);
           setUserQueues(queues);
+          // Если данных нет — показываем FAQ
+            if (adminOrgs.length === 0 && queues.length === 0) {
+                setShowFAQ(true);
+            };
         }catch (err: any) {
           console.error("Ошибка в loadUserData:", err);
           throw err;
@@ -240,6 +240,9 @@ const HomePage: React.FC = () => {
         );
   }
 
+  if (showFAQ) {
+    return <FAQPage />;
+  }
 
   return (
     <Container
