@@ -68,10 +68,6 @@ public class QueueEntryService {
     userRolesDao.insertRoleByQueueId(maxId, queueId);
   }
 
-  public void createQueueEntry(QueueEntryCreatingRequestDto dto) {
-
-  }
-
   // CALLED -> в мету добавляем called_at
   // SERVING -> в мету добавляем arrived_at, started_at
   // SERVED -> в мету добавляем finished_at

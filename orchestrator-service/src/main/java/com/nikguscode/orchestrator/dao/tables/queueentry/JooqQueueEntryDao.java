@@ -1,6 +1,7 @@
 package com.nikguscode.orchestrator.dao.tables.queueentry;
 
 import static com.nikguscode.jooq.tables.Queue.QUEUE;
+import static com.nikguscode.jooq.tables.QueueParams.QUEUE_PARAMS;
 import static com.nikguscode.jooq.tables.QueueEntry.QUEUE_ENTRY;
 import static com.nikguscode.jooq.tables.QueueEntryMeta.QUEUE_ENTRY_META;
 import static com.nikguscode.jooq.tables.User.USER;
@@ -9,13 +10,13 @@ import com.nikguscode.jooq.enums.QueueEntryStatus;
 import com.nikguscode.orchestrator.core.model.QueueEntry;
 import com.nikguscode.orchestrator.core.model.QueueEntryMeta;
 import com.nikguscode.orchestrator.dao.result.QueueEntryActiveRecord;
+import com.nikguscode.orchestrator.dao.result.QueueEntryCalledStatusRecord;
 import com.nikguscode.orchestrator.dao.result.QueueEntryRecord;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
@@ -62,16 +63,37 @@ public class JooqQueueEntryDao implements QueueEntryDao {
         .execute();
   }
 
+  @Override
+  public List<QueueEntryCalledStatusRecord> get() {
+    return dsl
+        .select(
+            QUEUE_ENTRY.ID,
+            QUEUE_ENTRY.ID_QUEUE,
+            QUEUE_ENTRY.ID_MAX,
+            QUEUE_ENTRY_META.JOINED_AT,
+            QUEUE_PARAMS.ARRIVAL_GRACE_PERIOD)
+        .from(QUEUE_ENTRY)
+
+        .join(QUEUE_PARAMS)
+        .on(QUEUE_ENTRY.ID_QUEUE.eq(QUEUE_PARAMS.ID_QUEUE))
+
+        .join(QUEUE_ENTRY_META)
+        .on(QUEUE_ENTRY.ID.eq(QUEUE_ENTRY_META.ID_QUEUE_ENTRY))
+
+        .where(QUEUE_ENTRY.STATUS.eq(QueueEntryStatus.CALLED))
+        .fetchInto(QueueEntryCalledStatusRecord.class);
+  }
+
   // queueid
   @Override
   public List<QueueEntryActiveRecord> findActiveEntriesForQueue(UUID entryId) {
     var query = createRankedQueueEntriesQuery();
     var subquery = query.asTable("t_ranked");
 
-    var cteId = subquery.field(QUEUE_ENTRY.ID);
+    var cteId = subquery.field("queueEntryId", UUID.class);
     var cteQueueEntryMaxId = subquery.field(QUEUE_ENTRY.ID_MAX);
-    var cteQueueEntryQueueId = subquery.field(QUEUE_ENTRY.ID_QUEUE);
-    var cteQueueId = subquery.field(QUEUE.ID);
+    var cteQueueEntryQueueId = subquery.field("queueUuid", UUID.class);
+    var cteQueueId = subquery.field("queueDetailsId", UUID.class);
     var cteName = subquery.field(QUEUE.NAME);
     var cteStatus = subquery.field(QUEUE_ENTRY.STATUS);
     var cteRank = subquery.field("rank_in_queue", Integer.class);
@@ -92,7 +114,7 @@ public class JooqQueueEntryDao implements QueueEntryDao {
     var subquery = query.asTable("t_ranked");
 
     var cteIdMax = subquery.field(QUEUE_ENTRY.ID_MAX);
-    var cteId = subquery.field(QUEUE_ENTRY.ID);
+    var cteId = subquery.field("queueEntryId", UUID.class);
     var cteName = subquery.field(QUEUE.NAME);
     var cteStatus = subquery.field(QUEUE_ENTRY.STATUS);
     var cteRank = subquery.field("rank_in_queue", Integer.class);
@@ -110,9 +132,9 @@ public class JooqQueueEntryDao implements QueueEntryDao {
     var query = createRankedQueueEntriesQuery();
     var subquery = query.asTable("t_ranked");
 
-    var cteId = subquery.field(QUEUE_ENTRY.ID);
+    var cteId = subquery.field("queueEntryId", UUID.class);
     var cteName = subquery.field(QUEUE.NAME);
-    var cteLogin = subquery.field(USER.USERNAME);
+    var cteLogin = subquery.field(USER.FIRST_NAME);
     var cteStatus = subquery.field(QUEUE_ENTRY.STATUS);
     var cteRank = subquery.field("rank_in_queue", Integer.class);
 
@@ -148,10 +170,10 @@ public class JooqQueueEntryDao implements QueueEntryDao {
         QueueEntryStatus.SERVED);
 
     return dsl.select(
-            QUEUE_ENTRY.ID,
+            QUEUE_ENTRY.ID.as("queueEntryId"),
             QUEUE_ENTRY.ID_MAX,
-            QUEUE_ENTRY.ID_QUEUE,
-            QUEUE.ID,
+            QUEUE_ENTRY.ID_QUEUE.as("queueUuid"),
+            QUEUE.ID.as("queueDetailsId"),
             QUEUE.NAME,
             QUEUE_ENTRY.STATUS,
             USER.USERNAME,

@@ -9,6 +9,7 @@ import com.nikguscode.orchestrator.core.service.user.UserService;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,8 +35,9 @@ public class UserController {
   }
 
   @GetMapping("/users/{maxId}")
-  public UserResponseDto getUserQueueInformation(@PathVariable Long maxId) {
-    return userService.getUserQueueInformation(maxId);
+  public ResponseEntity<UserResponseDto> getUserQueueInformation(@PathVariable Long maxId) {
+    var responseBody = userService.getUserQueueInformation(maxId);
+    return ResponseEntity.ok(responseBody);
   }
 
   // 1. Добавить в user_roles
@@ -44,17 +46,17 @@ public class UserController {
 //  @PutMapping("/users/{maxId}/role")
 
   @PutMapping("/users/{maxId}")
-  public String editUser(@RequestBody UserCreatingRequestDto dto) {
+  public ResponseEntity<Void> editUser(@RequestBody UserCreatingRequestDto dto) {
     User user = userDtoMapper.toUser(dto, OffsetDateTime.now());
     userDao.update(user);
-    return "zaglushka";
+    return ResponseEntity.ok().build();
   }
 
   @PostMapping("/users")
-  public String addUser(@RequestBody UserCreatingRequestDto dto) {
+  public ResponseEntity<Void> addUser(@RequestBody UserCreatingRequestDto dto) {
     User user = userDtoMapper.toUser(dto, OffsetDateTime.now());
     userDao.add(user);
-    return "zaglushka";
+    return ResponseEntity.ok().build();
   }
 
   @PutMapping("organizations/{organizationId}/users/{maxId}/role")
