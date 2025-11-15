@@ -94,8 +94,8 @@ const OrganizationDetailsPage: React.FC = () => {
       setSettings(editedSettings);
       setIsEditing(false);
       setEditedSettings(null);
-    } catch (err) {
-      console.error('Failed to update settings:', err);
+    } catch (error) {
+      console.error('Failed to update settings:', error);
       alert('Не удалось сохранить настройки');
     } finally {
       setLoading(false);
@@ -114,20 +114,39 @@ const OrganizationDetailsPage: React.FC = () => {
       const authId = sessionStorage.getItem('authId') ?? '';
       const maxHash = sessionStorage.getItem('maxHash') ?? '';
 
-      try {
-        const [settingsRes, metricsRes, graphicsRes] = await Promise.all([
-          orgsApi.getOrganizationSettings(orgId, authId, maxHash),
-          orgsApi.getOrganizationMetrics(orgId, authId, maxHash),
-          orgsApi.getOrganizationGraphics(orgId, authId, maxHash).catch(() => ({ data: { graphics: null } })),
-        ]);
+    try {
+      const results = await Promise.allSettled([
+        orgsApi.getOrganizationSettings(orgId, authId, maxHash),
+        orgsApi.getOrganizationMetrics(orgId, authId, maxHash),
+        orgsApi.getOrganizationGraphics(orgId, authId, maxHash),
+      ]);
 
-        const org = settingsRes.data.organization;
-        setSettings(org ?? null);
+      const [settingsRes, metricsRes, graphicsRes] = results;
+
+      let hasAnyData = false;
+
+      if (settingsRes.status === 'fulfilled') {
+        const org = settingsRes.value.data.organization ?? null;
+        setSettings(org);
         setOrgName(org?.name || `Организация ${orgId}`);
-        setMetrics(metricsRes.data.metrics ?? null);
+        if (org) hasAnyData = true;
+      } else {
+        console.warn('getOrganizationSettings failed:', settingsRes.reason);
+        setOrgName(`Организация ${orgId}`);
+      }
 
-        // === График: throughputByTime → обслужено (кумулятивно), totalLoadByTime → нагрузка ===
-        const graphics = graphicsRes.data.graphics;
+      if (metricsRes.status === 'fulfilled') {
+        const metrics = metricsRes.value.data.metrics ?? null;
+        setMetrics(metrics);
+        if (metrics) hasAnyData = true;
+      } else {
+        console.warn('getOrganizationMetrics failed:', metricsRes.reason);
+        setMetrics(null);
+      }
+
+      let chartDataResult: typeof chartData = null;
+      if (graphicsRes.status === 'fulfilled') {
+        const graphics = graphicsRes.value.data.graphics;
         if (graphics?.throughputByTime || graphics?.totalLoadByTime) {
           const loadData = graphics.totalLoadByTime || [];
           const throughputData = graphics.throughputByTime || [];
@@ -155,16 +174,23 @@ const OrganizationDetailsPage: React.FC = () => {
           });
 
           const sorted = Array.from(timeMap.values()).sort((a, b) => a.time.localeCompare(b.time));
-          setChartData(sorted.length > 0 ? sorted : null);
-        } else {
-          setChartData(null);
+          chartDataResult = sorted.length > 0 ? sorted : null;
+
+          if (chartDataResult) hasAnyData = true;
         }
-      } catch (err: any) {
-        console.error('API Error:', err);
-        setOrgName(`Организация ${orgId}`);
-      } finally {
-        setLoading(false);
+      } else {
+        console.warn('getOrganizationGraphics failed:', graphicsRes.reason);
       }
+
+      setChartData(chartDataResult);
+
+      // === Ошибка только если НИЧЕГО не загрузилось ==
+
+    } catch (error) {
+      console.error('Critical error (should not happen):', error);
+    } finally {
+      setLoading(false);
+    }
     };
 
     loadData();
