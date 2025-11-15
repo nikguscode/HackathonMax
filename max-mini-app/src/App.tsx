@@ -20,6 +20,10 @@ import { showErrorToast } from "./utils/showErrorToast.ts";
 
 <script src="https://st.max.ru/js/max-web-app.js"></script>
 
+/**
+ * Извлекает maxId из WebApp, URL или env.
+ */
+
 const getMaxId = (): string | null => {
   if (window.WebApp?.initDataUnsafe?.user?.id) {
     return String(window.WebApp.initDataUnsafe.user.id);
@@ -35,6 +39,10 @@ const getMaxId = (): string | null => {
   return null;
 };
 
+
+/**
+ * Создаёт конфигурацию API с authId/maxHash из sessionStorage.
+ */
 const createApiConfiguration = (): Configuration => {
   const basePath =
     import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
@@ -60,7 +68,9 @@ declare global {
   }
 }
 
-
+/**
+ * Главная страница: показывает организации модератора и очереди пользователя.
+ */
 const HomePage: React.FC = () => {
   const [moderatorOrgs, setModeratorOrgs] = useState<Organization[]>([]);
   const [userQueues, setUserQueues] = useState<QueueEntryInUserResponse[]>([]);
@@ -87,6 +97,7 @@ const HomePage: React.FC = () => {
       const config = createApiConfiguration();
       const usersApi = new UsersApi(config);
 
+      // Проверка сохранённого токена
       if (savedAuthId != null) {
         try {
           const userResponse = await usersApi.getUserByMaxId(
@@ -112,6 +123,7 @@ const HomePage: React.FC = () => {
         }
       }
 
+      // Новая авторизация
       try {
         const authConfig = createApiConfiguration();
         const usersApiAuth = new UsersApi(authConfig);
@@ -141,6 +153,9 @@ const HomePage: React.FC = () => {
       }
     };
 
+    /**
+     * Загружает данные пользователя: организации и очереди.
+     */
     const loadUserData = async (maxId: number, authId: string, maxHash: string) => {
       try {
           const config = createApiConfiguration();
@@ -176,7 +191,8 @@ const HomePage: React.FC = () => {
               peopleInFront: queue.peopleInFront,
             });
           }
-            if (moderatorOrgs.length === 0 && userQueues.length === 0 && (authId != '' && maxHash != '')) {
+          // Если данных нет — показываем FAQ
+            if (moderatorOrgs.length === 0 && userQueues.length === 0 && (authId)) {
               return(
                 <FAQPage/>
               );
@@ -185,7 +201,6 @@ const HomePage: React.FC = () => {
           setUserQueues(queues);
         }catch (err: any) {
           console.error("Ошибка в loadUserData:", err);
-          showErrorToast(err);
           throw err;
         }
       };
@@ -194,7 +209,7 @@ const HomePage: React.FC = () => {
   }, []);
 
 
-
+  // Скелетон во время загрузки
   if (loading) {
     return (
           <Container
@@ -283,6 +298,9 @@ const HomePage: React.FC = () => {
   );
 };
 
+/**
+ * Корневой компонент приложения с роутингом.
+ */
 function App() {
   return (
     <BrowserRouter>
@@ -326,5 +344,5 @@ function App() {
     </BrowserRouter>
   );
 }
-// 
+
 export default App;

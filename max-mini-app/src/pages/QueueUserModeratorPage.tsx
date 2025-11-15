@@ -27,6 +27,9 @@ const createApiConfiguration = (): Configuration => {
   });
 };
 
+/**
+ * Страница управления пользователями и сотрудниками в очереди (модератор).
+ */
 const QueueUserModeratorPage: React.FC = () => {
   const { id: queueId } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -45,6 +48,9 @@ const QueueUserModeratorPage: React.FC = () => {
   const maxHash = sessionStorage.getItem("maxHash") ?? '';
   const orgId = sessionStorage.getItem("orgId") ?? '';
 
+  /**
+   * Загружает участников и сотрудников очереди.
+   */
   useEffect(() => {
     if (!queueId) {
       showErrorToast({ message: "ID очереди не указан" });
@@ -93,7 +99,10 @@ const QueueUserModeratorPage: React.FC = () => {
 
     fetchData();
   }, [queueId, authId, maxHash]);
-
+  
+/**
+   * Удаляет пользователя или сотрудника.
+   */
   const handleDelete = async () => {
     if (!selectedEntryId) return;
 
@@ -129,7 +138,9 @@ const QueueUserModeratorPage: React.FC = () => {
     setIsAddUserModalOpen(false);
   };
 
- 
+  /**
+   * Добавляет сотрудника через API.
+   */
   const handleAddEmployee = async (userId: number) => {
     try {
       const config = createApiConfiguration();
@@ -149,6 +160,9 @@ const QueueUserModeratorPage: React.FC = () => {
     }
   };
 
+  /**
+   * Открывает модалку добавления.
+   */
   const handleOpenAddModal = () => {
     currentView === 'users' ? setIsAddUserModalOpen(true) : setIsAddEmployeeModalOpen(true);
   };

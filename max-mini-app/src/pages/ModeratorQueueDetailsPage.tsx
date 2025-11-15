@@ -6,7 +6,6 @@ import Logo from '../components/Logo';
 
 import {
   QueuesApi,
-  OrganizationsApi,
   Configuration,
   QueueSettingsResponse,
   QueueMetricsResponse,
@@ -123,7 +122,6 @@ const ModeratorQueueDetailsPage: React.FC = () => {
 
       const config = createApiConfiguration();
       const queuesApi = new QueuesApi(config);
-      const orgsApi = new OrganizationsApi(config);
 
       const authId = sessionStorage.getItem('authId') ?? '';
       const maxHash = sessionStorage.getItem('maxHash') ?? '';
@@ -136,9 +134,7 @@ const ModeratorQueueDetailsPage: React.FC = () => {
       }
 
       try {
-        const orgQueuesRes = await orgsApi.getOrganizationQueues(orgId, authId, maxHash);
-        const queue = orgQueuesRes.data.queues?.find(q => q.id === queueId);
-        setQueueName(queue?.name || `Очередь ${queueId}`);
+        
 
         const [settingsRes, metricsRes, graphicsRes] = await Promise.all([
           queuesApi.getQueueSettings(queueId, authId, maxHash),
@@ -149,6 +145,9 @@ const ModeratorQueueDetailsPage: React.FC = () => {
         setSettings(settingsRes.data.settings ?? null);
         setMetrics(metricsRes.data.metrics ?? null);
 
+        const queueNameFromSettings = settingsRes.data.settings?.name ?? '';
+        setQueueName(queueNameFromSettings);
+        setQueueName(settingsRes.data.settings?.name || `Очередь ${queueId}`);
         const graphics = graphicsRes.data.graphics;
         if (graphics) {
           const inQueueData = graphics.membersInQueueByTime || [];
