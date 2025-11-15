@@ -62,7 +62,6 @@ const OrganizationDetailsPage: React.FC = () => {
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
 
   const handleBack = () => navigate(-1);
-  const handleManage = () => navigate(`/moderator-organization/${orgId}`);
 
   const cancelEditing = () => {
     setIsEditing(false);
@@ -481,31 +480,6 @@ const OrganizationDetailsPage: React.FC = () => {
                 <Typography.Body style={{ color: '#666' }}>Загрузка...</Typography.Body>
               )}
             </Panel>
-
-            <Flex
-              onClick={handleManage}
-              onMouseDown={() => setIsPressed(true)}
-              onMouseUp={() => setIsPressed(false)}
-              onMouseLeave={() => setIsPressed(false)}
-              onTouchStart={() => setIsPressed(true)}
-              onTouchEnd={() => setIsPressed(false)}
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                backgroundColor: '#FFF',
-                border: '0.3px solid rgba(0,0,0,0.15)',
-                borderRadius: '16px',
-                boxShadow: isPressed ? pressedShadow : defaultShadow,
-                cursor: 'pointer',
-                transform: isPressed ? 'scale(0.98)' : 'scale(1)',
-                transition: 'all 0.15s ease',
-                userSelect: 'none',
-              }}
-            >
-              <Typography.Title style={{ fontSize: '15px', fontWeight: 500, margin: '0 auto', color: '#333' }}>
-                Управление организацией
-              </Typography.Title>
-            </Flex>
           </>
         )}
       </Flex>
