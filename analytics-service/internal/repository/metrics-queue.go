@@ -132,8 +132,9 @@ func (r *queueMetricsRepo) MaxInQueue(IDqueue uuid.UUID) (int, error) {
 			SELECT t, SUM(delta) OVER (ORDER BY t) AS active_count
 			FROM events
 		)
-		SELECT MAX(active_count) FROM accum;
+		SELECT COALESCE(MAX(active_count), 0) FROM accum;
 	`, IDqueue).Scan(&max).Error
+
 	return max, err
 }
 
@@ -159,8 +160,9 @@ func (r *queueMetricsRepo) MinInQueue(IDqueue uuid.UUID) (int, error) {
 			SELECT t, SUM(delta) OVER (ORDER BY t) AS active_count
 			FROM events
 		)
-		SELECT MIN(active_count) FROM accum WHERE active_count > 0;
+		SELECT COALESCE(MIN(active_count), 0) FROM accum WHERE active_count > 0;
 	`, IDqueue).Scan(&min).Error
+
 	return min, err
 }
 

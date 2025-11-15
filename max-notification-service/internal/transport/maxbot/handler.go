@@ -82,7 +82,7 @@ func (b *Bot) handleCallback(ctx context.Context, update *schemes.MessageCallbac
 func (b *Bot) handleStartCommand(ctx context.Context, update *schemes.MessageCreatedUpdate) error {
 	msg := maxbot.NewMessage().
 		SetChat(update.Message.Recipient.ChatId).
-		SetText("Добро пожаловать! Для того чтобы запичаться в очередь необходимо отсканировать QR-код. Вы можете контролировать свои очереди в нашем мини-приложении")
+		SetText("Добро пожаловать! Для того чтобы запиcаться в очередь необходимо отсканировать QR-код. Вы можете контролировать свои очереди в нашем мини-приложении")
 	log.Print(update.Message.Sender.UserId)
 	_, err := b.client.Messages.SendMessageResult(ctx, msg)
 	return err
