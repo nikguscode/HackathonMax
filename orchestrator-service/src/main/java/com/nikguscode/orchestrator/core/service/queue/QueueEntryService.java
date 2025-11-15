@@ -48,28 +48,24 @@ public class QueueEntryService {
   // 3. создать user roles
   @Transactional
   public void createQueueEntry(UUID queueId, Long maxId) {
-    try {
-      final UUID queueEntryId = UUID.randomUUID();
-      QueueEntry queueEntry = QueueEntry.builder()
-          .id(queueEntryId)
-          .queueId(queueId)
-          .maxId(maxId)
-          .status(QueueEntryStatus.WAITING)
-          .build();
-      System.out.println(queueEntry);
+    final UUID queueEntryId = UUID.randomUUID();
+    QueueEntry queueEntry = QueueEntry.builder()
+        .id(queueEntryId)
+        .queueId(queueId)
+        .maxId(maxId)
+        .status(QueueEntryStatus.WAITING)
+        .build();
+    System.out.println(queueEntry);
 
-      QueueEntryMeta queueEntryMeta = QueueEntryMeta.builder()
-          .queueEntryId(queueEntryId)
-          .build();
+    QueueEntryMeta queueEntryMeta = QueueEntryMeta.builder()
+        .queueEntryId(queueEntryId)
+        .build();
 
-      System.out.println(queueEntryMeta);
+    System.out.println(queueEntryMeta);
 
-      queueEntryDao.create(queueEntry, queueEntryMeta);
+    queueEntryDao.create(queueEntry, queueEntryMeta);
 
-      userRolesDao.insertRoleByQueueId(maxId, queueId);
-    } catch (DuplicateKeyException e) {
-      log.info("Пользователь уже находится в очереди");
-    }
+    userRolesDao.insertRoleByQueueId(maxId, queueId);
   }
 
   public void createQueueEntry(QueueEntryCreatingRequestDto dto) {

@@ -4,6 +4,7 @@ import com.nikguscode.jooq.enums.QueueEntryStatus;
 import com.nikguscode.orchestrator.core.model.QueueEntry;
 import com.nikguscode.orchestrator.core.model.QueueEntryMeta;
 import com.nikguscode.orchestrator.dao.result.QueueEntryActiveRecord;
+import com.nikguscode.orchestrator.dao.result.QueueEntryCalledStatusRecord;
 import com.nikguscode.orchestrator.dao.result.QueueEntryRecord;
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +16,8 @@ public interface QueueEntryDao {
   void updateByEntryId(UUID queueEntryId, QueueEntryStatus status);
 
   void delete(UUID entryId);
+
+  List<QueueEntryCalledStatusRecord> get();
 
   List<QueueEntryActiveRecord> findActiveByMaxId(Long maxId);
 
