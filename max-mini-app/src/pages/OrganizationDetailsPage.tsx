@@ -235,7 +235,7 @@ const OrganizationDetailsPage: React.FC = () => {
             {/* Информация */}
           <Panel mode="secondary" style={{ flex: '1 1 45%', minWidth: '280px', padding: '20px', borderRadius: '12px', backgroundColor: '#F0F0F0' }}>
             <Flex justify="space-between" align="center" style={{ marginBottom: '12px' }}>
-              <Typography.Title style={{ fontSize: '16px', margin: 0, color: '#333' }}>Настройки</Typography.Title>
+              <Typography.Title style={{ fontSize: '16px', margin: 0, color: '#000000ff' }}>Настройки</Typography.Title>
             </Flex>
 
             {isEditing && editedSettings ? (
@@ -309,16 +309,16 @@ const OrganizationDetailsPage: React.FC = () => {
             ) : settings ? (
               <Flex direction="column" style={{ gap: '10px', fontSize: '14px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{color: '#333333' }}>Адрес:</span> <span style={{color: '#000000ff'}}>{settings.address || '—'}</span>
+                  <span style={{color: '#333333' }}>Адрес:</span>&nbsp;<span style={{color: '#000000ff'}}>{settings.address || '—'}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{color: '#333333' }}>Статус:</span>
+                  <span style={{color: '#333333' }}>Статус:</span>&nbsp;
                   <strong style={{ color: settings.isBanned ? '#CC0000' : '#00AA00' }}>
-                    {settings.isBanned ? 'Заблокирована' : 'Активна'}
+                    {settings.isBanned ? 'заблокирована' : 'активна'}
                   </strong>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{color: '#333333' }}>Создано:</span>
+                  <span style={{color: '#333333' }}>Создано:</span>&nbsp;
                   <span style={{color: '#000000ff'}}>
                     {settings.createdAt ? new Date(settings.createdAt).toLocaleDateString('ru-RU') : '—'}
                   </span>
@@ -331,20 +331,20 @@ const OrganizationDetailsPage: React.FC = () => {
 
             {/* Метрики */}
             <Panel mode="secondary" style={{ flex: '1 1 45%', minWidth: '280px', padding: '20px', borderRadius: '12px', backgroundColor: '#F0F0F0' }}>
-              <Typography.Title style={{ fontSize: '16px', margin: '0 0 12px' }}>Метрики</Typography.Title>
+              <Typography.Title style={{ fontSize: '16px', margin: '0 0 12px', color: '#000000ff' }}>Метрики</Typography.Title>
               {metrics ? (
                 <Flex direction="column" style={{ gap: '8px', fontSize: '14px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{color: '#333333' }}>Активных очередей:</span> <span style={{color: '#000000ff'}}>{metrics.activeQueues}</span>
+                    <span style={{color: '#333333' }}>Активных очередей:</span> &nbsp;<span style={{color: '#000000ff'}}>{metrics.activeQueues}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{color: '#333333' }}>Всего обслужено:</span> <span style={{color: '#000000ff'}}>{metrics.totalServed}</span>
+                    <span style={{color: '#333333' }}>Всего обслужено:</span> &nbsp;<span style={{color: '#000000ff'}}>{metrics.totalServed}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{color: '#333333' }}>Ушедших:</span> <span style={{color: '#000000ff'}}>{metrics.totalLeft}</span>
+                    <span style={{color: '#333333' }}>Ушедших:</span> &nbsp;<span style={{color: '#000000ff'}}>{metrics.totalLeft}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{color: '#333333' }}>Среднее ожидание:</span> <span style={{color: '#000000ff'}}>{metrics.avgWaitingTime} мин</span>
+                    <span style={{color: '#333333' }}>Среднее ожидание:</span> &nbsp;<span style={{color: '#000000ff'}}>{metrics.avgWaitingTime} мин</span>
                   </div>
                 </Flex>
               ) : (
@@ -354,7 +354,7 @@ const OrganizationDetailsPage: React.FC = () => {
 
             {/* График */}
             <Panel mode="secondary" style={{ flex: '1 1 100%', padding: '20px', borderRadius: '12px', backgroundColor: '#F0F0F0', minHeight: '300px' }}>
-              <Typography.Title style={{ fontSize: '16px', margin: '0 0 16px', color: '#333' }}>Динамика за день</Typography.Title>
+              <Typography.Title style={{ fontSize: '16px', margin: '0 0 16px', color: '#000000ff' }}>Динамика за день</Typography.Title>
               {chartData ? (
                 <ResponsiveContainer width="100%" height={240}>
                   <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
@@ -382,7 +382,7 @@ const OrganizationDetailsPage: React.FC = () => {
           <>
       <Panel mode="secondary" style={{ width: '100%', padding: '16px', borderRadius: '12px', backgroundColor: '#F0F0F0' }}>
         <Flex justify="space-between" align="center" style={{ marginBottom: '12px' }}>
-          <Typography.Title style={{ fontSize: '15px', margin: 0, color: '#333' }}>Настройки</Typography.Title>
+          <Typography.Title style={{ fontSize: '15px', margin: 0, color: '#000000ff' }}>Настройки</Typography.Title>
         </Flex>
 
         {isEditing && editedSettings ? (
@@ -425,10 +425,10 @@ const OrganizationDetailsPage: React.FC = () => {
   ) : settings ? (
     <Flex direction="column" style={{ gap: '8px', fontSize: '13px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <span style={{color: '#333333' }}>Адрес:</span> <span style={{color: '#000000ff'}}>{settings.address || '—'}</span>
+        <span style={{color: '#333333' }}>Адрес:</span> &nbsp;<span style={{color: '#000000ff'}}>{settings.address || '—'}</span>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <span style={{color: '#333333' }}>Статус:</span>
+        <span style={{color: '#333333' }}>Статус:</span>&nbsp;
         <strong style={{ color: settings.isBanned ? '#CC0000' : '#00AA00' }}>
           {settings.isBanned ? 'Заблокирована' : 'Активна'}
         </strong>
@@ -458,19 +458,19 @@ const OrganizationDetailsPage: React.FC = () => {
             >
               {metrics ? (
                 <Flex direction="column" align="center" style={{ gap: '12px', width: '100%' }}>
-                  <Typography.Title style={{ fontSize: '15px', margin: 0, color: '#333' }}>Метрики</Typography.Title>
+                  <Typography.Title style={{ fontSize: '15px', margin: 0, color: '#000000ff' }}>Метрики</Typography.Title>
                   <Flex direction="column" style={{ gap: '4px', fontSize: '13px', width: '100%' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{color: '#333333' }}>Активных очередей:</span> <span style={{color: '#000000ff'}}>{metrics.activeQueues}</span>
+                      <span style={{color: '#333333' }}>Активных очередей:</span> &nbsp;<span style={{color: '#000000ff'}}>{metrics.activeQueues}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{color: '#333333' }}>Всего обслужено:</span> <span style={{color: '#000000ff'}}>{metrics.totalServed}</span>
+                      <span style={{color: '#333333' }}>Всего обслужено:</span> &nbsp;<span style={{color: '#000000ff'}}>{metrics.totalServed}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{color: '#333333' }}>Ушедших:</span> <span style={{color: '#000000ff'}}>{metrics.totalLeft}</span>
+                      <span style={{color: '#333333' }}>Ушедших:</span> &nbsp;<span style={{color: '#000000ff'}}>{metrics.totalLeft}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{color: '#333333' }}>Среднее ожидание:</span> <span style={{color: '#000000ff'}}>{metrics.avgWaitingTime} мин</span>
+                      <span style={{color: '#333333' }}>Среднее ожидание:</span> &nbsp;<span style={{color: '#000000ff'}}>{metrics.avgWaitingTime} мин</span>
                     </div>
                   </Flex>
                   <Typography.Body style={{ fontSize: '12px', color: '#999', fontStyle: 'italic' }}>

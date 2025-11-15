@@ -263,7 +263,7 @@ const ModeratorQueueDetailsPage: React.FC = () => {
             {/* === Настройки (с редактированием) === */}
             <Panel mode="secondary" style={{ flex: '1 1 45%', minWidth: '280px', padding: '20px', borderRadius: '12px', backgroundColor: '#F0F0F0' }}>
               <Flex justify="space-between" align="center" style={{ marginBottom: '12px' }}>
-                <Typography.Title style={{ fontSize: '16px', margin: 0 }}>Настройки</Typography.Title>
+                <Typography.Title style={{ fontSize: '16px', margin: 0, color: '#000000ff' }}>Настройки</Typography.Title>
                 {!isEditing ? (
                   <Typography.Title onClick={startEditing} style={{ fontSize: '14px', cursor: 'pointer', color: '#333333' }}>
                     Редактировать
@@ -343,15 +343,15 @@ const ModeratorQueueDetailsPage: React.FC = () => {
               ) : settings ? (
                 <Flex direction="column" style={{ gap: '10px', fontSize: '14px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{color: '#333333' }}>Макс. размер:</span> <span style={{color: "#000000ff"}}>{settings.maxQueueSize}</span>
+                    <span style={{color: '#333333' }}>Макс. размер:</span>&nbsp;<span style={{color: "#000000ff"}}>{settings.maxQueueSize}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{color: '#333333' }}>Льготный период:</span> <span style={{color: '#000000ff'}}>{settings.arrivalGracePeriod} мин</span>
+                    <span style={{color: '#333333' }}>Льготный период:</span>&nbsp;<span style={{color: '#000000ff'}}>{settings.arrivalGracePeriod} мин</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{color: '#333333' }}>Статус:</span>
+                    <span style={{color: '#333333' }}>Статус:</span>&nbsp;
                     <strong style={{ color: settings.isActive ? '#00AA00' : '#CC0000' }}>
-                      {settings.isActive ? 'Активна' : 'Неактивна'}
+                      {settings.isActive ? 'активна' : 'неактивна'}
                     </strong>
                   </div>
                 </Flex>
@@ -362,23 +362,23 @@ const ModeratorQueueDetailsPage: React.FC = () => {
 
             {/* === Метрики === */}
             <Panel mode="secondary" style={{ flex: '1 1 45%', minWidth: '280px', padding: '20px', borderRadius: '12px', backgroundColor: '#F0F0F0' }}>
-              <Typography.Title style={{ fontSize: '16px', margin: '0 0 12px' }}>Метрики</Typography.Title>
+              <Typography.Title style={{ fontSize: '16px', margin: '0 0 12px', color: '#000000ff' }}>Метрики</Typography.Title>
               {metrics ? (
                 <Flex direction="column" style={{ gap: '8px', fontSize: '14px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{color: '#333333' }}>В очереди:</span> <span style={{color: '#000000ff'}}>{metrics.entriesInTheQueue}</span>
+                    <span style={{color: '#333333' }}>В очереди:</span>&nbsp;<span style={{color: '#000000ff'}}>{metrics.entriesInTheQueue}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{color: '#333333' }}>Ожидание:</span> <span style={{color: '#000000ff'}}>{metrics.waitingTime} мин</span>
+                    <span style={{color: '#333333' }}>Ожидание:</span>&nbsp;<span style={{color: '#000000ff'}}>{metrics.waitingTime} мин</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{color: '#333333' }}>Обслужено:</span> <span style={{color: '#000000ff'}}>{metrics.numberOfServedMembers}</span>
+                    <span style={{color: '#333333' }}>Обслужено:</span>&nbsp;<span style={{color: '#000000ff'}}>{metrics.numberOfServedMembers}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{color: '#333333' }}>Обслуживание:</span> <span style={{color: '#000000ff'}}>{metrics.serviceTime} мин</span>
+                    <span style={{color: '#333333' }}>Обслуживание:</span>&nbsp;<span style={{color: '#000000ff'}}>{metrics.serviceTime} мин</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{color: '#333333' }}>Ушедших:</span> <span style={{color: '#000000ff'}}>{metrics.totalLeft}</span>
+                    <span style={{color: '#333333' }}>Ушедших:</span>&nbsp;<span style={{color: '#000000ff'}}>{metrics.totalLeft}</span>
                   </div>
                 </Flex>
               ) : (
@@ -388,7 +388,7 @@ const ModeratorQueueDetailsPage: React.FC = () => {
 
             {/* === График === */}
             <Panel mode="secondary" style={{ flex: '1 1 100%', padding: '20px', borderRadius: '12px', backgroundColor: '#F0F0F0', minHeight: '300px' }}>
-              <Typography.Title style={{ color: '#333333', fontSize: '16px', margin: '0 0 16px' }}>Динамика за день</Typography.Title>
+              <Typography.Title style={{ color: '#000000ff', fontSize: '16px', margin: '0 0 16px' }}>Динамика за день</Typography.Title>
               {chartData ? (
                 <ResponsiveContainer width="100%" height={240}>
                   <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
@@ -505,15 +505,15 @@ const ModeratorQueueDetailsPage: React.FC = () => {
               ) : settings ? (
                 <Flex direction="column" style={{ gap: '8px', fontSize: '13px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{color: '#333333' }}>Макс. размер:</span> <span style={{color: '#000000ff'}}>{settings.maxQueueSize}</span>
+                    <span style={{color: '#333333' }}>Макс. размер: </span>&nbsp;<span style={{color: '#000000ff'}}>{settings.maxQueueSize}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{color: '#333333' }}>Льготный период:</span> <span style={{color: '#000000ff'}}>{settings.arrivalGracePeriod} мин</span>
+                    <span style={{color: '#333333' }}>Льготный период:</span>&nbsp;<span style={{color: '#000000ff'}}>{settings.arrivalGracePeriod} мин</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{color: '#333333' }}>Статус:</span>
+                    <span style={{color: '#333333' }}>Статус:</span>&nbsp;
                     <strong style={{ color: settings.isActive ? '#00AA00' : '#CC0000' }}>
-                      {settings.isActive ? 'Активна' : 'Неактивна'}
+                      {settings.isActive ? 'активна' : 'неактивна'}
                     </strong>
                   </div>
                 </Flex>
@@ -547,19 +547,19 @@ const ModeratorQueueDetailsPage: React.FC = () => {
                   <Typography.Title style={{ fontSize: '15px', margin: 0 }}>Метрики</Typography.Title>
                   <Flex direction="column" style={{ gap: '4px', fontSize: '13px', width: '100%' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{color: '#333333' }}>В очереди:</span> <span style={{color: '#000000ff'}}>{metrics.entriesInTheQueue}</span>
+                      <span style={{color: '#333333' }}>В очереди:</span>&nbsp;<span style={{color: '#000000ff'}}>{metrics.entriesInTheQueue}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{color: '#333333' }}>Ожидание:</span> <span style={{color: '#000000ff'}}>{metrics.waitingTime} мин</span>
+                      <span style={{color: '#333333' }}>Ожидание:</span>&nbsp;<span style={{color: '#000000ff'}}>{metrics.waitingTime} мин</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{color: '#333333' }}>Обслужено:</span> <span style={{color: '#000000ff'}}>{metrics.numberOfServedMembers}</span>
+                      <span style={{color: '#333333' }}>Обслужено:</span>&nbsp;<span style={{color: '#000000ff'}}>{metrics.numberOfServedMembers}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{color: '#333333' }}>Обслуживание:</span> <span style={{color: '#000000ff'}}>{metrics.serviceTime} мин</span>
+                      <span style={{color: '#333333' }}>Обслуживание:</span>&nbsp;<span style={{color: '#000000ff'}}>{metrics.serviceTime} мин</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{color: '#333333' }}>Ушедших:</span> <span style={{color: '#000000ff'}}>{metrics.totalLeft}</span>
+                      <span style={{color: '#333333' }}>Ушедших:</span>&nbsp;<span style={{color: '#000000ff'}}>{metrics.totalLeft}</span>
                     </div>
                   </Flex>
                   <Typography.Body style={{ fontSize: '12px', color: '#999', fontStyle: 'italic' }}>
