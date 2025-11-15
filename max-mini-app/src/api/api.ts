@@ -173,6 +173,7 @@ export interface QueueResponse {
     'queues'?: Array<Queue>;
 }
 export interface QueueSettings {
+    'name'?: string;
     'arrivalGracePeriod'?: number;
     'maxQueueSize'?: number;
     'isActive'?: boolean;

@@ -5,6 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**name** | **string** |  | [optional] [default to undefined]
 **arrivalGracePeriod** | **number** |  | [optional] [default to undefined]
 **maxQueueSize** | **number** |  | [optional] [default to undefined]
 **isActive** | **boolean** |  | [optional] [default to undefined]
@@ -15,6 +16,7 @@ Name | Type | Description | Notes
 import { QueueSettings } from './api';
 
 const instance: QueueSettings = {
+    name,
     arrivalGracePeriod,
     maxQueueSize,
     isActive,
