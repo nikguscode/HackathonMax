@@ -128,11 +128,10 @@ const QueueDetailsPage: React.FC = () => {
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
 
   if (!entryId || !queueDetails) {
-    return (
-      <Container>
-        <div>Ошибка: ID очереди не указан</div>
-      </Container>
-    );
+    return;
+      // <Container>
+      //   <div>Ошибка: ID очереди не указан</div>
+      // </Container>
   }
 
   if (isLoading) {
