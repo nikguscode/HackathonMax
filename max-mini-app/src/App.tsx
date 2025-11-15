@@ -177,7 +177,11 @@ const HomePage: React.FC = () => {
               peopleInFront: queue.peopleInFront,
             });
           }
-
+            if (moderatorOrgs.length === 0 && userQueues.length === 0 && (authId != '' && maxHash != '')) {
+              return(
+                <FAQPage/>
+              );
+            };
           setModeratorOrgs(adminOrgs);
           setUserQueues(queues);
         }catch (err: any) {
@@ -190,11 +194,7 @@ const HomePage: React.FC = () => {
     initAndLoadUserData();
   }, []);
 
-  if (moderatorOrgs.length === 0 && userQueues.length === 0) {
-    return(
-      <FAQPage/>
-    )
-  }
+
 
   if (loading) {
     return (
