@@ -5,6 +5,7 @@ import Logo from '../components/Logo';
 import AddQueueModal from '../components/AddQueueModal';
 import { OrganizationsApi, Configuration, Queue } from '../api';
 import axios from 'axios';
+import SkeletonModeratorDashboard from '../components/Skeletons/SkeletonModeratorDashboard';
 
 interface QueueCardProps {
   id: string,
@@ -279,7 +280,7 @@ const ModeratorDashboardPage: React.FC = () => {
   const defaultShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
 
-  if (loading) return <div style={{ textAlign: "center", marginTop: 40 }}>Загрузка...</div>;
+  if (loading) return <SkeletonModeratorDashboard/>;
   if (error) return <div style={{ textAlign: "center", marginTop: 40, color: "red" }}>{error}</div>;
   return (
     <Container

@@ -14,6 +14,7 @@ import { UsersApi, Configuration } from "./api";
 import Logo from "./components/Logo.tsx";
 import SkeletonCard from "./components/Skeletons/SkeletonApp.tsx";
 import QueueUserModeratorPage from "./pages/QueueUserModeratorPage.tsx";
+import FAQPage from "./pages/FAQPage.tsx";
 
 <script src="https://st.max.ru/js/max-web-app.js"></script>
 
@@ -23,7 +24,6 @@ const getMaxId = (): string | null => {
     return String(window.WebApp.initDataUnsafe.user.id);
   }
 
-  // Если нет — fallback: URL-параметр или переменная окружения
   const urlParams = new URLSearchParams(window.location.search);
   const maxIdFromUrl = urlParams.get("maxId");
   if (maxIdFromUrl) return maxIdFromUrl;
@@ -185,35 +185,40 @@ const HomePage: React.FC = () => {
     initAndLoadUserData();
   }, []);
 
+  if (moderatorOrgs.length === 0 && userQueues.length === 0) {
+    return(
+      <FAQPage/>
+    )
+  }
 
   if (loading) {
-return (
-      <Container
-        style={{
-          backgroundColor: "#FFFFFF",
-          minHeight: "100vh",
-        }}
-      >
-        <Logo />
-        {/* Контейнер, имитирующий расположение карточек */}
-        <Flex
-          direction="column"
-          align="center"
-          style={{
-            width: "100%",
-            maxWidth: "300px",
-            margin: "0 auto",
-            padding: "0px 16px",
-          }}
-        >
-              <SkeletonCard />
-              <SkeletonCard />
-              <SkeletonCard />
-              <SkeletonCard />
-              <SkeletonCard />
-        </Flex>
-      </Container>
-    );
+    return (
+          <Container
+            style={{
+              backgroundColor: "#FFFFFF",
+              minHeight: "100vh",
+            }}
+          >
+            <Logo />
+            {/* Контейнер, имитирующий расположение карточек */}
+            <Flex
+              direction="column"
+              align="center"
+              style={{
+                width: "100%",
+                maxWidth: "300px",
+                margin: "0 auto",
+                padding: "0px 16px",
+              }}
+            >
+                  <SkeletonCard />
+                  <SkeletonCard />
+                  <SkeletonCard />
+                  <SkeletonCard />
+                  <SkeletonCard />
+            </Flex>
+          </Container>
+        );
   }
 
   if (error) {

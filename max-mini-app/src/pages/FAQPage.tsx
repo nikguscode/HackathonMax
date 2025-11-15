@@ -161,8 +161,10 @@ const FAQPage: React.FC = () => {
         style={{
           width: '100%',
           maxWidth: MAX_CONTENT_WIDTH,
+          border: '0.3px solid rgba(0, 0, 0, 0.15)',
+          borderRadius: "25px",
           margin: '0 auto',
-          padding: `0 ${HORIZONTAL_PADDING} 30px ${HORIZONTAL_PADDING}`,
+          padding: `20px ${HORIZONTAL_PADDING} 30px ${HORIZONTAL_PADDING}`,
           boxSizing: 'border-box',
           gap: '24px',
         }}

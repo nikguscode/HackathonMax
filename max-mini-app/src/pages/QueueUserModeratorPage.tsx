@@ -7,6 +7,7 @@ import { QueueMember, QueuesApi, Configuration, QueueEntriesApi, StaffApi, Queue
 import ConfirmationModal from '../components/ConfirmationModal'; 
 import AddEmployeeModal from '../components/AddEmployeeModal';
 import { useNavigate } from 'react-router-dom';
+import SkeletonQueueUserModerator from '../components/Skeletons/SkeletonQueueUserModerator';
 
 const createApiConfiguration = (): Configuration => {
   const basePath =
@@ -37,6 +38,8 @@ const QueueUserModeratorPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUserEntryId, setSelectedUserEntryId] = useState<string | null>(null);
   const [isAddEmployeeModalOpen, setIsAddEmployeeModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
 
   const [currentView, setCurrentView] = useState('users');
@@ -142,43 +145,59 @@ const QueueUserModeratorPage: React.FC = () => {
     
   };
 
-  useEffect(() => { 
-    const config = createApiConfiguration();
-    const queueApi = new QueuesApi(config);
-    const staffApi = new QueuesApi(config);
+useEffect(() => {
+  if (!queueId) {
+    setLoading(false);
+    return;
+  }
 
-    queueApi.getQueueMembers(queueId, authId, maxHash)
-      .then(res => {
-      const members: QueueMember[] = (res.data.members || []).map(
-        q=> ({
-            maxId: q.maxId,
-            username: q.username || '',
-            queueEntryId: q.queueEntryId,
-        }));
-        setUsers(members);
-    }) 
-    .catch(console.error);
+  const config = createApiConfiguration();
+  const queueApi = new QueuesApi(config);
+  const staffApi = new QueuesApi(config); // как у тебя
 
-    const fetchEmployees = async () => {
-        try {
-            const res = await staffApi.getQueueStaff(queueId, authId, maxHash);
-            
-            const staffMembers: QueueStaff[] = (res.data.staff || []).map(
-                q=> ({
-                    staffId: q.staffId,
-                    username: q.username || '',
-                }));
-            
-            setEmployees(staffMembers);
-            
-        } catch (err) {
-            console.error("Ошибка при загрузке сотрудников:", err);
-        }
-    };
+  setLoading(true); // ВКЛЮЧАЕМ СКЕЛЕТОН
 
-    fetchEmployees();
+  // === ЗАГРУЗКА ПОЛЬЗОВАТЕЛЕЙ ===
+  queueApi.getQueueMembers(queueId, authId, maxHash)
+    .then(res => {
+      const members: QueueMember[] = (res.data.members || []).map(q => ({
+        maxId: q.maxId,
+        username: q.username || '',
+        queueEntryId: q.queueEntryId,
+      }));
+      setUsers(members);
+    })
+    .catch(err => {
+      console.error('Ошибка при загрузке пользователей:', err);
+      setError('Не удалось загрузить пользователей');
+    });
 
-  }, [queueId, authId, maxHash])
+  // === ЗАГРУЗКА СОТРУДНИКОВ ===
+  const fetchEmployees = async () => {
+    try {
+      const res = await staffApi.getQueueStaff(queueId, authId, maxHash);
+      const staffMembers: QueueStaff[] = (res.data.staff || []).map(q => ({
+        staffId: q.staffId,
+        username: q.username || '',
+      }));
+      setEmployees(staffMembers);
+    } catch (err: any) {
+      console.error('Ошибка при загрузке сотрудников:', err);
+      // 404 — нормально, просто пусто
+      if (err.response?.status === 404) {
+        setEmployees([]);
+      } else {
+        setError('Не удалось загрузить сотрудников');
+      }
+    } finally {
+      setLoading(false); // ВЫКЛЮЧАЕМ СКЕЛЕТОН В ЛЮБОМ СЛУЧАЕ
+    }
+  };
+
+  fetchEmployees();
+
+}, [queueId, authId, maxHash]);
+
 
   const handleConfirmExit = async () => {
     if (selectedUserEntryId) {
@@ -203,6 +222,17 @@ const QueueUserModeratorPage: React.FC = () => {
   if (currentView === "users"){
     st = 'Добавить пользователя';
   }
+  if (loading) {
+  return <SkeletonQueueUserModerator />;
+}
+
+if (error) {
+  return (
+    <Container style={{ backgroundColor: '#FFFFFF', minHeight: '100vh', padding: '20px' }}>
+      <Typography.Title style={{ color: 'red', textAlign: 'center' }}>{error}</Typography.Title>
+    </Container>
+  );
+}
   return (
     <Container
       style={{

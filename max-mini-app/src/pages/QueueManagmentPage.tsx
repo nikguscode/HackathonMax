@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import Logo from '../components/Logo';
 import QueueManagmentButton from '../components/QueueManagmentButton';
 import { OrganizationsApi, Configuration, SimpleQueue } from '../api';
-
+import SkeletonQueueManagement from '../components/Skeletons/SkeletonQueueManagementPage';
 
 const createApiConfiguration = (): Configuration => {
   const basePath =
@@ -28,27 +28,43 @@ const createApiConfiguration = (): Configuration => {
 const QueueManagementPage: React.FC = () => {
     const { id: orgId } = useParams<{ id: string }>();
     const [userQueues, setUserQueues] = useState<SimpleQueue[]>([]);
+    const [loading, setLoading] = useState(true);
     const authId = sessionStorage.getItem("authId") ?? '';
     const maxHash = sessionStorage.getItem("maxHash") ?? '';
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!orgId) return;
+        if (!orgId) {
+        setLoading(false);
+        return;
+        }
 
+        const fetchQueues = async () => {
+        try {
+            setLoading(true);
+            setError(null);
 
-        const config = createApiConfiguration();
-        const orgApi = new OrganizationsApi(config);
+            const config = createApiConfiguration();
+            const orgApi = new OrganizationsApi(config);
 
-        orgApi.getOrganizationQueues(orgId, authId, maxHash)
-        .then(res => {
-        const queues: SimpleQueue[] = res.data.queues?.map(q => ({
+            const res = await orgApi.getOrganizationQueues(orgId, authId, maxHash);
+            const queues: SimpleQueue[] = res.data.queues?.map(q => ({
             id: q.id,
-            name: q.name
-        })) || [];
+            name: q.name,
+            })) || [];
 
-        setUserQueues(queues);
-        })
-    .catch(console.error);
-    }, [orgId]);
+            setUserQueues(queues);
+        } catch (err) {
+            console.error(err);
+            setError('Не удалось загрузить очереди');
+        } finally {
+            setLoading(false);
+        }
+        };
+
+        fetchQueues();
+    }, [orgId, authId, maxHash]);
+
     const MAX_CONTENT_WIDTH = '300px'; 
     const HORIZONTAL_PADDING = '16px'; 
     
@@ -57,6 +73,18 @@ const QueueManagementPage: React.FC = () => {
             <Container style={{ backgroundColor: '#E5E5E5', minHeight: '100vh', padding: '20px' }}>
                 <div>Ошибка: ID организации не указан</div>
             </Container>
+        );
+    }
+
+    if (loading) {
+        return <SkeletonQueueManagement/>;
+    }
+
+    if (error) {
+        return (
+        <Container style={{ backgroundColor: '#FFFFFFFF', minHeight: '100vh', padding: '20px' }}>
+            <div style={{ textAlign: 'center', color: 'red', marginTop: 40 }}>{error}</div>
+        </Container>
         );
     }
 

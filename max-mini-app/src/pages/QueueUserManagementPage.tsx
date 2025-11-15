@@ -6,6 +6,7 @@ import Logo from '../components/Logo';
 import { QueueMember, QueuesApi, Configuration, QueueEntriesApi } from '../api';
 import ConfirmationModal from '../components/ConfirmationModal';
 import SwipeableUserItem from '../components/SwipeableUserItem';
+import SkeletonQueueUserManagement from '../components/Skeletons/SkeletonQueueUserManagmentPagt';
 
 const createApiConfiguration = (): Configuration => {
   const basePath =
@@ -34,6 +35,8 @@ const QueueUserManagementPage: React.FC = () => {
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUserEntryId, setSelectedUserEntryId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const authId = sessionStorage.getItem("authId") ?? '';
   const maxHash = sessionStorage.getItem("maxHash") ?? '';
@@ -153,49 +156,82 @@ const QueueUserManagementPage: React.FC = () => {
     
   };
 
-  useEffect(() => { 
-    const config = createApiConfiguration();
-    const queueApi = new QueuesApi(config);
+  useEffect(() => {
+      if (!queueId) {
+        setLoading(false);
+        return;
+      }
 
-    queueApi.getQueueMembers(queueId, authId, maxHash)
-      .then(res => {
-      const members: QueueMember[] = (res.data.members || []).map(
-        q=> ({
+      const fetchUsers = async () => {
+        try {
+          setLoading(true);
+          setError(null);
+
+          const config = createApiConfiguration();
+          const queueApi = new QueuesApi(config);
+
+          const res = await queueApi.getQueueMembers(queueId, authId, maxHash);
+          const members: QueueMember[] = (res.data.members || []).map(q => ({
             maxId: q.maxId,
             username: q.username || '',
             queueEntryId: q.queueEntryId,
             status: q.status,
-        }));
-        setUsers(members);
-    }) 
-    .catch(console.error);
-  }, [queueId])
+          }));
+
+          setUsers(members);
+        } catch (err) {
+          console.error('Ошибка загрузки пользователей:', err);
+          setError('Не удалось загрузить пользователей');
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchUsers();
+    }, [queueId, authId, maxHash]);
   
-  useEffect(() => {
-    const servedUser = users.find(u => u.status === 'SERVED');
-    if (servedUser) {
-      // Даём время на анимацию полосы/вылета
-      const timer = setTimeout(() => {
-        handleRemoveUser(servedUser.queueEntryId!);
-      }, 400); // 400ms — чтобы анимация успела
+    useEffect(() => {
+      const servedUser = users.find(u => u.status === 'SERVED');
+      if (servedUser) {
+        // Даём время на анимацию полосы/вылета
+        const timer = setTimeout(() => {
+          handleRemoveUser(servedUser.queueEntryId!);
+        }, 400); // 400ms — чтобы анимация успела
 
-      return () => clearTimeout(timer); // чистим, если компонент размонтируется
-    }
-  }, [users]);
+        return () => clearTimeout(timer); // чистим, если компонент размонтируется
+      }
+    }, [users]);
 
-  const handleConfirmExit = async () => {
-    if (selectedUserEntryId) {
-      await handleDeleteQueue(selectedUserEntryId);
-      setSelectedUserEntryId(null);
-      setIsModalOpen(false);
-    }
-  };
+    const handleConfirmExit = async () => {
+      if (selectedUserEntryId) {
+        await handleDeleteQueue(selectedUserEntryId);
+        setSelectedUserEntryId(null);
+        setIsModalOpen(false);
+      }
+    };
+
   const MAX_CONTENT_WIDTH = '300px';
   const HORIZONTAL_PADDING = '16px';
+
   const handleNavigationBack = () => {
           console.log('Пользователь вернулся на предыдущий экран!');
           navigate(-1);
   };
+
+  if (loading) {
+      return <SkeletonQueueUserManagement />;
+    }
+
+    // Ошибка загрузки
+    if (error) {
+      return (
+        <Container style={{ backgroundColor: '#FFFFFF', minHeight: '100vh', padding: '20px' }}>
+          <Typography.Title style={{ textAlign: 'center', color: 'red' }}>
+            {error}
+          </Typography.Title>
+        </Container>
+      );
+    }
 return (
   <Container
     style={{
