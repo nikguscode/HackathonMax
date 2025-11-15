@@ -14,36 +14,44 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class JooqQueueEntryDao implements QueueEntryDao {
   private final DSLContext dsl;
 
   @Override
   public void create(QueueEntry queueEntry, QueueEntryMeta queueEntryMeta) {
-    var queueEntryRecord = dsl.newRecord(QUEUE_ENTRY);
-    var queueEntryMetaRecord = dsl.newRecord(QUEUE_ENTRY_META);
+    try {
+      var queueEntryRecord = dsl.newRecord(QUEUE_ENTRY);
+      var queueEntryMetaRecord = dsl.newRecord(QUEUE_ENTRY_META);
 
-    queueEntryRecord.setId(queueEntry.getId());
-    queueEntryRecord.setIdQueue(queueEntry.getQueueId());
-    queueEntryRecord.setIdMax(queueEntry.getMaxId());
-    queueEntryRecord.setStatus(QueueEntryStatus.valueOf(queueEntry.getStatus().toString()));
+      queueEntryRecord.setId(queueEntry.getId());
+      queueEntryRecord.setIdQueue(queueEntry.getQueueId());
+      queueEntryRecord.setIdMax(queueEntry.getMaxId());
+      queueEntryRecord.setStatus(QueueEntryStatus.valueOf(queueEntry.getStatus().toString()));
 
-    queueEntryMetaRecord.setId(queueEntryMeta.getId());
-    queueEntryMetaRecord.setIdQueueEntry(queueEntryMeta.getQueueEntryId());
-    queueEntryMetaRecord.setJoinedAt(queueEntryMeta.getJoinedAt().toLocalDateTime());
+      queueEntryMetaRecord.setId(queueEntryMeta.getId());
+      queueEntryMetaRecord.setIdQueueEntry(queueEntryMeta.getQueueEntryId());
+      queueEntryMetaRecord.setJoinedAt(queueEntryMeta.getJoinedAt().toLocalDateTime());
 
-    System.out.println(queueEntryRecord);
-    System.out.println(queueEntryMetaRecord);
-    queueEntryRecord.store();
-    queueEntryMetaRecord.store();
+      System.out.println(queueEntryRecord);
+      System.out.println(queueEntryMetaRecord);
+      queueEntryRecord.store();
+      queueEntryMetaRecord.store();
+    } catch (DuplicateKeyException e) {
+      log.info("Exception while trying to add user in queue");
+    }
   }
 
   @Override
@@ -52,6 +60,30 @@ public class JooqQueueEntryDao implements QueueEntryDao {
         .set(QUEUE_ENTRY.STATUS, status)
         .where(QUEUE_ENTRY.ID.eq(queueEntryId))
         .execute();
+  }
+
+  // queueid
+  @Override
+  public List<QueueEntryActiveRecord> findActiveEntriesForQueue(UUID entryId) {
+    var query = createRankedQueueEntriesQuery();
+    var subquery = query.asTable("t_ranked");
+
+    var cteId = subquery.field(QUEUE_ENTRY.ID);
+    var cteQueueEntryMaxId = subquery.field(QUEUE_ENTRY.ID_MAX);
+    var cteQueueEntryQueueId = subquery.field(QUEUE_ENTRY.ID_QUEUE);
+    var cteQueueId = subquery.field(QUEUE.ID);
+    var cteName = subquery.field(QUEUE.NAME);
+    var cteStatus = subquery.field(QUEUE_ENTRY.STATUS);
+    var cteRank = subquery.field("rank_in_queue", Integer.class);
+
+    return dsl
+        .select(cteId, cteQueueEntryMaxId, cteQueueEntryQueueId, cteStatus)
+        .from(subquery)
+        .where(
+            cteQueueId.eq(entryId)
+                .and(cteStatus.notContains(QueueEntryStatus.SERVING)))
+        .fetch(
+            record -> mapToQueueEntryActiveRecord(record, cteId, cteName, cteRank, cteStatus));
   }
 
   @Override
@@ -118,6 +150,8 @@ public class JooqQueueEntryDao implements QueueEntryDao {
     return dsl.select(
             QUEUE_ENTRY.ID,
             QUEUE_ENTRY.ID_MAX,
+            QUEUE_ENTRY.ID_QUEUE,
+            QUEUE.ID,
             QUEUE.NAME,
             QUEUE_ENTRY.STATUS,
             USER.USERNAME,

@@ -18,5 +18,7 @@ public interface QueueEntryDao {
 
   List<QueueEntryActiveRecord> findActiveByMaxId(Long maxId);
 
+  List<QueueEntryActiveRecord> findActiveEntriesForQueue(UUID entryId);
+
   Optional<QueueEntryRecord> findByEntryId(UUID entryId);
 }

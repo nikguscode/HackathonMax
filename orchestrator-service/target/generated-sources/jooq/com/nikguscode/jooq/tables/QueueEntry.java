@@ -9,7 +9,9 @@ import com.nikguscode.jooq.Public;
 import com.nikguscode.jooq.enums.QueueEntryStatus;
 import com.nikguscode.jooq.tables.records.QueueEntryRecord;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 import org.jooq.Condition;
@@ -108,6 +110,11 @@ public class QueueEntry extends TableImpl<QueueEntryRecord> {
     @Override
     public UniqueKey<QueueEntryRecord> getPrimaryKey() {
         return Keys.QUEUE_ENTRY_PKEY;
+    }
+
+    @Override
+    public List<UniqueKey<QueueEntryRecord>> getUniqueKeys() {
+        return Arrays.asList(Keys.UQ_QUEUE_USER);
     }
 
     @Override
