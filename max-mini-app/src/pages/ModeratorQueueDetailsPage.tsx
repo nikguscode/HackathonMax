@@ -140,10 +140,11 @@ const ModeratorQueueDetailsPage: React.FC = () => {
         const res = await queuesApi.getQueueSettings(queueId, authId, maxHash);
         settingsData = res.data.settings ?? null;
         setSettings(settingsData);
-        setQueueName(settingsData?.name || `Очередь ${queueId}`);
+        setQueueName(settingsData?.name?.trim()
+  ? settingsData.name.trim()
+  : `Очередь ${queueId}`);
       } catch (err) {
         console.warn('getQueueSettings failed:', err);
-        setQueueName(`Очередь ${queueId}`);
       }
 
       // === 2. Метрики ===
@@ -236,7 +237,7 @@ const ModeratorQueueDetailsPage: React.FC = () => {
     : { maxWidth: '300px', margin: '0 auto', padding: '0 16px 100px 16px', gap: '16px' };
 
   return (
-    <Container style={{ backgroundColor: '#ffffffff', minHeight: '100vh', padding: 0 }}>
+    <Container style={{ minHeight: '100vh', padding: 0 }}>
       <Logo onBack={handleBack} />
 
       <Flex direction="column" align="center" style={containerStyle}>
