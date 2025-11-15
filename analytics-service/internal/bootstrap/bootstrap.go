@@ -10,7 +10,8 @@ import (
 	"gorm.io/gorm"
 )
 
-// Bootstrap содержит все готовые зависимости
+// Bootstrap содержит все инициализированные зависимости приложения,
+// включая конфигурацию, подключение к БД, сервисы и соединение RabbitMQ.
 type Bootstrap struct {
 	Config         *config.Config
 	DBConn         *gorm.DB
@@ -18,7 +19,10 @@ type Bootstrap struct {
 	RabbitConn     *rabbitmq.Connection
 }
 
-// Init инициализирует все зависимости приложения
+// Init инициализирует все зависимости приложения: загружает конфигурацию,
+// подключается к базе данных, создаёт репозитории и сервисы,
+// а также (при режиме rabbit) устанавливает соединение с RabbitMQ.
+// Возвращает структуру Bootstrap, содержащую все готовые зависимости.
 func Init() (*Bootstrap, error) {
 	cfg := config.LoadConfig()
 
@@ -29,12 +33,17 @@ func Init() (*Bootstrap, error) {
 
 	repoQueue := repository.NewQueueMetricsRepo(conn)
 	repoOrg := repository.NewOrgMetricsRepo(conn)
+	graphQueue := repository.NewQueueGraphicsRepo(conn)
+	graphOrg := repository.NewOrgGraphicsRepo(conn)
 
-	metricsService := service.NewMetricsService(repoOrg, repoQueue)
+	metricsService := service.NewMetricsService(repoOrg, repoQueue, graphOrg, graphQueue)
 
-	rbconn, err := rabbitmq.NewConnection(cfg.RabbitURL())
-	if err != nil {
-		return nil, err
+	var rbconn *rabbitmq.Connection
+	if cfg.AppMode == "rabbit" {
+		rbconn, err = rabbitmq.NewConnection(cfg.RabbitURL())
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &Bootstrap{

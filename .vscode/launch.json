@@ -1,0 +1,24 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch notification-service",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/max-notification-service/cmd/app/main.go",
+            "envFile": "${workspaceFolder}/max-notification-service/.env"
+        },
+        {
+            "name": "Launch analytics-service",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/analytics-service/cmd/app/main.go",
+            "envFile": "${workspaceFolder}/analytics-service/.env"
+        }
+    ]
+}

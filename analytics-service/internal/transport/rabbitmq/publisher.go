@@ -8,12 +8,19 @@ import (
 	"github.com/streadway/amqp"
 )
 
+// Publisher публикует сообщения в RabbitMQ с заданным exchange и routing key.
 type Publisher struct {
-	channel    *amqp.Channel
-	exchange   string
-	routingKey string
+	channel    *amqp.Channel // Канал RabbitMQ
+	exchange   string        // Имя exchange
+	routingKey string        // Routing key для публикации
 }
 
+// NewPublisher создаёт нового Publisher.
+//
+// Параметры:
+//   - ch - канал RabbitMQ
+//   - exchange - имя exchange, куда будут публиковаться сообщения
+//   - routingKey - ключ маршрутизации сообщений
 func NewPublisher(ch *amqp.Channel, exchange, routingKey string) *Publisher {
 	return &Publisher{
 		channel:    ch,
@@ -22,6 +29,12 @@ func NewPublisher(ch *amqp.Channel, exchange, routingKey string) *Publisher {
 	}
 }
 
+// PublishMetrics публикует отчёт (любую структуру) в RabbitMQ.
+//
+// Параметры:
+//   - report - структура отчёта, которая будет сериализована в JSON.
+//
+// Возвращает ошибку, если не удалось сериализовать отчёт или отправить сообщение в очередь.
 func (p *Publisher) PublishMetrics(report interface{}) error {
 	body, err := json.Marshal(report)
 
