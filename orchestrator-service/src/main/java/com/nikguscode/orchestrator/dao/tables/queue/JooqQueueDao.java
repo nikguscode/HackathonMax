@@ -1,4 +1,4 @@
-package com.nikguscode.orchestrator.dao.queue;
+package com.nikguscode.orchestrator.dao.tables.queue;
 
 import static com.nikguscode.jooq.tables.Queue.QUEUE;
 import static com.nikguscode.jooq.tables.QueueEntry.QUEUE_ENTRY;
@@ -81,7 +81,7 @@ public class JooqQueueDao implements QueueDao {
         List.of(QueueEntryStatus.CANCELED, QueueEntryStatus.SERVED);
 
     return dsl
-        .select(QUEUE_ENTRY.ID_MAX, QUEUE_ENTRY.ID, USER.USERNAME)
+        .select(QUEUE_ENTRY.ID_MAX, QUEUE_ENTRY.ID, USER.FIRST_NAME, QUEUE_ENTRY.STATUS)
         .from(QUEUE)
 
         .join(QUEUE_ENTRY)

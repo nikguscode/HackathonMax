@@ -14,16 +14,21 @@ import { UsersApi, Configuration } from "./api";
 import Logo from "./components/Logo.tsx";
 import SkeletonCard from "./components/Skeletons/SkeletonApp.tsx";
 import QueueUserModeratorPage from "./pages/QueueUserModeratorPage.tsx";
+import FAQPage from "./pages/FAQPage.tsx";
+import { Toaster } from 'react-hot-toast'; 
+import { showErrorToast } from "./utils/showErrorToast.ts";
 
 <script src="https://st.max.ru/js/max-web-app.js"></script>
 
+/**
+ * Извлекает maxId из WebApp, URL или env.
+ */
+
 const getMaxId = (): string | null => {
   if (window.WebApp?.initDataUnsafe?.user?.id) {
-    console.log("MaxBridge: найден пользователь через WebApp:", window.WebApp.initDataUnsafe.user);
     return String(window.WebApp.initDataUnsafe.user.id);
   }
 
-  // Если нет — fallback: URL-параметр или переменная окружения
   const urlParams = new URLSearchParams(window.location.search);
   const maxIdFromUrl = urlParams.get("maxId");
   if (maxIdFromUrl) return maxIdFromUrl;
@@ -34,13 +39,16 @@ const getMaxId = (): string | null => {
   return null;
 };
 
+
+/**
+ * Создаёт конфигурацию API с authId/maxHash из sessionStorage.
+ */
 const createApiConfiguration = (): Configuration => {
   const basePath =
     import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
 
-  const authId = localStorage.getItem("authId");
-  const maxHash = localStorage.getItem("maxHash");
-  // const orgName = localStorage.getItem("orgName");
+  var authId = sessionStorage.getItem("authId");
+  var maxHash = sessionStorage.getItem("maxHash");
 
   return new Configuration({
     basePath,
@@ -60,14 +68,17 @@ declare global {
   }
 }
 
-
+/**
+ * Главная страница: показывает организации модератора и очереди пользователя.
+ */
 const HomePage: React.FC = () => {
   const [moderatorOrgs, setModeratorOrgs] = useState<Organization[]>([]);
   const [userQueues, setUserQueues] = useState<QueueEntryInUserResponse[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [showFAQ, setShowFAQ] = useState(false);
 
   useEffect(() => {
+    sessionStorage.removeItem("maxHash");
     const initAndLoadUserData = async () => {
       if (!window.WebApp) {
         console.warn("MAX Bridge не найден. Возможно, вы не в среде MAX.");
@@ -75,44 +86,92 @@ const HomePage: React.FC = () => {
       }
 
       setLoading(true);
-      setError(null);
+      setShowFAQ(false);
+
+      const maxId = getMaxId();
+      if (!maxId) {
+        setLoading(false);
+        return;
+      }
       
-      try {
-        const maxId = getMaxId();
-        if (!maxId) {
-          setError("Max ID не найден");
-          setLoading(false);
-          return;
-        }
+      const savedAuthId = sessionStorage.getItem("authId");
+      const savedMaxHash = sessionStorage.getItem("maxHash") ?? '';
 
-        // 1️⃣ Авторизация
-        const authConfig = createApiConfiguration();
-        const usersApiAuth = new UsersApi(authConfig);
-        const body = { miniAppInitData: window.WebApp.initData };
-        const authResponse = await usersApiAuth.sendUserMiniAppData(Number(maxId), body);
-        console.log("auth_date", body);
+      const config = createApiConfiguration();
+      const usersApi = new UsersApi(config);
 
-        if (authResponse.status === 200 && (authResponse.data as any)?.authId) {
-          const maxHash = (authResponse.data as any).maxHash;
-          const authId = (authResponse.data as any).authId;
-          localStorage.setItem("maxHash", maxHash);
-          localStorage.setItem("authId", authId);
-          console.log("✅ Авторизация успешна, maxHash сохранён:", maxHash);
-          console.log("✅ Авторизация успешна, maxId сохранён:", authId);
-          console.log("✅ Авторизация успешна, maxHash сохранён:", authResponse.request);
-          const config = createApiConfiguration();
-          const usersApi = new UsersApi(config);
-          const userResponse = (await usersApi.getUserByMaxId(Number(maxId), authId, maxHash)).data;
+      // Проверка сохранённого токена
+      if (savedAuthId != null) {
+        try {
+          const userResponse = await usersApi.getUserByMaxId(
+            Number(maxId),
+            savedAuthId,
+            savedMaxHash
+          );
 
-
-          if (!userResponse) {
-            setError("Ответ от сервера пустой. Проверьте подключение к API");
+          if (userResponse.data) {
+            console.log("Токен валиден. Используем сохранённые authId и maxHash.");
+            await loadUserData(Number(maxId), savedAuthId, savedMaxHash);
             setLoading(false);
             return;
           }
+        } catch (err: any) {
+          if (err.response?.status === 401) {
+            console.warn("Токен недействителен (401). Переавторизация...");
+            sessionStorage.removeItem("authId");
+            sessionStorage.removeItem("maxHash");
+          } else {
+            console.error("Ошибка при проверке токена:", err);
+          }
+        }
+      }
 
-          const organizationsList = userResponse.organizations || [];
-          const queueList = userResponse["queue-entries"] || [];
+      // Новая авторизация
+      try {
+        const authConfig = createApiConfiguration();
+        const usersApiAuth = new UsersApi(authConfig);
+
+        const authResponse = await usersApiAuth.sendUserMiniAppData(Number(maxId), {
+          miniAppInitData: window.WebApp.initData,
+        });
+
+        if (authResponse.status === 200 && authResponse.data?.authId) {
+          const newAuthId = authResponse.data.authId;
+          const newMaxHash = authResponse.data.maxHash;
+
+          sessionStorage.setItem("authId", newAuthId);
+          sessionStorage.setItem("maxHash", newMaxHash);
+
+          console.log("Авторизация успешна. Сохранены authId и maxHash.");
+
+          await loadUserData(Number(maxId), newAuthId, newMaxHash);
+        } else {
+          throw new Error("Не удалось получить authId");
+        }
+      } catch (err: any) {
+        console.error("Ошибка авторизации:", err);
+        showErrorToast(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    /**
+     * Загружает данные пользователя: организации и очереди.
+     */
+    const loadUserData = async (maxId: number, authId: string, maxHash: string) => {
+      try {
+          const config = createApiConfiguration();
+          const usersApi = new UsersApi(config);
+
+          const userResponse = await usersApi.getUserByMaxId(maxId, authId, maxHash);
+
+          if (!userResponse.data) {
+            throw new Error("Пустой ответ от сервера");
+          }
+
+          const organizationsList = userResponse.data.organizations || [];
+          const queueList = userResponse.data["queue-entries"] || [];
 
           const adminOrgs: Organization[] = [];
           const queues: QueueEntryInUserResponse[] = [];
@@ -125,7 +184,6 @@ const HomePage: React.FC = () => {
                 role: org.role,
                 amountOfQueues: org.amountOfQueues,
               });
-              
             }
           }
 
@@ -139,76 +197,53 @@ const HomePage: React.FC = () => {
 
           setModeratorOrgs(adminOrgs);
           setUserQueues(queues);
-        } else {
-          setError("Ошибка авторизации. Попробуйте перезапустить Mini App.");
-          setLoading(false);
-          return;
+          // Если данных нет — показываем FAQ
+            if (adminOrgs.length === 0 && queues.length === 0) {
+                setShowFAQ(true);
+            };
+        }catch (err: any) {
+          console.error("Ошибка в loadUserData:", err);
+          throw err;
         }
-
-      } catch (err: any) {
-        console.error("Ошибка при загрузке данных:", err);
-
-        if (err.response?.status === 401) {
-          setError("⛔ Доступ запрещён. Перезапустите мини-приложение.");
-        } else if (err.response?.status === 404) {
-          setError("Пользователь не найден.");
-        } else {
-          setError("Ошибка при загрузке данных с сервера.");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
+      };
 
     initAndLoadUserData();
   }, []);
 
 
+  // Скелетон во время загрузки
   if (loading) {
-return (
-      <Container
-        style={{
-          backgroundColor: "#FFFFFF",
-          minHeight: "100vh",
-        }}
-      >
-        <Logo />
-        {/* Контейнер, имитирующий расположение карточек */}
-        <Flex
-          direction="column"
-          align="center"
-          style={{
-            width: "100%",
-            maxWidth: "300px",
-            margin: "0 auto",
-            padding: "0px 16px",
-          }}
-        >
-              <SkeletonCard />
-              <SkeletonCard />
-              <SkeletonCard />
-              <SkeletonCard />
-              <SkeletonCard />
-        </Flex>
-      </Container>
-    );
+    return (
+          <Container
+            style={{
+              backgroundColor: "#FFFFFF",
+              minHeight: "100vh",
+            }}
+          >
+            <Logo />
+            {/* Контейнер, имитирующий расположение карточек */}
+            <Flex
+              direction="column"
+              align="center"
+              style={{
+                width: "100%",
+                maxWidth: "300px",
+                margin: "0 auto",
+                padding: "0px 16px",
+              }}
+            >
+                  <SkeletonCard />
+                  <SkeletonCard />
+                  <SkeletonCard />
+                  <SkeletonCard />
+                  <SkeletonCard />
+            </Flex>
+          </Container>
+        );
   }
 
-  if (error) {
-    return (
-      <Container
-        style={{
-          backgroundColor: "#FFFFFF",
-          minHeight: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "20px",
-        }}
-      >
-        <div style={{ color: "#DC3545", textAlign: "center" }}>{error}</div>
-      </Container>
-    );
+  if (showFAQ) {
+    return <FAQPage />;
   }
 
   return (
@@ -268,6 +303,9 @@ return (
   );
 };
 
+/**
+ * Корневой компонент приложения с роутингом.
+ */
 function App() {
   return (
     <BrowserRouter>
@@ -288,8 +326,28 @@ function App() {
         <Route path="/moderator-queue/queue/:id" element={<QueueUserModeratorPage />} />
         <Route path="*" element={<div>404 | Страница не найдена</div>} />
       </Routes>
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          duration: 5000,
+          style: {
+            background: '#333',
+            color: '#fff',
+            borderRadius: '12px',
+            padding: '12px 16px',
+            fontSize: '15px',
+            maxWidth: '300px',
+          },
+          error: {
+            style: {
+              background: '#DC3545',
+            },
+            icon: 'Error',
+          },
+        }}
+      />
     </BrowserRouter>
   );
 }
-// 
+
 export default App;

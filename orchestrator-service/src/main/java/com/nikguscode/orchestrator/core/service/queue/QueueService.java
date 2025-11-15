@@ -4,14 +4,19 @@ import com.nikguscode.openapi.model.QueueCreatingRequestDto;
 import com.nikguscode.openapi.model.QueueDto;
 import com.nikguscode.openapi.model.QueueMembersResponseDto;
 import com.nikguscode.openapi.model.QueueResponseDto;
+import com.nikguscode.openapi.model.QueueStaffDto;
+import com.nikguscode.openapi.model.QueueStaffResponseDto;
 import com.nikguscode.orchestrator.core.mapper.QueueDtoMapper;
+import com.nikguscode.orchestrator.core.mapper.UserDtoMapper;
 import com.nikguscode.orchestrator.core.model.Organization;
 import com.nikguscode.orchestrator.core.model.Queue;
 import com.nikguscode.orchestrator.core.model.QueueParams;
-import com.nikguscode.orchestrator.dao.organization.OrganizationDao;
-import com.nikguscode.orchestrator.dao.queue.QueueDao;
+import com.nikguscode.orchestrator.dao.tables.organization.OrganizationDao;
+import com.nikguscode.orchestrator.dao.tables.queue.QueueDao;
 import com.nikguscode.orchestrator.dao.result.QueueMemberRecord;
 import com.nikguscode.orchestrator.dao.result.QueueMetricsRecord;
+import com.nikguscode.orchestrator.dao.result.StaffRecord;
+import com.nikguscode.orchestrator.dao.tables.staff.StaffDao;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.Collections;
@@ -26,15 +31,21 @@ import org.springframework.transaction.annotation.Transactional;
 public class QueueService {
   private final OrganizationDao organizationDao;
   private final QueueDao queueDao;
+  private final StaffDao staffDao;
   private final QueueDtoMapper queueDtoMapper;
+  private final UserDtoMapper userDtoMapper;
 
   public QueueService(
       @Qualifier("jooqOrganizationDao") OrganizationDao organizationDao,
       @Qualifier("jooqQueueDao") QueueDao queueDao,
-      QueueDtoMapper queueDtoMapper) {
+      @Qualifier("jooqStaffDao") StaffDao staffDao,
+      QueueDtoMapper queueDtoMapper,
+      UserDtoMapper userDtoMapper) {
     this.organizationDao = organizationDao;
     this.queueDao = queueDao;
+    this.staffDao = staffDao;
     this.queueDtoMapper = queueDtoMapper;
+    this.userDtoMapper = userDtoMapper;
   }
 
   @Transactional
@@ -67,6 +78,17 @@ public class QueueService {
     System.out.println(queueDtoList);
 
     return queueDtoMapper.toQueueResponse(organizationOpt.get(), queueDtoList);
+  }
+
+  public QueueStaffResponseDto getStaff(UUID queueId) {
+    List<StaffRecord> staffRecords = staffDao.findByQueueId(queueId);
+
+    if (staffRecords.isEmpty()) {
+      return new QueueStaffResponseDto();
+    }
+
+    List<QueueStaffDto> queueStaffList = userDtoMapper.toStaffDto(staffRecords);
+    return new QueueStaffResponseDto().staff(queueStaffList);
   }
 
   public QueueMembersResponseDto getMembers(UUID queueId) {

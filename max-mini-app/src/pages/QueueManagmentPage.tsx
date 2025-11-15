@@ -4,14 +4,15 @@ import { useParams } from 'react-router-dom';
 import Logo from '../components/Logo';
 import QueueManagmentButton from '../components/QueueManagmentButton';
 import { OrganizationsApi, Configuration, SimpleQueue } from '../api';
-
+import SkeletonQueueManagement from '../components/Skeletons/SkeletonQueueManagementPage';
+import { showErrorToast } from '../utils/showErrorToast';
 
 const createApiConfiguration = (): Configuration => {
   const basePath =
     import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
 
-  const authId = localStorage.getItem("authId");
-  const maxHash = localStorage.getItem("maxHash");
+  const authId = sessionStorage.getItem("authId");
+  const maxHash = sessionStorage.getItem("maxHash");
 
   return new Configuration({
     basePath,
@@ -28,27 +29,42 @@ const createApiConfiguration = (): Configuration => {
 const QueueManagementPage: React.FC = () => {
     const { id: orgId } = useParams<{ id: string }>();
     const [userQueues, setUserQueues] = useState<SimpleQueue[]>([]);
-    const authId = localStorage.getItem("authId") ?? '';
-    const maxHash = localStorage.getItem("maxHash") ?? '';
+    const [loading, setLoading] = useState(true);
+    const authId = sessionStorage.getItem("authId") ?? '';
+    const maxHash = sessionStorage.getItem("maxHash") ?? '';
 
     useEffect(() => {
-        if (!orgId) return;
+        if (!orgId) {
+        setLoading(false);
+        showErrorToast({ message: "ID организации не указан" });
+        return;
+        }
 
+        const fetchQueues = async () => {
+        try {
+            setLoading(true);
 
-        const config = createApiConfiguration();
-        const orgApi = new OrganizationsApi(config);
+            const config = createApiConfiguration();
+            const orgApi = new OrganizationsApi(config);
 
-        orgApi.getOrganizationQueues(orgId, authId, maxHash)
-        .then(res => {
-        const queues: SimpleQueue[] = res.data.queues?.map(q => ({
+            const res = await orgApi.getOrganizationQueues(orgId, authId, maxHash);
+            const queues: SimpleQueue[] = res.data.queues?.map(q => ({
             id: q.id,
-            name: q.name
-        })) || [];
+            name: q.name,
+            })) || [];
 
-        setUserQueues(queues);
-        })
-    .catch(console.error);
-    }, [orgId]);
+            setUserQueues(queues);
+        } catch (err) {
+            console.error(err);
+            showErrorToast('Не удалось загрузить очереди');
+        } finally {
+            setLoading(false);
+        }
+        };
+
+        fetchQueues();
+    }, [orgId, authId, maxHash]);
+
     const MAX_CONTENT_WIDTH = '300px'; 
     const HORIZONTAL_PADDING = '16px'; 
     
@@ -58,6 +74,10 @@ const QueueManagementPage: React.FC = () => {
                 <div>Ошибка: ID организации не указан</div>
             </Container>
         );
+    }
+
+    if (loading) {
+        return <SkeletonQueueManagement/>;
     }
 
     return (

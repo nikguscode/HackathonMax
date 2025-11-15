@@ -43,6 +43,7 @@ public class Keys {
     public static final UniqueKey<OrganizationRecord> ORGANIZATION_PKEY = Internal.createUniqueKey(Organization.ORGANIZATION, DSL.name("organization_pkey"), new TableField[] { Organization.ORGANIZATION.ID }, true);
     public static final UniqueKey<QueueRecord> QUEUE_PKEY = Internal.createUniqueKey(Queue.QUEUE, DSL.name("queue_pkey"), new TableField[] { Queue.QUEUE.ID }, true);
     public static final UniqueKey<QueueEntryRecord> QUEUE_ENTRY_PKEY = Internal.createUniqueKey(QueueEntry.QUEUE_ENTRY, DSL.name("queue_entry_pkey"), new TableField[] { QueueEntry.QUEUE_ENTRY.ID }, true);
+    public static final UniqueKey<QueueEntryRecord> UQ_QUEUE_USER = Internal.createUniqueKey(QueueEntry.QUEUE_ENTRY, DSL.name("uq_queue_user"), new TableField[] { QueueEntry.QUEUE_ENTRY.ID_QUEUE, QueueEntry.QUEUE_ENTRY.ID_MAX }, true);
     public static final UniqueKey<QueueEntryMetaRecord> QUEUE_ENTRY_META_PKEY = Internal.createUniqueKey(QueueEntryMeta.QUEUE_ENTRY_META, DSL.name("queue_entry_meta_pkey"), new TableField[] { QueueEntryMeta.QUEUE_ENTRY_META.ID }, true);
     public static final UniqueKey<QueueParamsRecord> QUEUE_PARAMS_PKEY = Internal.createUniqueKey(QueueParams.QUEUE_PARAMS, DSL.name("queue_params_pkey"), new TableField[] { QueueParams.QUEUE_PARAMS.ID }, true);
     public static final UniqueKey<QueueStaffRecord> QUEUE_STAFF_PKEY = Internal.createUniqueKey(QueueStaff.QUEUE_STAFF, DSL.name("queue_staff_pkey"), new TableField[] { QueueStaff.QUEUE_STAFF.ID }, true);

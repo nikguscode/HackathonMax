@@ -3,6 +3,8 @@ package com.nikguscode.orchestrator.controller;
 import com.nikguscode.openapi.model.QueueCreatingRequestDto;
 import com.nikguscode.openapi.model.QueueMembersResponseDto;
 import com.nikguscode.openapi.model.QueueResponseDto;
+import com.nikguscode.openapi.model.QueueStaffResponseDto;
+import com.nikguscode.orchestrator.core.mapper.UserDtoMapper;
 import com.nikguscode.orchestrator.core.service.queue.QueueService;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
@@ -18,9 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v1/api")
 public class QueueController {
   private final QueueService queueService;
+  private final UserDtoMapper userDtoMapper;
 
-  public QueueController(QueueService queueService) {
+  public QueueController(
+      QueueService queueService,
+      UserDtoMapper userDtoMapper) {
     this.queueService = queueService;
+    this.userDtoMapper = userDtoMapper;
   }
 
   @PostMapping("organizations/{organizationId}/queues")
@@ -33,6 +39,11 @@ public class QueueController {
   @GetMapping("organizations/{organizationId}/queues")
   public QueueResponseDto getQueues(@PathVariable UUID organizationId) {
     return queueService.getQueues(organizationId);
+  }
+
+  @GetMapping("queues/{queueId}/staff")
+  public ResponseEntity<QueueStaffResponseDto> getQueueStaff(@PathVariable UUID queueId) {
+    return ResponseEntity.ok(queueService.getStaff(queueId));
   }
 
   @GetMapping("queues/{queueId}/members")

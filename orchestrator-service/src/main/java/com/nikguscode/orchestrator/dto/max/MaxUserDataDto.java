@@ -16,4 +16,5 @@ public class MaxUserDataDto {
     private final Long authDate;
     private final String hash;
     private final String ip;
+    private final String startParam;
 }

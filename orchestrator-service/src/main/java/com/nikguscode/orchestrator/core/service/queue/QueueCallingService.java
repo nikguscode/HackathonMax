@@ -1,12 +1,13 @@
 package com.nikguscode.orchestrator.core.service.queue;
 
-import com.nikguscode.orchestrator.dao.queueentry.QueueEntryDao;
-import com.nikguscode.orchestrator.dao.result.QueueEntryActiveRecord;
+import com.nikguscode.jooq.enums.QueueEntryStatus;
+import com.nikguscode.orchestrator.dao.result.QueueEntryCalledStatusRecord;
+import com.nikguscode.orchestrator.dao.tables.queueentry.QueueEntryDao;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class QueueCallingService {
@@ -16,9 +17,18 @@ public class QueueCallingService {
     this.queueEntryDao = queueEntryDao;
   }
 
-//
-//  @Transactional
-//  public void callUser(UUID queueEntryId) {
-//    List<QueueEntryActiveRecord> queues = queueEntryDao.findActiveByQueueId();
-//  }
+  @Scheduled(fixedDelay = 10000)
+  public void callUser() {
+    List<QueueEntryCalledStatusRecord> calledUsers = queueEntryDao.get();
+
+    List<QueueEntryCalledStatusRecord> excludedUsers = calledUsers.stream()
+        .filter(
+            en -> en.getJoinedAt()
+                .plusMinutes(en.getQueueArrivalGracePeriod())
+                .isAfter(LocalDateTime.now()))
+        .toList();
+
+    excludedUsers.forEach(
+        e -> queueEntryDao.updateByEntryId(e.getId(), QueueEntryStatus.MISSED));
+  }
 }

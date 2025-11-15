@@ -7,13 +7,14 @@ import ConfirmationModal from '../components/ConfirmationModal';
 import { QueueEntryResponse, QueueEntriesApi, Configuration } from '../api';
 import InfoCard from '../components/InfoCard';
 import QueueDetailsSkeleton from '../components/Skeletons/SkeletonQueueDetailsPage';
+import { showErrorToast } from '../utils/showErrorToast';
 
 const createApiConfiguration = (): Configuration => {
   const basePath =
     import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
 
-  const authId = localStorage.getItem("authId");
-  const maxHash = localStorage.getItem("maxHash");
+  const authId = sessionStorage.getItem("authId");
+  const maxHash = sessionStorage.getItem("maxHash");
 
   return new Configuration({
     basePath,
@@ -43,8 +44,8 @@ const QRCode: React.FC<QRCodeProps> = ({ userId, queueId }) => {
     <Panel
       mode="secondary"
       style={{
-        width: '250px',
-        height: '250px',
+        width: '200px',
+        height: '200px',
         borderRadius: '12px',
         display: 'flex',
         alignItems: 'center',
@@ -77,12 +78,19 @@ const QueueDetailsPage: React.FC = () => {
   const [isQRCodeOpen, setIsQRCodeOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const authId = localStorage.getItem("authId") ?? '';
-  const maxHash = localStorage.getItem("maxHash") ?? '';
+  const authId = sessionStorage.getItem("authId") ?? '';
+  const maxHash = sessionStorage.getItem("maxHash") ?? '';
+
+  const Status = queueDetails?.status;
 
   useEffect(() => { 
-    if (!entryId) return;
+    if (!entryId) {
+      showErrorToast({ message: "ID очереди не указан" });
+      setIsLoading(false);
+      return;
+    }
     const fetchQueueEntry = async () => {
+      
       setIsLoading(true);
       try{
         const config = createApiConfiguration();
@@ -91,16 +99,16 @@ const QueueDetailsPage: React.FC = () => {
         const response = await userInfoApi.getQueueEntry(entryId, authId, maxHash);
         setQueueDetails(response.data);
         
-        console.log('Ответ API:', response.data);
         
       } catch (err) {
         console.error('Ошибка при получении информации о пользователе:', err);
+        showErrorToast(err);
       } finally {
         setIsLoading(false);
       }
     }
     fetchQueueEntry();
-  }, [entryId]);
+  }, [entryId, authId, maxHash]);
 
   const handleDeleteQueue = async () => {
     if (!entryId) return;
@@ -108,28 +116,30 @@ const QueueDetailsPage: React.FC = () => {
     try {
       const config = createApiConfiguration();
       const queueApi = new QueueEntriesApi(config);
-
-      await queueApi.deleteQueueEntry(entryId, authId, maxHash);
-      console.log('Очередь успешно удалена:', entryId);
-
+      
+      if (Status == "WAITING"){
+        await queueApi.updateQueueEntryStatus(entryId, authId, maxHash, {status: "CANCELED"});
+      } else if (Status == "SERVING"){
+        await queueApi.updateQueueEntryStatus(entryId, authId, maxHash, {status: "SERVED"});  
+      }
       navigate('/');
-    } catch (err) {
+    } catch (err: any) {
       console.error('Ошибка при удалении очереди:', err);
+      showErrorToast(err);
     }
   };
 
   const defaultShadow = '0 2px 4px rgba(0, 0, 0, 0.2)';
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
 
-  if (!entryId) {
-    return (
-      <Container>
-        <div>Ошибка: ID очереди не указан</div>
-      </Container>
-    );
+  if (!entryId || !queueDetails) {
+    return;
+      // <Container>
+      //   <div>Ошибка: ID очереди не указан</div>
+      // </Container>
   }
 
-  if (isLoading || !queueDetails) {
+  if (isLoading) {
         return <QueueDetailsSkeleton />;
   }
 
@@ -157,9 +167,9 @@ const QueueDetailsPage: React.FC = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-
-  const Status = queueDetails?.status;
-
+  
+  
+  var status = '';
   if (Status === 'WAITING'){
     status = 'Ожидание';
   } else if (Status === 'SERVING'){
@@ -171,7 +181,15 @@ const QueueDetailsPage: React.FC = () => {
   } else {
     status = 'Пропущено';
   }
-  
+  const isServing = queueDetails?.status === 'SERVING';
+
+  const exitButtonText = isServing
+    ? "Подтвердить обслуживание"
+    : "Выйти из очереди";
+
+  const exitButtonColor = isServing
+    ? "#3fad6dff"
+    : "#aa1818ff";
   return (
     <Container
       style={{
@@ -220,9 +238,9 @@ const QueueDetailsPage: React.FC = () => {
             onTouchCancel={handleExitQueueMouseLeave}
             style={{
               width: 'auto',
-              minWidth: '300px',
+              minWidth: '270px',
               padding: '12px 16px',
-              backgroundColor: '#aa1818ff',
+              backgroundColor: exitButtonColor,
               border: '0.3px solid rgba(0, 0, 0, 0.15)',
               borderRadius: '16px',
               boxShadow: isExitQueue ? pressedShadow : defaultShadow,
@@ -242,7 +260,7 @@ const QueueDetailsPage: React.FC = () => {
                 margin: '0 auto',
               }}
             >
-              Выйти из очереди
+              {exitButtonText}
             </Typography.Title>
           </Flex>
       </Flex>

@@ -6,6 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **organizationId** | **string** |  | [default to undefined]
+**queueId** | **string** |  | [default to undefined]
 **role** | [**UserRole**](UserRole.md) |  | [default to undefined]
 
 ## Example
@@ -15,6 +16,7 @@ import { UserRoleRequest } from './api';
 
 const instance: UserRoleRequest = {
     organizationId,
+    queueId,
     role,
 };
 ```

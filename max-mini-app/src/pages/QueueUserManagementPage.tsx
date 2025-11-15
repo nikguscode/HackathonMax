@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Container, Flex, Button, Typography, Panel } from '@maxhub/max-ui';
+import { Container, Flex, Typography } from '@maxhub/max-ui';
 import AddUserModal from '../components/AddUserModal';
 import Logo from '../components/Logo';
 import { QueueMember, QueuesApi, Configuration, QueueEntriesApi } from '../api';
 import ConfirmationModal from '../components/ConfirmationModal';
+import SwipeableUserItem from '../components/SwipeableUserItem';
+import SkeletonQueueUserManagement from '../components/Skeletons/SkeletonQueueUserManagmentPagt';
+import { showErrorToast } from '../utils/showErrorToast';
 
 const createApiConfiguration = (): Configuration => {
   const basePath =
     import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
 
-  const authId = localStorage.getItem("authId");
-  const maxHash = localStorage.getItem("maxHash");
+  const authId = sessionStorage.getItem("authId");
+  const maxHash = sessionStorage.getItem("maxHash");
 
   return new Configuration({
     basePath,
@@ -33,14 +36,64 @@ const QueueUserManagementPage: React.FC = () => {
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUserEntryId, setSelectedUserEntryId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const authId = localStorage.getItem("authId") ?? '';
-  const maxHash = localStorage.getItem("maxHash") ?? '';
+  const authId = sessionStorage.getItem("authId") ?? '';
+  const maxHash = sessionStorage.getItem("maxHash") ?? '';
+
+  const handleServedUser = async (entryId: string) => {
+      if (!entryId) {
+        console.warn('⚠️ entryId is undefined — пропускаем удаление');
+        return;
+      }
+      try {
+        console.log('🟡 Отправляем запрос на удаление:', entryId);
+
+        const config = createApiConfiguration();
+        const queueEntriesApi = new QueueEntriesApi(config);
+
+        await queueEntriesApi.updateQueueEntryStatus(entryId, authId, maxHash, {status: "SERVING"});
+
+      setUsers(prevUsers =>
+            prevUsers.map(user =>
+              user.queueEntryId === entryId
+                ? { ...user, status: 'SERVING' }
+                : user
+            )
+          );
+
+        console.log('✅ Пользователь удалён локально:', entryId);
+      } catch (err){
+        console.error('Ошибка при удалении пользователя:', err);
+      }
+  };
+
+  const handleConfirmUser = async (entryId: string) => {
+      if (!entryId) {
+        console.warn('⚠️ entryId is undefined — пропускаем удаление');
+        return;
+      }
+      try {
+        console.log('🟡 Отправляем запрос на удаление:', entryId);
+
+        const config = createApiConfiguration();
+        const queueEntriesApi = new QueueEntriesApi(config);
+
+        await queueEntriesApi.updateQueueEntryStatus(entryId, authId, maxHash, {status: "SERVED"});
+
+        setUsers(prevUsers => prevUsers.filter(user => user.queueEntryId!== entryId));
+
+        console.log('✅ Пользователь удалён локально:', entryId);
+      } catch (err){
+        console.error('Ошибка при удалении пользователя:', err);
+      }
+  };
 
   const handleDeleteUser = ( entryId: string ) => {
     setSelectedUserEntryId(entryId);
     setIsModalOpen(true);
   };
+
   const handleAddUserMouseDown = () => {
     setisAddQueue(true);
   };
@@ -77,6 +130,9 @@ const QueueUserManagementPage: React.FC = () => {
 
   const defaultShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
+  const handleRemoveUser = (entryId: string) => {
+    setUsers(prev => prev.filter(u => u.queueEntryId !== entryId));
+  };
 
   const handleDeleteQueue = async (entryId: string) => {
     if (!entryId) {
@@ -100,200 +156,167 @@ const QueueUserManagementPage: React.FC = () => {
     
   };
 
-  useEffect(() => { 
-    const config = createApiConfiguration();
-    const queueApi = new QueuesApi(config);
+  useEffect(() => {
+      if (!queueId) {
+        showErrorToast({ message: "ID очереди не указан" });
+        setLoading(false);
+        return;
+      }
 
-    queueApi.getQueueMembers(queueId, authId, maxHash)
-      .then(res => {
-      const members: QueueMember[] = (res.data.members || []).map(
-        q=> ({
+      const fetchUsers = async () => {
+        try {
+          setLoading(true);
+
+          const config = createApiConfiguration();
+          const queueApi = new QueuesApi(config);
+
+          const res = await queueApi.getQueueMembers(queueId, authId, maxHash);
+          const members: QueueMember[] = (res.data.members || []).map(q => ({
             maxId: q.maxId,
             username: q.username || '',
             queueEntryId: q.queueEntryId,
-        }));
-        setUsers(members);
-    }) 
-    .catch(console.error);
-  }, [queueId])
+            status: q.status,
+          }));
 
-  const handleConfirmExit = async () => {
-    if (selectedUserEntryId) {
-      await handleDeleteQueue(selectedUserEntryId);
-      setSelectedUserEntryId(null);
-      setIsModalOpen(false);
-    }
-  };
+          setUsers(members);
+        } catch (err) {
+          console.error('Ошибка загрузки пользователей:', err);
+          showErrorToast(err);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchUsers();
+    }, [queueId, authId, maxHash]);
+  
+    useEffect(() => {
+      const servedUser = users.find(u => u.status === 'SERVED');
+      if (servedUser) {
+        // Даём время на анимацию полосы/вылета
+        const timer = setTimeout(() => {
+          handleRemoveUser(servedUser.queueEntryId!);
+        }, 400); // 400ms — чтобы анимация успела
+
+        return () => clearTimeout(timer); // чистим, если компонент размонтируется
+      }
+    }, [users]);
+
+    const handleConfirmExit = async () => {
+      if (selectedUserEntryId) {
+        await handleDeleteQueue(selectedUserEntryId);
+        setSelectedUserEntryId(null);
+        setIsModalOpen(false);
+      }
+    };
+
   const MAX_CONTENT_WIDTH = '300px';
   const HORIZONTAL_PADDING = '16px';
+
   const handleNavigationBack = () => {
           console.log('Пользователь вернулся на предыдущий экран!');
           navigate(-1);
   };
-  return (
-    <Container
+
+  if (loading) {
+      return <SkeletonQueueUserManagement />;
+    }
+return (
+  <Container
+    style={{
+      backgroundColor: '#ffffffff',
+      minHeight: '100vh',
+      padding: 0,
+      display: 'flex',
+      flexDirection: 'column',
+    }}
+  >
+    <Logo onBack={handleNavigationBack} />
+
+    {/* ← ВСЁ, что ниже, будет центрировано */}
+    <Flex
+      direction="column"
+      align="center"               // горизонтальный центр
       style={{
-        backgroundColor: '#ffffffff',
-        minHeight: '100vh',
-        padding: '0',
-        display: 'flex',
-        flexDirection: 'column',
+        width: '100%',
+        maxWidth: MAX_CONTENT_WIDTH,   // 300px (у тебя уже объявлено)
+        margin: '0 auto',
+        padding: `0 ${HORIZONTAL_PADDING}`,
+        boxSizing: 'border-box',
+        gap: 12,
+        flex: 1,
+        paddingBottom: 100,
       }}
     >
-      <Logo onBack={handleNavigationBack}/>
+
+      <Flex direction="column" align="center" style={{ width: '100%', gap: 16 }}>
+        {users.map(user => (
+          <SwipeableUserItem
+            key={user.maxId}
+            user={user}
+            onDelete={handleDeleteUser}
+            onConfirm={handleConfirmUser}
+            onServe={handleServedUser}
+            onRemove={handleRemoveUser}
+          />
+        ))}
+      </Flex>
+
+      {/* ---------- Кнопка «Добавить пользователя» ---------- */}
       <Flex
-        direction="column"
         align="center"
+        justify="center"               // центр текста
+        onClick={handleOpenAddUserModal}
+        onMouseDown={handleAddUserMouseDown}
+        onMouseUp={handleAddUserMouseUp}
+        onMouseLeave={handleAddUserMouseLeave}
+        onTouchStart={handleAddUserMouseDown}
+        onTouchEnd={handleAddUserMouseUp}
+        onTouchCancel={handleAddUserMouseLeave}
         style={{
           width: '100%',
-          maxWidth: MAX_CONTENT_WIDTH,
-          height: 'auto',
-          margin: '0 auto',
-          padding: `0px ${HORIZONTAL_PADDING}`,
-          boxSizing: 'border-box',
-          gap: '12px',
-          flex: 1,
-          paddingBottom: '100px',
+          maxWidth: '240px', 
+          padding: '12px 16px',
+          backgroundColor: '#FFFFFF',
+          border: '0.3px solid rgba(0,0,0,0.15)',
+          borderRadius: 16,
+          boxShadow: isAddQueue ? pressedShadow : defaultShadow,
+          cursor: 'pointer',
+          marginBottom: 12,
+          transform: isAddQueue ? 'scale(0.98)' : 'scale(1)',
+          transition: 'all 0.15s ease',
+          userSelect: 'none',
         }}
       >
-        <Flex direction="column" align="center" style={{ width: '100%', gap: '16px', marginBottom: '12px'  }}>
-          {users.map((user) => (
-            <Panel
-              key={user.maxId}
-              mode="secondary"
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                borderRadius: '12px',
-                backgroundColor: '#FFFFFF',
-                border: '0.3px solid rgba(0, 0, 0, 0.15)',
-                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <Flex
-                    justify="space-between"
-                    align="center"
-                    style={{
-                      width: '100%',
-                      gap: '10px',
-                    }}
-                  >
-                  <Typography.Title
-                    style={{
-                      fontSize: '15px',
-                      fontWeight: 500,
-                      color: '#333333',
-                      margin: 0,
-                      flexGrow: 1,           
-                      flexShrink: 1,           
-                      minWidth: 0,             
-                      overflow: 'hidden',      
-                      whiteSpace: 'nowrap',    
-                      textOverflow: 'ellipsis',
-                      textAlign: 'left',
-                    }}
-                  >
-                    {user.username}
-                  </Typography.Title>
-                
-              <Button
-                mode="primary"
-                onClick={() => handleDeleteUser(user.queueEntryId!)}
-                style={{
-                  minWidth: '24px',
-                  width: '24px',
-                  height: '24px',
-                  padding: '0',
-                  borderRadius: '4px',
-                  backgroundColor: '#DC3545',
-                  border: 'none',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                  marginLeft: '2%',
-                }}
-              >
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M3 4H13M5.5 4V3C5.5 2.44772 5.94772 2 6.5 2H9.5C10.0523 2 10.5 2.44772 10.5 3V4M12.5 4V13C12.5 13.5523 12.0523 14 11.5 14H4.5C3.94772 14 3.5 13.5523 3.5 13V4H12.5Z"
-                    stroke="white"
-                    strokeWidth="1.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M6.5 7V11.5M9.5 7V11.5"
-                    stroke="white"
-                    strokeWidth="1.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </Button>
-            </Flex>
-            </Panel>
-          ))}
-        </Flex>
-        <Flex
-          align="center"
-          justify="space-between"
-          onClick={handleOpenAddUserModal}
-          onMouseDown={handleAddUserMouseDown}
-          onMouseUp={handleAddUserMouseUp}
-          onMouseLeave={handleAddUserMouseLeave}
-          onTouchStart={handleAddUserMouseDown}
-          onTouchEnd={handleAddUserMouseUp}
-          onTouchCancel={handleAddUserMouseLeave}
+        <Typography.Title
           style={{
-            width: '100%',
-            padding: '12px 16px',
-            backgroundColor: '#FFFFFF',
-            border: '0.3px solid rgba(0, 0, 0, 0.15)',
-            borderRadius: '16px',
-            boxShadow: isAddQueue ? pressedShadow : defaultShadow,
-            cursor: 'pointer',
-            marginBottom: '12px',
-            transform: isAddQueue ? 'scale(0.98)' : 'scale(1)',
-            transition: 'all 0.15s ease',
-            userSelect: 'none',
+            fontSize: 15,
+            fontWeight: 500,
+            color: '#333333',
+            margin: 0,
           }}
         >
-          <Typography.Title
-            
-            style={{
-              fontSize: '15px',
-              fontWeight: 500,
-              color: '#333333',
-              margin: '0 auto',
-            }}
-          >
-            Добавить пользователя
-          </Typography.Title>
-        </Flex>
-        <AddUserModal 
-          isOpen={isAddUserModalOpen}
-          onClose={() => setIsAddUserModalOpen(false)}
-          onAddUser={handleAddUserSubmit}
-        />
+          Добавить пользователя
+        </Typography.Title>
       </Flex>
-      <ConfirmationModal
-        isOpen={isModalOpen}
-        onClose={() => { setIsModalOpen(false); setSelectedUserEntryId(null); }}
-        onConfirm={handleConfirmExit}
+
+      <AddUserModal
+        isOpen={isAddUserModalOpen}
+        onClose={() => setIsAddUserModalOpen(false)}
+        onAddUser={handleAddUserSubmit}
       />
-    </Container>
-  );
+    </Flex>
+
+    <ConfirmationModal
+      isOpen={isModalOpen}
+      onClose={() => {
+        setIsModalOpen(false);
+        setSelectedUserEntryId(null);
+      }}
+      onConfirm={handleConfirmExit}
+    />
+  </Container>
+);
 };
 
 export default QueueUserManagementPage;
-

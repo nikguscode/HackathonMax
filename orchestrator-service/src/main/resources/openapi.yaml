@@ -313,6 +313,30 @@ paths:
         default:
           $ref: '#/components/responses/UnexpectedError'
 
+    post:
+      tags: [organizations]
+      summary: Update settings
+      operationId: updateSettingsOrganization
+      parameters:
+        - $ref: '#/components/parameters/OrganizationIdPathParameter'
+        - $ref: '#/components/parameters/AuthIdHeader'
+        - $ref: '#/components/parameters/MaxHashHeader'
+      requestBody:
+        description: Update organization settings
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationSettingsResponse'
+      responses:
+        '200':
+          description: Organization update settings
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
   /organizations/{organizationId}/metrics:
     get:
       tags: [organizations]
@@ -394,6 +418,28 @@ paths:
       responses:
         '200':
           description: Queue settings retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueSettingsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+    post:
+      tags: [queues]
+      summary: Update queue settings
+      operationId: updateQueueSettings
+      parameters:
+        - $ref: '#/components/parameters/QueueIdPathParameter'
+        - $ref: '#/components/parameters/AuthIdHeader'
+        - $ref: '#/components/parameters/MaxHashHeader'
+      responses:
+        '200':
+          description: Queue settings uptadte successfully
           content:
             application/json:
               schema:
@@ -624,11 +670,15 @@ components:
         organizationId:
           type: string
           format: uuid
+        queueId:
+          type: string
+          format: uuid
         role:
           $ref: '#/components/schemas/UserRole'
       required:
         - organizationId
         - role
+        - queueId
 
     UserUpdateRequest:
       type: object
@@ -933,6 +983,8 @@ components:
     QueueSettings:
       type: object
       properties:
+        name:
+          type: string
         arrivalGracePeriod:
           type: integer
         maxQueueSize:
@@ -1012,6 +1064,8 @@ components:
           format: uuid
         username:
           type: string
+        status:
+          $ref: '#/components/schemas/QueueEntryStatus'
 
     QueueStaff:
       type: object

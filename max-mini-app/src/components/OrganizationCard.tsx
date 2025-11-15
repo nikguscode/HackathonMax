@@ -37,7 +37,12 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ name, amountOfQueue
       }
     }
   };
-
+  var orgName = '';
+  if (role === 'EMPLOYEE'){
+    orgName = name + ' (E)';
+  } else {
+    orgName = name + ' (M)';
+  }
   const defaultShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
 
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
@@ -78,7 +83,7 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ name, amountOfQueue
           textOverflow: 'ellipsis',
         }}
       >
-        {name}
+        {orgName}
       </Typography.Title>
 
       <div

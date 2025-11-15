@@ -3,7 +3,7 @@ package com.nikguscode.orchestrator.controller;
 import com.nikguscode.openapi.model.QueueEntryResponseDto;
 import com.nikguscode.openapi.model.QueueEntryStatusUpdateRequestDto;
 import com.nikguscode.orchestrator.core.service.queue.QueueEntryService;
-import com.nikguscode.orchestrator.dao.queueentry.QueueEntryDao;
+import com.nikguscode.orchestrator.dao.tables.queueentry.QueueEntryDao;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;

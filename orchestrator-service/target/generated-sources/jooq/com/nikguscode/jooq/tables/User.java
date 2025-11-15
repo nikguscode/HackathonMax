@@ -58,7 +58,7 @@ public class User extends TableImpl<UserRecord> {
     /**
      * The column <code>public.user.username</code>.
      */
-    public final TableField<UserRecord, String> USERNAME = createField(DSL.name("username"), SQLDataType.VARCHAR(255).nullable(false), this, "");
+    public final TableField<UserRecord, String> USERNAME = createField(DSL.name("username"), SQLDataType.VARCHAR(255), this, "");
 
     /**
      * The column <code>public.user.first_name</code>.
@@ -68,12 +68,12 @@ public class User extends TableImpl<UserRecord> {
     /**
      * The column <code>public.user.second_name</code>.
      */
-    public final TableField<UserRecord, String> SECOND_NAME = createField(DSL.name("second_name"), SQLDataType.VARCHAR(255).nullable(false), this, "");
+    public final TableField<UserRecord, String> SECOND_NAME = createField(DSL.name("second_name"), SQLDataType.VARCHAR(255), this, "");
 
     /**
      * The column <code>public.user.created_at</code>.
      */
-    public final TableField<UserRecord, OffsetDateTime> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false), this, "");
+    public final TableField<UserRecord, OffsetDateTime> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "");
 
     private User(Name alias, Table<UserRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);

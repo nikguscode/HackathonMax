@@ -116,10 +116,16 @@ export const QueueEntryStatus = {
     Serving: 'SERVING',
     Served: 'SERVED',
     Canceled: 'CANCELED',
-    Missed: 'MISSED'
+    Missed: 'MISSED',
+    Called: 'CALLED'
 } as const;
 
 export type QueueEntryStatus = typeof QueueEntryStatus[keyof typeof QueueEntryStatus];
+
+
+export interface QueueEntryStatusUpdateRequest {
+    'status': QueueEntryStatus;
+}
 
 
 export interface QueueGraphics {
@@ -141,7 +147,10 @@ export interface QueueMember {
     'maxId'?: number;
     'queueEntryId'?: string;
     'username'?: string;
+    'status'?: QueueEntryStatus;
 }
+
+
 export interface QueueMembersResponse {
     'members'?: Array<QueueMember>;
 }
@@ -164,6 +173,7 @@ export interface QueueResponse {
     'queues'?: Array<Queue>;
 }
 export interface QueueSettings {
+    'name'?: string;
     'arrivalGracePeriod'?: number;
     'maxQueueSize'?: number;
     'isActive'?: boolean;
@@ -215,6 +225,7 @@ export type UserRole = typeof UserRole[keyof typeof UserRole];
 
 export interface UserRoleRequest {
     'organizationId': string;
+    'queueId': string;
     'role': UserRole;
 }
 
@@ -465,6 +476,56 @@ export const OrganizationsApiAxiosParamCreator = function (configuration?: Confi
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @summary Update settings
+         * @param {string} organizationId Organization id
+         * @param {string} authId Auth Id provided by orchestrator service
+         * @param {string} maxHash Authentication hash provided by the Max massenger
+         * @param {OrganizationSettingsResponse} [organizationSettingsResponse] Update organization settings
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateSettingsOrganization: async (organizationId: string, authId: string, maxHash: string, organizationSettingsResponse?: OrganizationSettingsResponse, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'organizationId' is not null or undefined
+            assertParamExists('updateSettingsOrganization', 'organizationId', organizationId)
+            // verify required parameter 'authId' is not null or undefined
+            assertParamExists('updateSettingsOrganization', 'authId', authId)
+            // verify required parameter 'maxHash' is not null or undefined
+            assertParamExists('updateSettingsOrganization', 'maxHash', maxHash)
+            const localVarPath = `/organizations/{organizationId}/settings`
+                .replace(`{${"organizationId"}}`, encodeURIComponent(String(organizationId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            if (authId != null) {
+                localVarHeaderParameter['Auth-Id'] = String(authId);
+            }
+            if (maxHash != null) {
+                localVarHeaderParameter['Max-Hash'] = String(maxHash);
+            }
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(organizationSettingsResponse, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -550,6 +611,22 @@ export const OrganizationsApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['OrganizationsApi.getOrganizationSettings']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * 
+         * @summary Update settings
+         * @param {string} organizationId Organization id
+         * @param {string} authId Auth Id provided by orchestrator service
+         * @param {string} maxHash Authentication hash provided by the Max massenger
+         * @param {OrganizationSettingsResponse} [organizationSettingsResponse] Update organization settings
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateSettingsOrganization(organizationId: string, authId: string, maxHash: string, organizationSettingsResponse?: OrganizationSettingsResponse, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateSettingsOrganization(organizationId, authId, maxHash, organizationSettingsResponse, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['OrganizationsApi.updateSettingsOrganization']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -619,6 +696,19 @@ export const OrganizationsApiFactory = function (configuration?: Configuration, 
          */
         getOrganizationSettings(organizationId: string, authId: string, maxHash: string, options?: RawAxiosRequestConfig): AxiosPromise<OrganizationSettingsResponse> {
             return localVarFp.getOrganizationSettings(organizationId, authId, maxHash, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Update settings
+         * @param {string} organizationId Organization id
+         * @param {string} authId Auth Id provided by orchestrator service
+         * @param {string} maxHash Authentication hash provided by the Max massenger
+         * @param {OrganizationSettingsResponse} [organizationSettingsResponse] Update organization settings
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateSettingsOrganization(organizationId: string, authId: string, maxHash: string, organizationSettingsResponse?: OrganizationSettingsResponse, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.updateSettingsOrganization(organizationId, authId, maxHash, organizationSettingsResponse, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -691,6 +781,20 @@ export class OrganizationsApi extends BaseAPI {
      */
     public getOrganizationSettings(organizationId: string, authId: string, maxHash: string, options?: RawAxiosRequestConfig) {
         return OrganizationsApiFp(this.configuration).getOrganizationSettings(organizationId, authId, maxHash, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Update settings
+     * @param {string} organizationId Organization id
+     * @param {string} authId Auth Id provided by orchestrator service
+     * @param {string} maxHash Authentication hash provided by the Max massenger
+     * @param {OrganizationSettingsResponse} [organizationSettingsResponse] Update organization settings
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public updateSettingsOrganization(organizationId: string, authId: string, maxHash: string, organizationSettingsResponse?: OrganizationSettingsResponse, options?: RawAxiosRequestConfig) {
+        return OrganizationsApiFp(this.configuration).updateSettingsOrganization(organizationId, authId, maxHash, organizationSettingsResponse, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -839,6 +943,58 @@ export const QueueEntriesApiAxiosParamCreator = function (configuration?: Config
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @summary Update queue entry status
+         * @param {string} entryId Queue Entry id
+         * @param {string} authId Auth Id provided by orchestrator service
+         * @param {string} maxHash Authentication hash provided by the Max massenger
+         * @param {QueueEntryStatusUpdateRequest} queueEntryStatusUpdateRequest Update queue entry status
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateQueueEntryStatus: async (entryId: string, authId: string, maxHash: string, queueEntryStatusUpdateRequest: QueueEntryStatusUpdateRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'entryId' is not null or undefined
+            assertParamExists('updateQueueEntryStatus', 'entryId', entryId)
+            // verify required parameter 'authId' is not null or undefined
+            assertParamExists('updateQueueEntryStatus', 'authId', authId)
+            // verify required parameter 'maxHash' is not null or undefined
+            assertParamExists('updateQueueEntryStatus', 'maxHash', maxHash)
+            // verify required parameter 'queueEntryStatusUpdateRequest' is not null or undefined
+            assertParamExists('updateQueueEntryStatus', 'queueEntryStatusUpdateRequest', queueEntryStatusUpdateRequest)
+            const localVarPath = `/queue-entries/{entryId}`
+                .replace(`{${"entryId"}}`, encodeURIComponent(String(entryId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            if (authId != null) {
+                localVarHeaderParameter['Auth-Id'] = String(authId);
+            }
+            if (maxHash != null) {
+                localVarHeaderParameter['Max-Hash'] = String(maxHash);
+            }
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(queueEntryStatusUpdateRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -893,6 +1049,22 @@ export const QueueEntriesApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['QueueEntriesApi.getQueueEntry']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * 
+         * @summary Update queue entry status
+         * @param {string} entryId Queue Entry id
+         * @param {string} authId Auth Id provided by orchestrator service
+         * @param {string} maxHash Authentication hash provided by the Max massenger
+         * @param {QueueEntryStatusUpdateRequest} queueEntryStatusUpdateRequest Update queue entry status
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateQueueEntryStatus(entryId: string, authId: string, maxHash: string, queueEntryStatusUpdateRequest: QueueEntryStatusUpdateRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateQueueEntryStatus(entryId, authId, maxHash, queueEntryStatusUpdateRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['QueueEntriesApi.updateQueueEntryStatus']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -938,6 +1110,19 @@ export const QueueEntriesApiFactory = function (configuration?: Configuration, b
         getQueueEntry(entryId: string, authId: string, maxHash: string, options?: RawAxiosRequestConfig): AxiosPromise<QueueEntryResponse> {
             return localVarFp.getQueueEntry(entryId, authId, maxHash, options).then((request) => request(axios, basePath));
         },
+        /**
+         * 
+         * @summary Update queue entry status
+         * @param {string} entryId Queue Entry id
+         * @param {string} authId Auth Id provided by orchestrator service
+         * @param {string} maxHash Authentication hash provided by the Max massenger
+         * @param {QueueEntryStatusUpdateRequest} queueEntryStatusUpdateRequest Update queue entry status
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateQueueEntryStatus(entryId: string, authId: string, maxHash: string, queueEntryStatusUpdateRequest: QueueEntryStatusUpdateRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.updateQueueEntryStatus(entryId, authId, maxHash, queueEntryStatusUpdateRequest, options).then((request) => request(axios, basePath));
+        },
     };
 };
 
@@ -982,6 +1167,20 @@ export class QueueEntriesApi extends BaseAPI {
      */
     public getQueueEntry(entryId: string, authId: string, maxHash: string, options?: RawAxiosRequestConfig) {
         return QueueEntriesApiFp(this.configuration).getQueueEntry(entryId, authId, maxHash, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Update queue entry status
+     * @param {string} entryId Queue Entry id
+     * @param {string} authId Auth Id provided by orchestrator service
+     * @param {string} maxHash Authentication hash provided by the Max massenger
+     * @param {QueueEntryStatusUpdateRequest} queueEntryStatusUpdateRequest Update queue entry status
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public updateQueueEntryStatus(entryId: string, authId: string, maxHash: string, queueEntryStatusUpdateRequest: QueueEntryStatusUpdateRequest, options?: RawAxiosRequestConfig) {
+        return QueueEntriesApiFp(this.configuration).updateQueueEntryStatus(entryId, authId, maxHash, queueEntryStatusUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -1222,6 +1421,52 @@ export const QueuesApiAxiosParamCreator = function (configuration?: Configuratio
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @summary Update queue settings
+         * @param {string} queueId Queue id
+         * @param {string} authId Auth Id provided by orchestrator service
+         * @param {string} maxHash Authentication hash provided by the Max massenger
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateQueueSettings: async (queueId: string, authId: string, maxHash: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'queueId' is not null or undefined
+            assertParamExists('updateQueueSettings', 'queueId', queueId)
+            // verify required parameter 'authId' is not null or undefined
+            assertParamExists('updateQueueSettings', 'authId', authId)
+            // verify required parameter 'maxHash' is not null or undefined
+            assertParamExists('updateQueueSettings', 'maxHash', maxHash)
+            const localVarPath = `/queues/{queueId}/settings`
+                .replace(`{${"queueId"}}`, encodeURIComponent(String(queueId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            if (authId != null) {
+                localVarHeaderParameter['Auth-Id'] = String(authId);
+            }
+            if (maxHash != null) {
+                localVarHeaderParameter['Max-Hash'] = String(maxHash);
+            }
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -1306,6 +1551,21 @@ export const QueuesApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['QueuesApi.getQueueStaff']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * 
+         * @summary Update queue settings
+         * @param {string} queueId Queue id
+         * @param {string} authId Auth Id provided by orchestrator service
+         * @param {string} maxHash Authentication hash provided by the Max massenger
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateQueueSettings(queueId: string, authId: string, maxHash: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QueueSettingsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateQueueSettings(queueId, authId, maxHash, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['QueuesApi.updateQueueSettings']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -1374,6 +1634,18 @@ export const QueuesApiFactory = function (configuration?: Configuration, basePat
          */
         getQueueStaff(queueId: string, authId: string, maxHash: string, options?: RawAxiosRequestConfig): AxiosPromise<QueueStaffResponse> {
             return localVarFp.getQueueStaff(queueId, authId, maxHash, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Update queue settings
+         * @param {string} queueId Queue id
+         * @param {string} authId Auth Id provided by orchestrator service
+         * @param {string} maxHash Authentication hash provided by the Max massenger
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateQueueSettings(queueId: string, authId: string, maxHash: string, options?: RawAxiosRequestConfig): AxiosPromise<QueueSettingsResponse> {
+            return localVarFp.updateQueueSettings(queueId, authId, maxHash, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -1445,6 +1717,19 @@ export class QueuesApi extends BaseAPI {
      */
     public getQueueStaff(queueId: string, authId: string, maxHash: string, options?: RawAxiosRequestConfig) {
         return QueuesApiFp(this.configuration).getQueueStaff(queueId, authId, maxHash, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Update queue settings
+     * @param {string} queueId Queue id
+     * @param {string} authId Auth Id provided by orchestrator service
+     * @param {string} maxHash Authentication hash provided by the Max massenger
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public updateQueueSettings(queueId: string, authId: string, maxHash: string, options?: RawAxiosRequestConfig) {
+        return QueuesApiFp(this.configuration).updateQueueSettings(queueId, authId, maxHash, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

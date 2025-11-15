@@ -19,16 +19,22 @@ const AddQueueModal: React.FC<AddQueueModalProps> = ({ isOpen, onClose, onAddQue
   const defaultShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
 
-  const handleAddQueue = () => {
+  const handleAddQueue = async () => {
     if (!queueName.trim()) return;
 
     const arrival = queueMaxTime ? parseInt(queueMaxTime) : undefined;
     const maxMembers = queueMaxMembers ? parseInt(queueMaxMembers) : undefined;
 
-    onAddQueue(queueName.trim(), arrival, maxMembers);
-    setQueueName('');
-    setQueueMaxTime('');
-    setQueueMaxMembers('');
+    try {
+        await onAddQueue(queueName.trim(), arrival, maxMembers);
+
+        setQueueName('');
+        setQueueMaxTime('');
+        setQueueMaxMembers('');
+        onClose();
+      } catch (err) {
+        console.error('Ошибка при добавлении очереди:', err);
+      }
   };
 
 

@@ -18,6 +18,7 @@ spring:
 server:
   path:
     prefix: /v1/api
+  dateTimeZone: Europe/London
   port: 8080
 
 max:
