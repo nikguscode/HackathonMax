@@ -7,6 +7,7 @@ import ConfirmationModal from '../components/ConfirmationModal';
 import { QueueEntryResponse, QueueEntriesApi, Configuration } from '../api';
 import InfoCard from '../components/InfoCard';
 import QueueDetailsSkeleton from '../components/Skeletons/SkeletonQueueDetailsPage';
+import { showErrorToast } from '../utils/showErrorToast';
 
 const createApiConfiguration = (): Configuration => {
   const basePath =
@@ -83,8 +84,13 @@ const QueueDetailsPage: React.FC = () => {
   const Status = queueDetails?.status;
 
   useEffect(() => { 
-    if (!entryId) return;
+    if (!entryId) {
+      showErrorToast({ message: "ID очереди не указан" });
+      setIsLoading(false);
+      return;
+    }
     const fetchQueueEntry = async () => {
+      
       setIsLoading(true);
       try{
         const config = createApiConfiguration();
@@ -93,16 +99,16 @@ const QueueDetailsPage: React.FC = () => {
         const response = await userInfoApi.getQueueEntry(entryId, authId, maxHash);
         setQueueDetails(response.data);
         
-        console.log('Ответ API:', response.data);
         
       } catch (err) {
         console.error('Ошибка при получении информации о пользователе:', err);
+        showErrorToast(err);
       } finally {
         setIsLoading(false);
       }
     }
     fetchQueueEntry();
-  }, [entryId]);
+  }, [entryId, authId, maxHash]);
 
   const handleDeleteQueue = async () => {
     if (!entryId) return;
@@ -113,14 +119,13 @@ const QueueDetailsPage: React.FC = () => {
       
       if (Status == "WAITING"){
         await queueApi.updateQueueEntryStatus(entryId, authId, maxHash, {status: "CANCELED"});
-        console.log('Отменено:', entryId);
       } else if (Status == "SERVING"){
-        await queueApi.updateQueueEntryStatus(entryId, authId, maxHash, {status: "SERVED"});
-        console.log('Обслужено:', entryId);       
+        await queueApi.updateQueueEntryStatus(entryId, authId, maxHash, {status: "SERVED"});  
       }
       navigate('/');
-    } catch (err) {
+    } catch (err: any) {
       console.error('Ошибка при удалении очереди:', err);
+      showErrorToast(err);
     }
   };
 
@@ -128,11 +133,10 @@ const QueueDetailsPage: React.FC = () => {
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
 
   if (!entryId || !queueDetails) {
-    return (
-      <Container>
-        <div>Ошибка: ID очереди не указан</div>
-      </Container>
-    );
+    return;
+      // <Container>
+      //   <div>Ошибка: ID очереди не указан</div>
+      // </Container>
   }
 
   if (isLoading) {
@@ -163,7 +167,7 @@ const QueueDetailsPage: React.FC = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-
+  
   
   var status = '';
   if (Status === 'WAITING'){

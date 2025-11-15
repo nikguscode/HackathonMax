@@ -64,11 +64,6 @@ const OrganizationDetailsPage: React.FC = () => {
   const handleBack = () => navigate(-1);
   const handleManage = () => navigate(`/moderator-organization/${orgId}`);
 
-  const startEditing = () => {
-    setEditedSettings(settings);
-    setIsEditing(true);
-  };
-
   const cancelEditing = () => {
     setIsEditing(false);
     setEditedSettings(null);
@@ -215,17 +210,6 @@ const OrganizationDetailsPage: React.FC = () => {
           <Panel mode="secondary" style={{ flex: '1 1 45%', minWidth: '280px', padding: '20px', borderRadius: '12px', backgroundColor: '#F0F0F0' }}>
             <Flex justify="space-between" align="center" style={{ marginBottom: '12px' }}>
               <Typography.Title style={{ fontSize: '16px', margin: 0 }}>Настройки</Typography.Title>
-              {!isEditing ? (
-                <Typography.Title onClick={startEditing} style={{ fontSize: '14px', cursor: 'pointer' }}>
-                  Редактировать
-                </Typography.Title>
-              ) : (
-                <Flex gap="8px">
-                  <Typography.Title onClick={cancelEditing} style={{ fontSize: '14px', color: '#666' }}>
-                    Отмена
-                  </Typography.Title>
-                </Flex>
-              )}
             </Flex>
 
             {isEditing && editedSettings ? (
@@ -373,11 +357,6 @@ const OrganizationDetailsPage: React.FC = () => {
       <Panel mode="secondary" style={{ width: '100%', padding: '16px', borderRadius: '12px', backgroundColor: '#F0F0F0' }}>
         <Flex justify="space-between" align="center" style={{ marginBottom: '12px' }}>
           <Typography.Title style={{ fontSize: '15px', margin: 0 }}>Настройки</Typography.Title>
-          {!isEditing && (
-            <Typography.Title onClick={startEditing} style={{ fontSize: '13px' }}>
-              Редактировать
-            </Typography.Title>
-          )}
         </Flex>
 
         {isEditing && editedSettings ? (

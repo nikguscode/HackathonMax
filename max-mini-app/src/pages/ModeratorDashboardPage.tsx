@@ -5,6 +5,8 @@ import Logo from '../components/Logo';
 import AddQueueModal from '../components/AddQueueModal';
 import { OrganizationsApi, Configuration, Queue } from '../api';
 import axios from 'axios';
+import SkeletonModeratorDashboard from '../components/Skeletons/SkeletonModeratorDashboard';
+import { showErrorToast } from '../utils/showErrorToast';
 
 interface QueueCardProps {
   id: string,
@@ -144,7 +146,6 @@ const ModeratorDashboardPage: React.FC = () => {
   const { id: orgId } = useParams<{ id: string }>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [queues, setQueues] = useState<Queue[]>([]);
-  const [error, setError] = useState<string | null>(null);
   const [orgName, setOrgName] = useState<string | null>(null);
 
   const authId = sessionStorage.getItem("authId") ?? '';
@@ -152,9 +153,13 @@ const ModeratorDashboardPage: React.FC = () => {
   sessionStorage.setItem("orgId", orgId ?? '');
 
   const fetchQueues = async (organizationId: string) => {
+        if (!orgId) {
+          showErrorToast({ message: "ID организации не указан" });
+          setLoading(false);
+          return;
+        }
         try {
             setLoading(true);
-            setError(null);
 
             const apiConfig = createApiConfiguration();
             const organizationsApi = new OrganizationsApi(apiConfig, apiConfig.basePath, axios);
@@ -181,7 +186,7 @@ const ModeratorDashboardPage: React.FC = () => {
             return true; 
         } catch (err) {
             console.error('Ошибка загрузки данных организации:', err);
-            setError('Ошибка при загрузке данных организации.');
+            showErrorToast('Ошибка при загрузке данных организации.');
             return false; 
         } finally {
             setLoading(false);
@@ -232,8 +237,6 @@ const ModeratorDashboardPage: React.FC = () => {
               queueData 
           );
 
-          console.log(`✅ Очередь "${queueName}" успешно добавлена для организации ${orgId}`);
-
           handleCloseModal();
 
           await fetchQueues(orgId);
@@ -279,8 +282,7 @@ const ModeratorDashboardPage: React.FC = () => {
   const defaultShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
   const pressedShadow = '0 0 1px rgba(0, 0, 0, 0.15)';
 
-  if (loading) return <div style={{ textAlign: "center", marginTop: 40 }}>Загрузка...</div>;
-  if (error) return <div style={{ textAlign: "center", marginTop: 40, color: "red" }}>{error}</div>;
+  if (loading) return <SkeletonModeratorDashboard/>;
   return (
     <Container
       style={{
