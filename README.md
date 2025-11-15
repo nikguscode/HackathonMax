@@ -48,11 +48,5 @@ docker compose --profile docker up -d --build
 ## Остановка
 
 ```bash
-docker compose down
-```
-
-Удалить данные:
-
-```bash
-docker compose down -v
+docker compose -p shared down -v
 ```
