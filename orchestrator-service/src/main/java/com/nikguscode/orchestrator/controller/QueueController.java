@@ -3,6 +3,7 @@ package com.nikguscode.orchestrator.controller;
 import com.nikguscode.openapi.model.QueueCreatingRequestDto;
 import com.nikguscode.openapi.model.QueueMembersResponseDto;
 import com.nikguscode.openapi.model.QueueResponseDto;
+import com.nikguscode.openapi.model.QueueSettingsDto;
 import com.nikguscode.openapi.model.QueueStaffResponseDto;
 import com.nikguscode.orchestrator.core.mapper.UserDtoMapper;
 import com.nikguscode.orchestrator.core.service.queue.QueueService;
@@ -53,13 +54,7 @@ public class QueueController {
 
   // не определены
   @GetMapping("queues/{queueId}/settings")
-  public String getSettings(@PathVariable UUID organizationId) {
-    return null;
-  }
-
-  // обращение к сервису мерик через брокер
-  @GetMapping("queues/{queueId}/metrics")
-  public String getMetrics(@PathVariable UUID organizationId) {
-    return null;
+  public QueueSettingsDto getSettings(@PathVariable UUID organizationId) {
+    return new QueueSettingsDto().name("test").arrivalGracePeriod(2).maxQueueSize(3).isActive(true);
   }
 }
