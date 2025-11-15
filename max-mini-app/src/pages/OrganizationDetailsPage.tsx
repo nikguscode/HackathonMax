@@ -309,7 +309,7 @@ const OrganizationDetailsPage: React.FC = () => {
             ) : settings ? (
               <Flex direction="column" style={{ gap: '10px', fontSize: '14px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{color: '#333333' }}>Адрес:</span> <strong>{settings.address || '—'}</strong>
+                  <span style={{color: '#333333' }}>Адрес:</span> <span style={{color: '#000000ff'}}>{settings.address || '—'}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{color: '#333333' }}>Статус:</span>
@@ -319,9 +319,9 @@ const OrganizationDetailsPage: React.FC = () => {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{color: '#333333' }}>Создано:</span>
-                  <strong>
+                  <span style={{color: '#000000ff'}}>
                     {settings.createdAt ? new Date(settings.createdAt).toLocaleDateString('ru-RU') : '—'}
-                  </strong>
+                  </span>
                 </div>
               </Flex>
             ) : (
@@ -335,16 +335,16 @@ const OrganizationDetailsPage: React.FC = () => {
               {metrics ? (
                 <Flex direction="column" style={{ gap: '8px', fontSize: '14px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{color: '#333333' }}>Активных очередей:</span> <strong>{metrics.activeQueues}</strong>
+                    <span style={{color: '#333333' }}>Активных очередей:</span> <span style={{color: '#000000ff'}}>{metrics.activeQueues}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{color: '#333333' }}>Всего обслужено:</span> <strong>{metrics.totalServed}</strong>
+                    <span style={{color: '#333333' }}>Всего обслужено:</span> <span style={{color: '#000000ff'}}>{metrics.totalServed}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{color: '#333333' }}>Ушедших:</span> <strong>{metrics.totalLeft}</strong>
+                    <span style={{color: '#333333' }}>Ушедших:</span> <span style={{color: '#000000ff'}}>{metrics.totalLeft}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{color: '#333333' }}>Среднее ожидание:</span> <strong>{metrics.avgWaitingTime} мин</strong>
+                    <span style={{color: '#333333' }}>Среднее ожидание:</span> <span style={{color: '#000000ff'}}>{metrics.avgWaitingTime} мин</span>
                   </div>
                 </Flex>
               ) : (
@@ -425,7 +425,7 @@ const OrganizationDetailsPage: React.FC = () => {
   ) : settings ? (
     <Flex direction="column" style={{ gap: '8px', fontSize: '13px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <span style={{color: '#333333' }}>Адрес:</span> <strong>{settings.address || '—'}</strong>
+        <span style={{color: '#333333' }}>Адрес:</span> <span style={{color: '#000000ff'}}>{settings.address || '—'}</span>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <span style={{color: '#333333' }}>Статус:</span>
@@ -461,16 +461,16 @@ const OrganizationDetailsPage: React.FC = () => {
                   <Typography.Title style={{ fontSize: '15px', margin: 0, color: '#333' }}>Метрики</Typography.Title>
                   <Flex direction="column" style={{ gap: '4px', fontSize: '13px', width: '100%' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{color: '#333333' }}>Активных очередей:</span> <strong>{metrics.activeQueues}</strong>
+                      <span style={{color: '#333333' }}>Активных очередей:</span> <span style={{color: '#000000ff'}}>{metrics.activeQueues}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{color: '#333333' }}>Всего обслужено:</span> <strong>{metrics.totalServed}</strong>
+                      <span style={{color: '#333333' }}>Всего обслужено:</span> <span style={{color: '#000000ff'}}>{metrics.totalServed}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{color: '#333333' }}>Ушедших:</span> <strong>{metrics.totalLeft}</strong>
+                      <span style={{color: '#333333' }}>Ушедших:</span> <span style={{color: '#000000ff'}}>{metrics.totalLeft}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{color: '#333333' }}>Среднее ожидание:</span> <strong>{metrics.avgWaitingTime} мин</strong>
+                      <span style={{color: '#333333' }}>Среднее ожидание:</span> <span style={{color: '#000000ff'}}>{metrics.avgWaitingTime} мин</span>
                     </div>
                   </Flex>
                   <Typography.Body style={{ fontSize: '12px', color: '#999', fontStyle: 'italic' }}>
