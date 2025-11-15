@@ -15,6 +15,8 @@ import Logo from "./components/Logo.tsx";
 import SkeletonCard from "./components/Skeletons/SkeletonApp.tsx";
 import QueueUserModeratorPage from "./pages/QueueUserModeratorPage.tsx";
 import FAQPage from "./pages/FAQPage.tsx";
+import { Toaster } from 'react-hot-toast'; 
+import { showErrorToast } from "./utils/showErrorToast.ts";
 
 <script src="https://st.max.ru/js/max-web-app.js"></script>
 
@@ -64,7 +66,6 @@ const HomePage: React.FC = () => {
   const [moderatorOrgs, setModeratorOrgs] = useState<Organization[]>([]);
   const [userQueues, setUserQueues] = useState<QueueEntryInUserResponse[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const initAndLoadUserData = async () => {
@@ -74,11 +75,9 @@ const HomePage: React.FC = () => {
       }
 
       setLoading(true);
-      setError(null);
 
       const maxId = getMaxId();
       if (!maxId) {
-        setError("Max ID не найден");
         setLoading(false);
         return;
       }
@@ -137,50 +136,56 @@ const HomePage: React.FC = () => {
         }
       } catch (err: any) {
         console.error("Ошибка авторизации:", err);
-        setError("Не удалось авторизоваться. Попробуйте позже.");
+        showErrorToast(err);
       } finally {
         setLoading(false);
       }
     };
 
     const loadUserData = async (maxId: number, authId: string, maxHash: string) => {
-      const config = createApiConfiguration();
-      const usersApi = new UsersApi(config);
+      try {
+          const config = createApiConfiguration();
+          const usersApi = new UsersApi(config);
 
-      const userResponse = await usersApi.getUserByMaxId(maxId, authId, maxHash);
+          const userResponse = await usersApi.getUserByMaxId(maxId, authId, maxHash);
 
-      if (!userResponse.data) {
-        throw new Error("Пустой ответ от сервера");
-      }
+          if (!userResponse.data) {
+            throw new Error("Пустой ответ от сервера");
+          }
 
-      const organizationsList = userResponse.data.organizations || [];
-      const queueList = userResponse.data["queue-entries"] || [];
+          const organizationsList = userResponse.data.organizations || [];
+          const queueList = userResponse.data["queue-entries"] || [];
 
-      const adminOrgs: Organization[] = [];
-      const queues: QueueEntryInUserResponse[] = [];
+          const adminOrgs: Organization[] = [];
+          const queues: QueueEntryInUserResponse[] = [];
 
-      for (const org of organizationsList) {
-        if (org.role === "MODERATOR" || org.role === "EMPLOYEE") {
-          adminOrgs.push({
-            id: org.id,
-            name: org.name,
-            role: org.role,
-            amountOfQueues: org.amountOfQueues,
-          });
+          for (const org of organizationsList) {
+            if (org.role === "MODERATOR" || org.role === "EMPLOYEE") {
+              adminOrgs.push({
+                id: org.id,
+                name: org.name,
+                role: org.role,
+                amountOfQueues: org.amountOfQueues,
+              });
+            }
+          }
+
+          for (const queue of queueList) {
+            queues.push({
+              id: queue.id,
+              name: queue.name,
+              peopleInFront: queue.peopleInFront,
+            });
+          }
+
+          setModeratorOrgs(adminOrgs);
+          setUserQueues(queues);
+        }catch (err: any) {
+          console.error("Ошибка в loadUserData:", err);
+          showErrorToast(err);
+          throw err;
         }
-      }
-
-      for (const queue of queueList) {
-        queues.push({
-          id: queue.id,
-          name: queue.name,
-          peopleInFront: queue.peopleInFront,
-        });
-      }
-
-      setModeratorOrgs(adminOrgs);
-      setUserQueues(queues);
-    };
+      };
 
     initAndLoadUserData();
   }, []);
@@ -221,22 +226,6 @@ const HomePage: React.FC = () => {
         );
   }
 
-  if (error) {
-    return (
-      <Container
-        style={{
-          backgroundColor: "#FFFFFF",
-          minHeight: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "20px",
-        }}
-      >
-        <div style={{ color: "#DC3545", textAlign: "center" }}>{error}</div>
-      </Container>
-    );
-  }
 
   return (
     <Container
@@ -315,6 +304,26 @@ function App() {
         <Route path="/moderator-queue/queue/:id" element={<QueueUserModeratorPage />} />
         <Route path="*" element={<div>404 | Страница не найдена</div>} />
       </Routes>
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          duration: 5000,
+          style: {
+            background: '#333',
+            color: '#fff',
+            borderRadius: '12px',
+            padding: '12px 16px',
+            fontSize: '15px',
+            maxWidth: '300px',
+          },
+          error: {
+            style: {
+              background: '#DC3545',
+            },
+            icon: 'Error',
+          },
+        }}
+      />
     </BrowserRouter>
   );
 }
