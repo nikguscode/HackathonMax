@@ -209,7 +209,7 @@ const OrganizationDetailsPage: React.FC = () => {
     : { maxWidth: '300px', margin: '0 auto', padding: '0 16px 100px 16px', gap: '16px' };
 
   return (
-    <Container style={{ minHeight: '100vh', padding: 0 }}>
+    <Container style={{ backgroundColor: '#ffffffff', minHeight: '100vh', padding: 0 }}>
       <Logo onBack={handleBack} />
 
       <Flex direction="column" align="center" style={containerStyle}>
