@@ -5,6 +5,7 @@ import Logo from '../components/Logo';
 import QueueManagmentButton from '../components/QueueManagmentButton';
 import { OrganizationsApi, Configuration, SimpleQueue } from '../api';
 import SkeletonQueueManagement from '../components/Skeletons/SkeletonQueueManagementPage';
+import { showErrorToast } from '../utils/showErrorToast';
 
 const createApiConfiguration = (): Configuration => {
   const basePath =
@@ -31,18 +32,17 @@ const QueueManagementPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const authId = sessionStorage.getItem("authId") ?? '';
     const maxHash = sessionStorage.getItem("maxHash") ?? '';
-    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         if (!orgId) {
         setLoading(false);
+        showErrorToast({ message: "ID организации не указан" });
         return;
         }
 
         const fetchQueues = async () => {
         try {
             setLoading(true);
-            setError(null);
 
             const config = createApiConfiguration();
             const orgApi = new OrganizationsApi(config);
@@ -56,7 +56,7 @@ const QueueManagementPage: React.FC = () => {
             setUserQueues(queues);
         } catch (err) {
             console.error(err);
-            setError('Не удалось загрузить очереди');
+            showErrorToast('Не удалось загрузить очереди');
         } finally {
             setLoading(false);
         }
@@ -78,14 +78,6 @@ const QueueManagementPage: React.FC = () => {
 
     if (loading) {
         return <SkeletonQueueManagement/>;
-    }
-
-    if (error) {
-        return (
-        <Container style={{ backgroundColor: '#FFFFFFFF', minHeight: '100vh', padding: '20px' }}>
-            <div style={{ textAlign: 'center', color: 'red', marginTop: 40 }}>{error}</div>
-        </Container>
-        );
     }
 
     return (

@@ -7,6 +7,7 @@ import { QueueMember, QueuesApi, Configuration, QueueEntriesApi } from '../api';
 import ConfirmationModal from '../components/ConfirmationModal';
 import SwipeableUserItem from '../components/SwipeableUserItem';
 import SkeletonQueueUserManagement from '../components/Skeletons/SkeletonQueueUserManagmentPagt';
+import { showErrorToast } from '../utils/showErrorToast';
 
 const createApiConfiguration = (): Configuration => {
   const basePath =
@@ -36,7 +37,6 @@ const QueueUserManagementPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUserEntryId, setSelectedUserEntryId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const authId = sessionStorage.getItem("authId") ?? '';
   const maxHash = sessionStorage.getItem("maxHash") ?? '';
@@ -158,6 +158,7 @@ const QueueUserManagementPage: React.FC = () => {
 
   useEffect(() => {
       if (!queueId) {
+        showErrorToast({ message: "ID очереди не указан" });
         setLoading(false);
         return;
       }
@@ -165,7 +166,6 @@ const QueueUserManagementPage: React.FC = () => {
       const fetchUsers = async () => {
         try {
           setLoading(true);
-          setError(null);
 
           const config = createApiConfiguration();
           const queueApi = new QueuesApi(config);
@@ -181,7 +181,7 @@ const QueueUserManagementPage: React.FC = () => {
           setUsers(members);
         } catch (err) {
           console.error('Ошибка загрузки пользователей:', err);
-          setError('Не удалось загрузить пользователей');
+          showErrorToast(err);
         } finally {
           setLoading(false);
         }
@@ -220,17 +220,6 @@ const QueueUserManagementPage: React.FC = () => {
 
   if (loading) {
       return <SkeletonQueueUserManagement />;
-    }
-
-    // Ошибка загрузки
-    if (error) {
-      return (
-        <Container style={{ backgroundColor: '#FFFFFF', minHeight: '100vh', padding: '20px' }}>
-          <Typography.Title style={{ textAlign: 'center', color: 'red' }}>
-            {error}
-          </Typography.Title>
-        </Container>
-      );
     }
 return (
   <Container

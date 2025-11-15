@@ -22,7 +22,6 @@ import { showErrorToast } from "./utils/showErrorToast.ts";
 
 const getMaxId = (): string | null => {
   if (window.WebApp?.initDataUnsafe?.user?.id) {
-    console.log("MaxBridge: найден пользователь через WebApp:", window.WebApp.initDataUnsafe.user);
     return String(window.WebApp.initDataUnsafe.user.id);
   }
 
