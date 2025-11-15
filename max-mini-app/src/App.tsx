@@ -47,8 +47,8 @@ const createApiConfiguration = (): Configuration => {
   const basePath =
     import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
 
-  const authId = sessionStorage.getItem("authId");
-  const maxHash = sessionStorage.getItem("maxHash");
+  var authId = sessionStorage.getItem("authId");
+  var maxHash = sessionStorage.getItem("maxHash");
 
   return new Configuration({
     basePath,
@@ -78,6 +78,7 @@ const HomePage: React.FC = () => {
   const [showFAQ, setShowFAQ] = useState(false);
 
   useEffect(() => {
+    sessionStorage.removeItem("maxHash");
     const initAndLoadUserData = async () => {
       if (!window.WebApp) {
         console.warn("MAX Bridge не найден. Возможно, вы не в среде MAX.");
@@ -85,13 +86,14 @@ const HomePage: React.FC = () => {
       }
 
       setLoading(true);
+      setShowFAQ(false);
 
       const maxId = getMaxId();
       if (!maxId) {
         setLoading(false);
         return;
       }
-
+      
       const savedAuthId = sessionStorage.getItem("authId");
       const savedMaxHash = sessionStorage.getItem("maxHash") ?? '';
 

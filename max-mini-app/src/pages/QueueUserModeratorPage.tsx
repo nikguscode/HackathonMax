@@ -11,7 +11,7 @@ import { showErrorToast } from '../utils/showErrorToast';
 
 const createApiConfiguration = (): Configuration => {
   const basePath = import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
-  const authId = sessionStorage.getItem("authId");
+  var authId = sessionStorage.getItem("authId");
   const maxHash = sessionStorage.getItem("maxHash");
   const orgId = sessionStorage.getItem("orgId");
 
