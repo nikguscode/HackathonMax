@@ -310,7 +310,7 @@ const ModeratorQueueDetailsPage: React.FC = () => {
                       checked={editedSettings.isActive}
                       onChange={(e) => handleInputChange('isActive', e.target.checked)}
                     />
-                    <label htmlFor="isActive" style={{ cursor: 'pointer', userSelect: 'none' }}>
+                    <label htmlFor="isActive" style={{ cursor: 'pointer', userSelect: 'none', color: '#333'}}>
                       Очередь активна
                     </label>
                   </div>
@@ -544,7 +544,7 @@ const ModeratorQueueDetailsPage: React.FC = () => {
               {error && <Typography.Body style={{ color: '#FF0000' }}>{error}</Typography.Body>}
               {metrics && (
                 <Flex direction="column" align="center" style={{ gap: '12px', width: '100%' }}>
-                  <Typography.Title style={{ fontSize: '15px', margin: 0 }}>Метрики</Typography.Title>
+                  <Typography.Title style={{ fontSize: '15px', margin: 0, color: '#333' }}>Метрики</Typography.Title>
                   <Flex direction="column" style={{ gap: '4px', fontSize: '13px', width: '100%' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span style={{color: '#333333' }}>В очереди:</span>&nbsp;<span style={{color: '#000000ff'}}>{metrics.entriesInTheQueue}</span>
