@@ -150,7 +150,7 @@ const SwipeableUserItem: React.FC<SwipeableUserItemProps> = ({
  <Panel
   mode="secondary"
   style={{
-    width: '99.5%',
+    width: '100%',
     padding: 0, 
     borderRadius: 12,
     backgroundColor: '#FFFFFF',
