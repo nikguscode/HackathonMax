@@ -5,8 +5,6 @@ import '@maxhub/max-ui/dist/styles.css';
 import App from './App';
 import './index.css';
 
-{sessionStorage.clear()}
-
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     
