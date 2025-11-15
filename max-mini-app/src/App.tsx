@@ -47,8 +47,8 @@ const createApiConfiguration = (): Configuration => {
   const basePath =
     import.meta.env.VITE_API_BASE_PATH || "http://localhost:8080/v1/api";
 
-  var authId = sessionStorage.getItem("authId");
-  var maxHash = sessionStorage.getItem("maxHash");
+  const authId = sessionStorage.getItem("authId");
+  const maxHash = sessionStorage.getItem("maxHash");
 
   return new Configuration({
     basePath,
@@ -78,7 +78,6 @@ const HomePage: React.FC = () => {
   const [showFAQ, setShowFAQ] = useState(false);
 
   useEffect(() => {
-    sessionStorage.removeItem("maxHash");
     const initAndLoadUserData = async () => {
       if (!window.WebApp) {
         console.warn("MAX Bridge не найден. Возможно, вы не в среде MAX.");
@@ -96,6 +95,9 @@ const HomePage: React.FC = () => {
       
       const savedAuthId = sessionStorage.getItem("authId");
       const savedMaxHash = sessionStorage.getItem("maxHash") ?? '';
+
+      console.log(`[START] AuthId: ${savedAuthId}`);
+      console.log(`[START] MaxHash: ${savedMaxHash.length > 0 ? 'Загружен' : 'Пустой'}`);
 
       const config = createApiConfiguration();
       const usersApi = new UsersApi(config);
@@ -118,6 +120,7 @@ const HomePage: React.FC = () => {
         } catch (err: any) {
           if (err.response?.status === 401) {
             console.warn("Токен недействителен (401). Переавторизация...");
+            console.log("!!! УДАЛЯЕМ ОБА ТОКЕНА ИЗ-ЗА 401 !!!");
             sessionStorage.removeItem("authId");
             sessionStorage.removeItem("maxHash");
           } else {
@@ -138,6 +141,9 @@ const HomePage: React.FC = () => {
         if (authResponse.status === 200 && authResponse.data?.authId) {
           const newAuthId = authResponse.data.authId;
           const newMaxHash = authResponse.data.maxHash;
+
+          console.log(`!!! АВТОРИЗАЦИЯ УСПЕШНА. НОВЫЙ MaxHash: ${newMaxHash}`);
+          console.log("Авторизация успешна. Сохранены authId и maxHash.");
 
           sessionStorage.setItem("authId", newAuthId);
           sessionStorage.setItem("maxHash", newMaxHash);
