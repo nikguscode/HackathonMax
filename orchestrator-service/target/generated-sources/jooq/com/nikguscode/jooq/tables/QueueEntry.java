@@ -4,6 +4,7 @@
 package com.nikguscode.jooq.tables;
 
 
+import com.nikguscode.jooq.Indexes;
 import com.nikguscode.jooq.Keys;
 import com.nikguscode.jooq.Public;
 import com.nikguscode.jooq.enums.QueueEntryStatus;
@@ -16,6 +17,7 @@ import java.util.UUID;
 
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.PlainSQL;
 import org.jooq.QueryPart;
@@ -108,13 +110,13 @@ public class QueueEntry extends TableImpl<QueueEntryRecord> {
     }
 
     @Override
-    public UniqueKey<QueueEntryRecord> getPrimaryKey() {
-        return Keys.QUEUE_ENTRY_PKEY;
+    public List<Index> getIndexes() {
+        return Arrays.asList(Indexes.UQ_QUEUE_USER_ACTIVE_STATUS);
     }
 
     @Override
-    public List<UniqueKey<QueueEntryRecord>> getUniqueKeys() {
-        return Arrays.asList(Keys.UQ_QUEUE_USER);
+    public UniqueKey<QueueEntryRecord> getPrimaryKey() {
+        return Keys.QUEUE_ENTRY_PKEY;
     }
 
     @Override

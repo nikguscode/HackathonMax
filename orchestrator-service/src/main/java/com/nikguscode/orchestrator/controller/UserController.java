@@ -36,6 +36,13 @@ public class UserController {
     this.userService = userService;
   }
 
+  @PostMapping("/users")
+  public ResponseEntity<Void> addUser(@RequestBody UserCreatingRequestDto dto) {
+    User user = userDtoMapper.toUser(dto, OffsetDateTime.now());
+    userDao.add(user);
+    return ResponseEntity.ok().build();
+  }
+
   @GetMapping("/users/{maxId}")
   public ResponseEntity<UserResponseDto> getUserQueueInformation(@PathVariable Long maxId) {
     var responseBody = userService.getUserQueueInformation(maxId);
@@ -56,17 +63,5 @@ public class UserController {
     User user = userDtoMapper.toUser(dto, OffsetDateTime.now());
     userDao.update(user);
     return ResponseEntity.ok().build();
-  }
-
-  @PostMapping("/users")
-  public ResponseEntity<Void> addUser(@RequestBody UserCreatingRequestDto dto) {
-    User user = userDtoMapper.toUser(dto, OffsetDateTime.now());
-    userDao.add(user);
-    return ResponseEntity.ok().build();
-  }
-
-  @PutMapping("organizations/{organizationId}/users/{maxId}/role")
-  public String updateUserRole(@PathVariable UUID organizationId, @PathVariable Long maxId) {
-    return null;
   }
 }
