@@ -26,10 +26,10 @@
 
 ### 3. Запуск всего проекта
 
-Запустить всё:
+Запустить всё. В папке `HackathonMax/shared` выполнить:
 
 ```bash
-docker compose up -d
+docker compose --profile docker up -d --build
 ```
 
 ## Доступ к сервисам
